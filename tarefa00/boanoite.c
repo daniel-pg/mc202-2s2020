@@ -1,7 +1,7 @@
 /*
  * Daniel Paulo Garcia © 2020
  * 
- * bomdia.c
+ * boanoite.c
  * 
  * Parte da primeira tarefa da disciplina de MC202!
  *
@@ -14,7 +14,12 @@
 int main(void)
 {
     char nome[MAX_NOME];
-    scanf("%s", nome);
-    printf("Bom dia, %s.\n", nome);
-    return 0;
+    unsigned n;
+
+    scanf("%u", &n);
+    for (size_t i = 0; i < n; i++)
+    {
+        scanf("%s", nome);
+        printf("Boa noite, %s.\n", nome);
+    }
 }
