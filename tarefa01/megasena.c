@@ -1,4 +1,4 @@
-/*
+/**
  * Daniel Paulo Garcia © 2020
  * 
  * megasena.c
@@ -50,14 +50,58 @@ void contar_acertos(unsigned lista_acertos[], uint64_t lista_apostas[], unsigned
 
         for (size_t j = 0; j < NUMEROS_SORTEADOS; j++)
         {
-            if (( (lista_apostas[i] >> (lista_sorteados[j] - 1)) & 0x01) == 0x01)
+            if (((lista_apostas[i] >> (lista_sorteados[j] - 1)) & 0x01) == 0x01)
             {
                 acertos++;
             }
         }
 
         lista_acertos[i] = acertos;
+    }
+}
 
+unsigned contar_premiados(unsigned lista_acertos[], unsigned m, unsigned acertos)
+{
+    unsigned premiados = 0;
+
+    for (size_t i = 0; i < m; i++)
+    {
+        if (lista_acertos[i] == acertos)
+        {
+            premiados++;
+        }
+    }
+
+    return premiados;
+}
+
+void listar_premios(unsigned lista_acertos[], unsigned contagem_premiados[], unsigned m, double n)
+{
+    double valores_premios[3] = {0.0, 0.0, 0.0};
+
+    // Caso não hajam premiados na quadra, quina ou sena, previne uma divisão por zero.
+    if (contagem_premiados[0] > 0) valores_premios[0] = (0.19 * n) / contagem_premiados[0];
+    if (contagem_premiados[1] > 0) valores_premios[1] = (0.19 * n) / contagem_premiados[1];
+    if (contagem_premiados[2] > 0) valores_premios[2] = (0.62 * n) / contagem_premiados[2];
+
+    for (size_t i = 0; i < m; i++)
+    {
+        switch (lista_acertos[i])
+        {
+        case 4:
+            printf("%.2lf\n", valores_premios[0]);
+            break;
+        case 5:
+            printf("%.2lf\n", valores_premios[1]);
+            break;
+        case 6:
+            printf("%.2lf\n", valores_premios[2]);
+            break;
+
+        default:
+            printf("%.2lf\n", 0.0);
+            break;
+        }
     }
 }
 
@@ -74,14 +118,12 @@ int main(void)
     ler_sorteados(lista_sorteados);
     contar_acertos(lista_acertos, lista_apostas, lista_sorteados, m);
 
-    for (size_t i = 0; i < m; i++)
+    unsigned contagem_premiados[3];
+    for (size_t i = 0; i < 3; i++)
     {
-        // printf("%lu", lista_apostas[i]);
-        printf("%u", lista_acertos[i]);
+        contagem_premiados[i] = contar_premiados(lista_acertos, m, i + 4);
     }
 
-    printf("\n");
-    
-
+    listar_premios(lista_acertos, contagem_premiados, m, n);
     return 0;
 }
