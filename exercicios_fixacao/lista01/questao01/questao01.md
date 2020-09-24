@@ -7,8 +7,7 @@ Crie um tipo abstrato de dados “número complexo”. As seguintes operações 
 
 2. Imprimir número
 
-3. Somar, multiplicar, subtrair, elevar a potência inteira e dividir número. Deve imprimir uma men-
-sagem de erro sempre que a operação não estiver bem definida.
+3. Somar, multiplicar, subtrair, elevar a potência inteira e dividir número. Deve imprimir uma mensagem de erro sempre que a operação não estiver bem definida.
 
 4. Comparar números.
 
