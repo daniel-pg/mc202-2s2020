@@ -1,3 +1,12 @@
+/**
+ * Daniel Paulo Garcia © 2020
+ * 
+ * complexo.c
+ * 
+ * Implementa as funções do módulo "complexo.h".
+ *
+ */
+
 #include "complexo.h"
 
 void inicializa_complexo(Complexo *z, double real, double imag)

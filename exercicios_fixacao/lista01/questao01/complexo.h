@@ -1,3 +1,12 @@
+/**
+ * Daniel Paulo Garcia © 2020
+ * 
+ * complexo.h
+ * 
+ * Interface do módulo "complexo.h".
+ *
+ */
+
 #ifndef COMPLEXO_H
 #define COMPLEXO_H
 
