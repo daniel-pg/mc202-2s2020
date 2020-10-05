@@ -7,8 +7,9 @@
  *
  */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 #include <string.h>
 
 #define MAX_PALAVRA 25
@@ -17,6 +18,8 @@ typedef struct termo
 {
     char *palavra;
     double *historico;
+    double *maximo, *minimo;
+    double media, desvpad;
 } Termo;
 
 Termo * alocaListaTermos(int n, int m)
@@ -84,6 +87,66 @@ void mostraListaTermos(Termo *lista_termos, int n, int m)
     }
 }
 
+double calculaMedia(double* historico, int m)
+{
+    // Assuma que o historico tenha pelo menos um elemento
+    double sma = historico[0] / m;
+
+    for (int i = 1; i < m; i++)
+    {
+        sma += historico[i] / m;
+    }
+
+    return sma;
+}
+
+double calculaDesvPad(double* historico, int m)
+{
+    if (m < 2) return 0.0;
+    
+    double variancia = 0.0;
+    double media = calculaMedia(historico, m);
+    double parcela;
+
+    for (int i = 0; i < m; i++)
+    {
+        parcela = historico[i] - media;
+        variancia += (parcela * parcela) / m;
+    }
+
+    return sqrt(variancia); // Desvio padrão
+}
+
+int calculaIndiceMaximo(double* historico, int m)
+{
+    int idx_max = 0;
+
+    for (int i = 1; i < m; i++)
+    {
+        if (historico[i] > historico[idx_max])
+        {
+            idx_max = i;
+        }
+    }
+
+    return idx_max;
+}
+
+int calculaIndiceMinimo(double* historico, int m)
+{
+    int idx_min = 0;
+
+    for (int i = 1; i < m; i++)
+    {
+        if (historico[i] < historico[idx_min])
+        {
+            idx_min = i;
+        }
+    }
+
+    return idx_min;
+}
+
 int main(void)
 {
     Termo *lista_termos;
@@ -93,7 +156,7 @@ int main(void)
 
     lista_termos = alocaListaTermos(n, m);
     lerListaTermos(lista_termos, n, m);
-    mostraListaTermos(lista_termos, n, m);
+    // mostraListaTermos(lista_termos, n, m);
 
     liberaListaTermos(lista_termos, n);
 
