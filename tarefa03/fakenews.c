@@ -11,16 +11,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include "fakenews.h"
 
 #define MAX_PALAVRA 25
-
-typedef struct termo
-{
-    char *palavra;
-    double *historico;
-    double *maximo, *minimo;
-    double media, desvpad;
-} Termo;
 
 Termo * alocaListaTermos(int n, int m)
 {
@@ -73,6 +66,23 @@ void lerListaTermos(Termo *lista_termos, int n, int m)
     }
 }
 
+void processaListaTermos(Termo *lista_termos, int n, int m)
+{
+    int idx_max, idx_min;
+    double media;
+
+    for (int i = 0; i < n; i++)
+    {
+        idx_max = calculaIndiceMaximo(lista_termos[i].historico, m);
+        idx_min = calculaIndiceMinimo(lista_termos[i].historico, m);
+        media = calculaMedia(lista_termos[i].historico, m);
+        lista_termos[i].maximo = &lista_termos[i].historico[idx_max];
+        lista_termos[i].minimo = &lista_termos[i].historico[idx_min];
+        lista_termos[i].media = media;
+        lista_termos[i].desvpad = calculaDesvPad(lista_termos[i].historico, media, m);
+    }
+}
+
 /** Lista todas os termos da entrada. Função usada apenas para debugging do programa */
 void mostraListaTermos(Termo *lista_termos, int n, int m)
 {
@@ -100,12 +110,11 @@ double calculaMedia(double* historico, int m)
     return sma;
 }
 
-double calculaDesvPad(double* historico, int m)
+double calculaDesvPad(double* historico, double media, int m)
 {
     if (m < 2) return 0.0;
     
     double variancia = 0.0;
-    double media = calculaMedia(historico, m);
     double parcela;
 
     for (int i = 0; i < m; i++)
@@ -157,6 +166,7 @@ int main(void)
     lista_termos = alocaListaTermos(n, m);
     lerListaTermos(lista_termos, n, m);
     // mostraListaTermos(lista_termos, n, m);
+    processaListaTermos(lista_termos, n, m);
 
     liberaListaTermos(lista_termos, n);
 
