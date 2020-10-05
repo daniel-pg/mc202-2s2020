@@ -58,6 +58,32 @@ void liberaListaTermos(Termo *lista_termos, int n)
     free(lista_termos);
 }
 
+void lerListaTermos(Termo *lista_termos, int n, int m)
+{
+    for (int i = 0; i < n; i++)
+    {
+        scanf(" %25s", lista_termos[i].palavra);
+        for (int j = 0; j < m; j++)
+        {
+            scanf(" %lf", &lista_termos[i].historico[j]);
+        }
+    }
+}
+
+/** Lista todas os termos da entrada. Função usada apenas para debugging do programa */
+void mostraListaTermos(Termo *lista_termos, int n, int m)
+{
+    for (int i = 0; i < n; i++)
+    {
+        printf("%s\n", lista_termos[i].palavra);
+        for (int j = 0; j < m; j++)
+        {
+            printf("%lf ", lista_termos[i].historico[j]);
+        }
+        printf("\n");
+    }
+}
+
 int main(void)
 {
     Termo *lista_termos;
@@ -66,6 +92,8 @@ int main(void)
     scanf(" %d %d", &n, &m);
 
     lista_termos = alocaListaTermos(n, m);
+    lerListaTermos(lista_termos, n, m);
+    mostraListaTermos(lista_termos, n, m);
 
     liberaListaTermos(lista_termos, n);
 
