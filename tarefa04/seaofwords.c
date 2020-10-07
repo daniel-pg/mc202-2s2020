@@ -16,7 +16,7 @@ void le_cacapalavras(char *cacapalavras, int n, int m)
     {
         for (int j = 0; j < m; j++)
         {
-            scanf(" %c", (cacapalavras + sizeof(char) * (i * n + j)) );
+            scanf(" %c", &cacapalavras[i*n + j] );
         }
     }
 }
@@ -25,7 +25,7 @@ void le_pistas(char *pistas, int q)
 {
     for (int i = 0; i < q; i++)
     {
-        scanf(" %s", &pistas[i]);
+        scanf(" %s", &pistas[i * MAX_PALAVRA]);
     }
 }
 
@@ -36,7 +36,7 @@ void escreve_cacapalavras(const char *cacapalavras, int n, int m)
     {
         for (int j = 0; j < m; j++)
         {
-            printf("%c", *(cacapalavras + sizeof(char) * (i * n + j)) );
+            printf("%c", cacapalavras[i*n + j] );
         }
 
         printf("\n");
@@ -48,30 +48,31 @@ void escreve_pistas(char *pistas, int q)
 {
     for (int i = 0; i < q; i++)
     {
-        printf("%s\n", &pistas[i]);
+        printf("%s\n", &pistas[i * MAX_PALAVRA]);
     }
 }
 
-void procura_palavras(const char *cacapalavras, const char *palavras, bool *resultados, int n, int m, int q)
+void procura_palavras(char *cacapalavras, const char *palavras, bool *resultados, int n, int m, int q)
 {
-    char palavra_atual[MAX_PALAVRA];
+    char palavra_atual[MAX_PALAVRA] = {0};
 
     // Para cada palavra
     for (int k = 0; k < q; k++)
     {
         // Caso básico: A tabela está vazia
-        if (!n || !m){
-            resultados[k] = 0;
+        if (!n || !m)
+        {
+            resultados[k] = false;
             continue;
         }
 
-        strncpy(palavra_atual, &palavras[k], MAX_PALAVRA);
+        strncpy(palavra_atual, &palavras[k * MAX_PALAVRA], MAX_PALAVRA);
 
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < m; j++)
             {
-                if (backtrack(cacapalavras, palavra_atual, 0, i, j))
+                if (backtrack(cacapalavras, palavra_atual, 0, i, j, &n, &m))
                 {
                     resultados[k] = true;
                     goto proxima_palavra;
@@ -80,15 +81,44 @@ void procura_palavras(const char *cacapalavras, const char *palavras, bool *resu
         }
         resultados[k] = 0;
 
-        proxima_palavra:;
+        proxima_palavra: ;
 
     }
 
 }
 
-bool backtrack(const char *cacapalavras, const char *palavra, int index, int i, int j)
+bool backtrack(char *cacapalavras, const char palavra[], int index, int i, int j, const int *n, const int *m)
 {
-    return true;
+    if (cacapalavras[i * (*n) + j] != palavra[index]) return false;
+    if (index == strlen(palavra) - 1) return true;
+
+    bool encontrou = false;
+    char c = cacapalavras[i * (*n) + j];
+    cacapalavras[i * (*n) + j] = '\0'; // Apaga o caractere, i.e. não deve ser procurado novamente
+
+    if (i > 0)
+    {
+        encontrou |= backtrack(cacapalavras, palavra, index+1, i-1, j, n, m);
+        if (encontrou) return true;
+    }
+    if (j > 0)
+    {
+        encontrou |= backtrack(cacapalavras, palavra, index+1, i, j-1, n, m);
+        if (encontrou) return true;
+    }
+    if (i < *n - 1)
+    {
+        encontrou |= backtrack(cacapalavras, palavra, index+1, i+1, j, n, m);
+        if (encontrou) return true;
+    }
+    if (j < *m - 1)
+    {
+        encontrou |= backtrack(cacapalavras, palavra, index+1, i, j+1, n, m);
+        if (encontrou) return true;
+    }
+
+    cacapalavras[i * (*n) + j] = c; // Restaura valor anterior do caça-palavras
+    return encontrou;
 }
 
 void imprime_resultados(const bool *resultados, int q)
@@ -114,6 +144,7 @@ int main(void)
     /* Infelizmente o C90 não permite coisas como sizeof(char[n][m]), que é um um uso legítimo e seguro de VLA's.
      * Todas vez que quiser acessar a matriz, ao invés de usar a sintaxe super-conveniente:     matriz[i][j];
      * Terei que escrever:      *(matriz + sizeof(char) * (i * n + j))
+     * Alternativamente:        matriz[i*n + j]
      *
      * Solução elegante, se pudesse usar VLA's:
      * char (*matriz)[m] = malloc(sizeof(int[n][m]));
