@@ -205,6 +205,14 @@ class Task(BaseTask):
         binary = self.compile(["seaofwords.c"])
         self.test_cases(binary, self.case_range("seaofwords{}.in", 6, 10))
 
+    def teste_3_casosdeborda(self):
+        binary = self.compile(["seaofwords.c"])
+        self.test_cases(binary, self.case_range("meus_testes{}.in", 1, 7))
+
+    def teste_4_espirais(self):
+        binary = self.compile(["seaofwords.c"])
+        self.test_cases(binary, self.case_range("meus_testes{}.in", 8, 9))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Testa tarefa.")
