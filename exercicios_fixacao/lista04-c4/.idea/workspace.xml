@@ -28,6 +28,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="259e4808-7862-44d9-925e-77e8b116aecf" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/lista04-c4.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/lista04-c4.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/questao02/poligono.c" beforeDir="false" afterPath="$PROJECT_DIR$/questao02/poligono.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/questao02/poligono.h" beforeDir="false" afterPath="$PROJECT_DIR$/questao02/poligono.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../tarefa04/seaofwords.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../tarefa04/seaofwords.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -48,6 +52,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="cf.first.check.clang-format" value="false" />
@@ -60,6 +65,11 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
   </component>
   <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -76,7 +86,7 @@
       <updated>1602629762179</updated>
       <workItem from="1602629763427" duration="1149000" />
       <workItem from="1602631741157" duration="3222000" />
-      <workItem from="1602689050624" duration="3586000" />
+      <workItem from="1602689050624" duration="8004000" />
     </task>
     <servers />
   </component>
@@ -103,5 +113,13 @@
       <screen x="0" y="0" width="1600" height="855" />
     </state>
     <state x="583" y="185" width="424" height="483" key="FileChooserDialogImpl/0.0.1600.855@0.0.1600.855" timestamp="1602645862712" />
+    <state x="400" y="160" key="Vcs.Push.Dialog.v2" timestamp="1602705880382">
+      <screen x="0" y="0" width="1600" height="855" />
+    </state>
+    <state x="400" y="160" key="Vcs.Push.Dialog.v2/0.0.1600.855@0.0.1600.855" timestamp="1602705880382" />
+    <state x="463" y="175" width="672" height="678" key="search.everywhere.popup" timestamp="1602704130179">
+      <screen x="0" y="0" width="1600" height="855" />
+    </state>
+    <state x="463" y="175" width="672" height="678" key="search.everywhere.popup/0.0.1600.855@0.0.1600.855" timestamp="1602704130179" />
   </component>
 </project>

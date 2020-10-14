@@ -7,11 +7,18 @@
 
 #include <stdbool.h>
 
+struct ponto
+{
+    double x, y;
+};
+
 typedef struct poligono{
-    double *x, *y;
-    int n;
+    struct ponto *pontos;
+    int n_vertices;
 } Poligono;
 
+Poligono * cria_poligono(int n_vertices);
+void libera_poligono(Poligono *p);
 bool eh_poligono_simples(Poligono *p);
 double calcula_area_poligono(Poligono *p);
 void transladar_poligono(Poligono *p, double dx, double dy);
