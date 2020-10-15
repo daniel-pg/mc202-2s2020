@@ -8,7 +8,7 @@
 #include <string.h>
 #include "seaofwords.h"
 
-#define MAX_PALAVRA 20
+#define MAX_PALAVRA 21
 
 void le_cacapalavras(char *cacapalavras, int n, int m)
 {
@@ -16,7 +16,7 @@ void le_cacapalavras(char *cacapalavras, int n, int m)
     {
         for (int j = 0; j < m; j++)
         {
-            scanf(" %c", &cacapalavras[i*n + j] );
+            scanf(" %c", &cacapalavras[i*m + j] );
         }
     }
 }
@@ -36,7 +36,7 @@ void escreve_cacapalavras(const char *cacapalavras, int n, int m)
     {
         for (int j = 0; j < m; j++)
         {
-            printf("%c", cacapalavras[i*n + j] );
+            printf("%c", cacapalavras[i*m + j] );
         }
 
         printf("\n");
@@ -89,35 +89,36 @@ void procura_palavras(char *cacapalavras, const char *palavras, bool *resultados
 
 bool backtrack(char *cacapalavras, const char palavra[], int index, int i, int j, const int *n, const int *m)
 {
-    if (cacapalavras[i * (*n) + j] != palavra[index]) return false;
+    if (cacapalavras[i * (*m) + j] != palavra[index]) return false;
     if (index == strlen(palavra) - 1) return true;
 
     bool encontrou = false;
-    char c = cacapalavras[i * (*n) + j];
-    cacapalavras[i * (*n) + j] = '\0'; // Apaga o caractere, i.e. não deve ser procurado novamente
+    char c = cacapalavras[i * (*m) + j];
+    cacapalavras[i * (*m) + j] = '\0'; // Apaga o caractere, i.e. não deve ser procurado novamente
 
     if (i > 0)
     {
         encontrou |= backtrack(cacapalavras, palavra, index+1, i-1, j, n, m);
-        if (encontrou) return true;
+        if (encontrou) goto retorna_valor;
     }
     if (j > 0)
     {
         encontrou |= backtrack(cacapalavras, palavra, index+1, i, j-1, n, m);
-        if (encontrou) return true;
+        if (encontrou) goto retorna_valor;
     }
     if (i < *n - 1)
     {
         encontrou |= backtrack(cacapalavras, palavra, index+1, i+1, j, n, m);
-        if (encontrou) return true;
+        if (encontrou) goto retorna_valor;
     }
     if (j < *m - 1)
     {
         encontrou |= backtrack(cacapalavras, palavra, index+1, i, j+1, n, m);
-        if (encontrou) return true;
+        if (encontrou) goto retorna_valor;
     }
 
-    cacapalavras[i * (*n) + j] = c; // Restaura valor anterior do caça-palavras
+    retorna_valor:
+    cacapalavras[i * (*m) + j] = c; // Restaura valor anterior do caça-palavras
     return encontrou;
 }
 
@@ -143,8 +144,8 @@ int main(void)
 
     /* Infelizmente o C90 não permite coisas como sizeof(char[n][m]), que é um um uso legítimo e seguro de VLA's.
      * Todas vez que quiser acessar a matriz, ao invés de usar a sintaxe super-conveniente:     matriz[i][j];
-     * Terei que escrever:      *(matriz + sizeof(char) * (i * n + j))
-     * Alternativamente:        matriz[i*n + j]
+     * Terei que escrever:      *(matriz + sizeof(char) * (i * m + j))
+     * Alternativamente:        matriz[i*m + j]
      *
      * Solução elegante, se pudesse usar VLA's:
      * char (*matriz)[m] = malloc(sizeof(int[n][m]));
