@@ -26,7 +26,16 @@ int main(void)
 {
     double area;
     Poligono *meu_poligono = le_poligono();
+
     area = calcula_area_poligono(meu_poligono);
+
+    if (eh_poligono_simples(meu_poligono))
+        printf("Y");
+    else
+        printf("N");
+
     printf("%.2lf", area);
+
+    libera_poligono(meu_poligono);
     return 0;
 }

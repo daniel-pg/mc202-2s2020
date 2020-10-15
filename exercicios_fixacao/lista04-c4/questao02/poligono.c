@@ -20,6 +20,14 @@ void libera_poligono(Poligono *p)
     free(p);
 }
 
+/*
+bool sao_linhas_concorrente(struct ponto p1, struct ponto q1, struct ponto p2, struct ponto q2)
+{
+}
+*/
+
+// Tarefa mais difícil do que eu imaginava, envolve conhecer algoritmos como o Shamos-Hoey ou o Bentley-Ottmann, além
+// de estruturas de dados que ainda não tivemos na disciplina ("árvores AVL", árvores não sei das quantas, etc...)
 bool eh_poligono_simples(Poligono *p)
 {
     return false;
