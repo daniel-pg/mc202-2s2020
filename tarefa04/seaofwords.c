@@ -10,33 +10,40 @@
 
 #define MAX_PALAVRA 21
 
-void le_cacapalavras(char *cacapalavras, int n, int m)
+void le_cacapalavras(struct cacapalavras *c, int n, int m)
 {
+    c->matriz = malloc(sizeof(*c->matriz) * n * m);
+    c->n = n;
+    c->m = m;
+
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < m; j++)
         {
-            scanf(" %c", &cacapalavras[i*m + j] );
+            scanf(" %c", &c->matriz[i*m + j] );
         }
     }
 }
 
-void le_pistas(char *pistas, int q)
+void le_pistas(struct pistas *p, int q)
 {
+    p->palavras = malloc(sizeof(char[MAX_PALAVRA]) * q);
+    p->q = q;
+
     for (int i = 0; i < q; i++)
     {
-        scanf(" %s", &pistas[i * MAX_PALAVRA]);
+        scanf(" %s", &p->palavras[i * MAX_PALAVRA]);
     }
 }
 
 /* Função utilizada apenas para depurar o programa e checar se a entrada foi lida corretamente */
-void escreve_cacapalavras(const char *cacapalavras, int n, int m)
+void escreve_cacapalavras(const struct cacapalavras *c)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < c->n; i++)
     {
-        for (int j = 0; j < m; j++)
+        for (int j = 0; j < c->m; j++)
         {
-            printf("%c", cacapalavras[i*m + j] );
+            printf("%c", c->matriz[i * c->m + j] );
         }
 
         printf("\n");
@@ -44,35 +51,35 @@ void escreve_cacapalavras(const char *cacapalavras, int n, int m)
 }
 
 /* Função utilizada apenas para depurar o programa e checar se a entrada foi lida corretamente */
-void escreve_pistas(char *pistas, int q)
+void escreve_pistas(const struct pistas *p)
 {
-    for (int i = 0; i < q; i++)
+    for (int i = 0; i < p->q; i++)
     {
-        printf("%s\n", &pistas[i * MAX_PALAVRA]);
+        printf("%s\n", &p->palavras[i * MAX_PALAVRA]);
     }
 }
 
-void procura_palavras(char *cacapalavras, const char *palavras, bool *resultados, int n, int m, int q)
+void procura_palavras(struct cacapalavras *c, const struct pistas *p, bool *resultados)
 {
-    char palavra_atual[MAX_PALAVRA] = {0};
+    unsigned int tmh_palavra;
 
     // Para cada palavra
-    for (int k = 0; k < q; k++)
+    for (int k = 0; k < p->q; k++)
     {
         // Caso básico: A tabela está vazia
-        if (!n || !m)
+        if (!c->n || !c->m)
         {
             resultados[k] = false;
             continue;
         }
 
-        strncpy(palavra_atual, &palavras[k * MAX_PALAVRA], MAX_PALAVRA);
+        tmh_palavra = strlen(&p->palavras[k * MAX_PALAVRA]);
 
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < c->n; i++)
         {
-            for (int j = 0; j < m; j++)
+            for (int j = 0; j < c->m; j++)
             {
-                if (backtrack(cacapalavras, palavra_atual, 0, i, j, &n, &m))
+                if (encontra_palavra_na_posicao(c, &p->palavras[k * MAX_PALAVRA], tmh_palavra, 0, i, j))
                 {
                     resultados[k] = true;
                     goto proxima_palavra;
@@ -87,38 +94,38 @@ void procura_palavras(char *cacapalavras, const char *palavras, bool *resultados
 
 }
 
-bool backtrack(char *cacapalavras, const char palavra[], int index, int i, int j, const int *n, const int *m)
+bool encontra_palavra_na_posicao(struct cacapalavras *c, const char *palavra, unsigned int tmh_palavra, int index, int i, int j)
 {
-    if (cacapalavras[i * (*m) + j] != palavra[index]) return false;
-    if (index == strlen(palavra) - 1) return true;
+    if (c->matriz[i * c->m + j] != palavra[index]) return false;
+    if (index == tmh_palavra - 1) return true;
 
     bool encontrou = false;
-    char c = cacapalavras[i * (*m) + j];
-    cacapalavras[i * (*m) + j] = '\0'; // Apaga o caractere, i.e. não deve ser procurado novamente
+    char acessado = c->matriz[i * c->m + j];
+    c->matriz[i * c->m + j] = '\0'; // Apaga o caractere, i.e. não deve ser procurado novamente
 
     if (i > 0)
     {
-        encontrou |= backtrack(cacapalavras, palavra, index+1, i-1, j, n, m);
+        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i-1, j);
         if (encontrou) goto retorna_valor;
     }
     if (j > 0)
     {
-        encontrou |= backtrack(cacapalavras, palavra, index+1, i, j-1, n, m);
+        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i, j-1);
         if (encontrou) goto retorna_valor;
     }
-    if (i < *n - 1)
+    if (i < c->n - 1)
     {
-        encontrou |= backtrack(cacapalavras, palavra, index+1, i+1, j, n, m);
+        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i+1, j);
         if (encontrou) goto retorna_valor;
     }
-    if (j < *m - 1)
+    if (j < c->m - 1)
     {
-        encontrou |= backtrack(cacapalavras, palavra, index+1, i, j+1, n, m);
+        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i, j+1);
         if (encontrou) goto retorna_valor;
     }
 
     retorna_valor:
-    cacapalavras[i * (*m) + j] = c; // Restaura valor anterior do caça-palavras
+    c->matriz[i * c->m + j] = acessado; // Restaura valor anterior do caça-palavras
     return encontrou;
 }
 
@@ -127,53 +134,37 @@ void imprime_resultados(const bool *resultados, int q)
     for (int i = 0; i < q; i++)
     {
         if (resultados[i])
-        {
             printf("sim\n");
-        }
         else
-        {
             printf("nao\n");
-        }
     }
 }
 
 int main(void)
 {
     int n, m, q;
-    scanf(" %d %d %d", &n, &m, &q); // Assume-se que a entrada sempre é válida, não há necessidade de usar fgets() ou strtol()
+    scanf(" %d %d %d", &n, &m, &q);
 
-    /* Infelizmente o C90 não permite coisas como sizeof(char[n][m]), que é um um uso legítimo e seguro de VLA's.
-     * Todas vez que quiser acessar a matriz, ao invés de usar a sintaxe super-conveniente:     matriz[i][j];
-     * Terei que escrever:      *(matriz + sizeof(char) * (i * m + j))
-     * Alternativamente:        matriz[i*m + j]
-     *
-     * Solução elegante, se pudesse usar VLA's:
-     * char (*matriz)[m] = malloc(sizeof(int[n][m]));
-     * */
-    char *cacapalavras = malloc(sizeof(char) * n * m);
-    char *pistas = malloc(sizeof(char[MAX_PALAVRA]) * q);
-    bool *resultados = malloc(sizeof(bool) * q);
-    if (!cacapalavras || !pistas || !resultados)
-    {
-        free(resultados);
-        free(pistas);
-        free(cacapalavras);
-        printf("Erro de alocacao de memoria!");
-        exit(1);
-    }
+    bool *resultados = malloc(sizeof(*resultados) * q);
+    if (resultados == NULL) exit(1);
 
-    le_cacapalavras(cacapalavras, n, m);
-    le_pistas(pistas, q);
+    // Aloca struct na pilha
+    struct cacapalavras cs;
+    struct pistas ps;
+
+    le_cacapalavras(&cs, n, m);
+    le_pistas(&ps, q);
+
     // DEBUG: Escreve entrada devolta na tela
-    // escreve_cacapalavras(cacapalavras, n, m);
-    // escreve_pistas(pistas, q);
+    // escreve_cacapalavras(&cs);
+    // escreve_pistas(&ps);
 
-    procura_palavras(cacapalavras, pistas, resultados, n, m, q);
+    procura_palavras(&cs, &ps, resultados);
     imprime_resultados(resultados, q);
 
     // Libera memoria
     free(resultados);
-    free(pistas);
-    free(cacapalavras);
+    free(ps.palavras);
+    free(cs.matriz);
     return 0;
 }
