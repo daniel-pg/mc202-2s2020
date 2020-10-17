@@ -1,0 +1,36 @@
+;*******************************
+;* KOCH
+;* Desenha uma curva de Koch
+;* recursivamente.
+;*******************************
+
+TO Koch :l :w
+    IF :l = 1 [
+        fd :w lt 60
+        fd :w rt 120
+        fd :w lt 60
+        fd :w
+    ]
+    IF :l > 1 [
+        Koch :l-1 :w/3
+        lt 60
+        Koch :l-1 :w/3
+        rt 120
+        Koch :l-1 :w/3
+        lt 60
+        Koch :l-1 :w/3
+    ]
+END
+
+; PREAMBULO
+clearscreen
+hideturtle
+setpensize 1
+
+rt 90
+penup
+setxy -225 -25
+pendown
+
+; DESENHA
+Koch 5 150
