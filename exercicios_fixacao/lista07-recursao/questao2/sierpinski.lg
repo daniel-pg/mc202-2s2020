@@ -1,0 +1,28 @@
+;*******************************
+;* SIERPINSKI
+;* Desenha um Triangulo de
+;* Sierpinski recursivamente.
+;*******************************
+
+TO Sierpinski :l :w
+    if :l > 0 [
+        repeat 3 [
+            Sierpinski :l-1 :w/2
+            fd :w
+            rt 120
+        ]
+    ]
+END
+
+; PREAMBULO
+clearscreen
+hideturtle
+setpensize 1
+
+rt 90
+penup
+setxy -150 150
+pendown
+
+; DESENHA
+Sierpinski 5 300
