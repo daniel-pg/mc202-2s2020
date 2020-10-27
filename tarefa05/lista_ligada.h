@@ -36,14 +36,14 @@ void esvazia_lista(lista_ligada_t *lista);
 // Esvazia a lista e logo em seguida libera-a da memória.
 void libera_lista(lista_ligada_t *lista);
 
-// Insere elemento na posição especificada.
+// Insere elemento na posição anterior à especificada.
 void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos);
 
 // Anexa elemento ao final da lista.
 void anexa_elemento(lista_ligada_t *lista, const item_t item);
 
-// Concatena duas listas
-void concatena_listas(lista_ligada_t *l1, lista_ligada_t *l2);
+// Concatena duas listas.
+void concatena_listas(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_ligada_t *l2);
 
 // Remove primeira ocorrência do elemento especificado da lista e devolve seu indice.
 size_t remove_elemento(lista_ligada_t *lista, const item_t item);
@@ -52,7 +52,7 @@ size_t remove_elemento(lista_ligada_t *lista, const item_t item);
 void retira_elemento(lista_ligada_t *lista, size_t pos);
 
 // Copia a lista de origem para a lista de destino.
-void copia_lista(lista_ligada_t *orig, lista_ligada_t *dest);
+void copia_lista(lista_ligada_t *dest, lista_ligada_t *orig);
 
 // Imprime todos os elementos da lista na saída padrão usando um separador especificado.
 void imprime_lista(lista_ligada_t *lista, const char *sep);
