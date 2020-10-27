@@ -45,25 +45,120 @@ void libera_lista(lista_ligada_t *lista)
     free(lista);
 }
 
+void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos)
+{
+    if (lista == NULL)
+    {
+        return; // Operação inválida: inserção numa lista vazia. Ver documentação em "lista_ligada.h".
+    }
+
+    register size_t i;
+    celula_t *atual;
+    celula_t *novo_elemento;
+
+    if ( (novo_elemento = malloc(sizeof(*novo_elemento))) == NULL ) exit(1);
+    novo_elemento->valor = item;
+
+    // Percorre a lista da esquerda para a direita ou ao contrário dependendo de qual caminho for mais curto.
+    if (pos < lista->len / 2)
+    {
+        atual = lista->inicio;
+        for (i = 0; i < pos - 1; i++)
+        {
+            atual = atual->prox;
+        }
+        novo_elemento->ant = atual;
+        novo_elemento->prox = atual->prox;
+        atual->prox->ant = novo_elemento;
+        atual->prox = novo_elemento;
+
+    } else
+    {
+        atual = lista->fim;
+        for (i = lista->len - 1; i > pos; i--)
+        {
+            atual = atual->ant;
+        }
+        novo_elemento->prox = atual;
+        novo_elemento->ant = atual->ant;
+        atual->ant->prox = novo_elemento;
+        atual->ant = novo_elemento;
+    }
+
+    lista->len++;
+}
+
 void anexa_elemento(lista_ligada_t *lista, const item_t item)
 {
     celula_t *novo_elemento;
     if ( (novo_elemento = malloc(sizeof(*novo_elemento))) == NULL ) exit(1);
-
     novo_elemento->valor = item;
+
+    if (lista->inicio == NULL)
+        lista->inicio = novo_elemento;
+    else
+        lista->fim->prox = novo_elemento;
+
     novo_elemento->ant = lista->fim;
     novo_elemento->prox = NULL;
-
     lista->fim = novo_elemento;
+    lista->len++;
+}
+
+void concatena_listas(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_ligada_t *l2)
+{
+    copia_lista(nova_lista, l1);
+    copia_lista(nova_lista, l2);
+}
+
+size_t remove_elemento(lista_ligada_t *lista, const item_t item)
+{
+    return 0;
+}
+
+void retira_elemento(lista_ligada_t *lista, size_t pos)
+{
+    return;
+}
+
+void copia_lista(lista_ligada_t *dest, lista_ligada_t *orig)
+{
+    celula_t *atual = orig->inicio;
+    celula_t *novo_elemento;
+
+    while (atual != NULL)
+    {
+        if ( (novo_elemento = malloc(sizeof(*novo_elemento))) == NULL ) exit(1);
+        novo_elemento->valor = atual->valor;
+
+        if (dest->inicio == NULL)
+            dest->inicio = novo_elemento;
+        else
+            dest->fim->prox = novo_elemento;
+
+        novo_elemento->ant = dest->fim;
+        dest->fim = novo_elemento;
+
+        atual = atual->prox;
+    }
+
+    dest->fim->prox = NULL;
+    dest->len = orig->len;
 }
 
 void imprime_lista(lista_ligada_t *lista, const char *sep)
 {
-    for (celula_t *atual = lista->inicio; atual != NULL ; atual = atual->prox)
+    celula_t *atual = lista->inicio;
+
+    while (atual != NULL)
     {
         printf("%" PRIu64, atual->valor);
         printf("%s", sep);
+
+        atual = atual->prox;
     }
+
+    printf("\n");
 }
 
 void ler_lista(lista_ligada_t *lista, size_t n)
