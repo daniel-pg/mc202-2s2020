@@ -35,6 +35,7 @@ void esvazia_lista(lista_ligada_t *lista)
         free(anterior);
     }
 
+    // Quando o fluxo de execução chegar aqui, necessariamente: lista->inicio == NULL;
     lista->fim = NULL;
     lista->len = 0;
 }
@@ -43,6 +44,27 @@ void libera_lista(lista_ligada_t *lista)
 {
     esvazia_lista(lista);
     free(lista);
+}
+
+void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento)
+{
+    if (elemento->ant == NULL && elemento->prox == NULL) {
+        lista->inicio = NULL;
+        lista->fim = NULL;
+    }
+    else if (elemento->ant == NULL) {
+        elemento->prox->ant = NULL;
+    }
+    else if (elemento->prox == NULL) {
+        elemento->ant->prox = NULL;
+    }
+    else {
+        elemento->ant->prox = elemento->prox;
+        elemento->prox->ant = elemento->ant;
+    }
+
+    free(elemento);
+    lista->len--;
 }
 
 void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos)
@@ -111,14 +133,39 @@ void concatena_listas(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_liga
     copia_lista(nova_lista, l2);
 }
 
-size_t remove_elemento(lista_ligada_t *lista, const item_t item)
+void remove_elemento(lista_ligada_t *lista, const item_t item)
 {
-    return 0;
+    celula_t *atual = lista->inicio;
+
+    while (atual != NULL)
+    {
+        if (atual->valor == item)
+        {
+            libera_elemento_costura_lista(lista, atual);
+            break;
+        }
+
+        atual = atual->prox;
+    }
 }
 
 void retira_elemento(lista_ligada_t *lista, size_t pos)
 {
-    return;
+    celula_t *atual;
+    size_t i;
+
+    if (pos < lista->len / 2)
+    {
+        atual = lista->inicio;
+        for (i = 0; i < pos; i++) atual = atual->prox; // Avança o ponteiro atual até o elemento que será removido.
+    }
+    else
+    {
+        atual = lista->fim;
+        for (i = lista->len; i > pos; i--) atual = atual->ant; // Avança o ponteiro atual até o elemento que será removido.
+    }
+
+    libera_elemento_costura_lista(lista, atual);
 }
 
 void copia_lista(lista_ligada_t *dest, lista_ligada_t *orig)
@@ -156,6 +203,21 @@ void imprime_lista(lista_ligada_t *lista, const char *sep)
         printf("%s", sep);
 
         atual = atual->prox;
+    }
+
+    printf("\n");
+}
+
+void imprime_lista_inverso(lista_ligada_t *lista, const char *sep)
+{
+    celula_t *atual = lista->fim;
+
+    while (atual != NULL)
+    {
+        printf("%" PRIu64, atual->valor);
+        printf("%s", sep);
+
+        atual = atual->ant;
     }
 
     printf("\n");

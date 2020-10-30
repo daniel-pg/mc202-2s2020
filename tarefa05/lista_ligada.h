@@ -36,6 +36,9 @@ void esvazia_lista(lista_ligada_t *lista);
 // Esvazia a lista e logo em seguida libera-a da memória.
 void libera_lista(lista_ligada_t *lista);
 
+// Libera/remove o elemento da lista e "costura" as pontas soltas da lista de volta.
+void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento);
+
 // Insere elemento na posição anterior à especificada.
 void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos);
 
@@ -46,7 +49,7 @@ void anexa_elemento(lista_ligada_t *lista, const item_t item);
 void concatena_listas(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_ligada_t *l2);
 
 // Remove primeira ocorrência do elemento especificado da lista e devolve seu indice.
-size_t remove_elemento(lista_ligada_t *lista, const item_t item);
+void remove_elemento(lista_ligada_t *lista, const item_t item);
 
 // Retira o elemento na posição especificada.
 void retira_elemento(lista_ligada_t *lista, size_t pos);
@@ -56,6 +59,9 @@ void copia_lista(lista_ligada_t *dest, lista_ligada_t *orig);
 
 // Imprime todos os elementos da lista na saída padrão usando um separador especificado.
 void imprime_lista(lista_ligada_t *lista, const char *sep);
+
+// Mesma coisa da função imprime_lista(), exceto que os elementos da lista são impressos em ordem inversa.
+void imprime_lista_inverso(lista_ligada_t *lista, const char *sep);
 
 // Lê uma lista de tamanho especificado da entrada padrão.
 void ler_lista(lista_ligada_t *lista, size_t n);
