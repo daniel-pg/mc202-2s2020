@@ -7,45 +7,65 @@
  */
 
 #include <stdio.h>
+#include "int_grande.h"
 
-void seleciona_operacao(char op) // DD
+void seleciona_operacao(char op, lista_ligada_t *n1, lista_ligada_t *n2)
 {
-    // TODO: receber os números n1 e n2 como parâmetros e implementar operações
+    lista_ligada_t *resultado = inicializa_lista();
+
     switch (op)
     {
         case '+':
             /* operação de soma */
+            soma_ngrande(resultado, n1, n2);
             break;
 
         case '-':
             /* operação de subtração (em módulo) */
+            subtrai_ngrande(resultado, n1, n2);
             break;
 
         case '*':
             /* operação de multiplicação */
+             multiplica_ngrande(resultado, n1, n2);
             break;
 
         case '/':
             /* operação de divisão */
+            divide_ngrande(resultado, n1, n2);
             break;
 
         default:
             break;
     }
+
+    imprime_ngrande(resultado);
+    libera_lista(resultado);
 }
 
-int main(int argc, char const *argv[])
+int main(void)
 {
-    unsigned int n;
+    lista_ligada_t *n1, *n2;
+    n1 = inicializa_lista();
+    n2 = inicializa_lista();
+
+    size_t n;
     char op;
 
-    scanf(" %u", &n);
+    // Número de operações que serão realizadas
+    scanf(" %lu", &n);
 
     for (size_t i = 0; i < n; i++)
     {
+        // Operador da função que se quer computar
         scanf(" %c", &op);
-        // TODO: Ler números n1 e n2 e selecionar operação aqui.
+
+        le_ngrande(n1);
+        le_ngrande(n2);
+        seleciona_operacao(op, n1, n2);
     }
 
+    libera_lista(n2);
+    libera_lista(n1);
     return 0;
 }
