@@ -17,6 +17,9 @@ void imprime_ngrande(lista_ligada_t *num);
 // Lê um número em formato decimal da entrada padrão.
 void le_ngrande(lista_ligada_t *num);
 
+// Retorna 1 se n1 for maior, -1 se n1 for menor, ou 0 se n1 e n2 forem iguais.
+int compara_ngrande(lista_ligada_t *n1, lista_ligada_t *n2);
+
 // Soma dois números e guarda o resultado na variável de destino.
 void soma_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2);
 
