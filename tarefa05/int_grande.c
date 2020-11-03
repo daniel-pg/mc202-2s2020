@@ -19,7 +19,7 @@
 #define XSTR(x) STR(x)
 
 // Maximo de algarismos decimais que cabem em um int de 64 bits, menos um algarismo para caber o resto da soma.
-#define MAX_DIG_DECIMAL 2
+#define MAX_DIG_DECIMAL 18
 #define MAX_VAL_DECIMAL (item_t) pow(10, MAX_DIG_DECIMAL)
 
 #define MAX_NUM_LENGTH 64
@@ -75,6 +75,14 @@ void le_ngrande(lista_ligada_t *num)
     scanf(" %s", entrada);
     size_t tmh_str = strlen(entrada);
     conv_str_para_bin(num, entrada, tmh_str);
+}
+
+void remove_zeros_a_esquerda(lista_ligada_t *num)
+{
+    while (num->len > 1 && num->fim->valor == 0)
+    {
+        retira_elemento(num, num->len);
+    }
 }
 
 int compara_ngrande(lista_ligada_t *n1, lista_ligada_t *n2)
@@ -155,12 +163,7 @@ void soma_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t 
         atual_result = atual_result->prox;
     }
 
-    // Remove os "zeros à esquerda", ninguém gosta deles.
-    if (resultado->fim->valor == 0)
-    {
-        retira_elemento(resultado, resultado->len);
-    }
-
+    remove_zeros_a_esquerda(resultado);
 }
 
 void multiplica_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
@@ -217,11 +220,7 @@ void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada
         atual_result = atual_result->prox;
     }
 
-    // Remove os zeros à esquerda.
-    if (resultado->len > 1 && resultado->fim->valor == 0)
-    {
-        retira_elemento(resultado, resultado->len);
-    }
+    remove_zeros_a_esquerda(resultado);
 }
 
 void divide_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)

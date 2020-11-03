@@ -17,6 +17,9 @@ void imprime_ngrande(lista_ligada_t *num);
 // Lê um número em formato decimal da entrada padrão.
 void le_ngrande(lista_ligada_t *num);
 
+// Remove todos os zeros à esquerda de um número, ninguém gosta deles.
+void remove_zeros_a_esquerda(lista_ligada_t *num);
+
 // Retorna 1 se n1 for maior, -1 se n1 for menor, ou 0 se n1 e n2 forem iguais.
 int compara_ngrande(lista_ligada_t *n1, lista_ligada_t *n2);
 
