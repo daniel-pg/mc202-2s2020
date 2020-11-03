@@ -77,6 +77,37 @@ void le_ngrande(lista_ligada_t *num)
     conv_str_para_bin(num, entrada, tmh_str);
 }
 
+int compara_ngrande(lista_ligada_t *n1, lista_ligada_t *n2)
+{
+    celula_t *atual_n1, *atual_n2;
+
+    if (n1->len > n2->len) {
+        return 1;
+    } else if (n1->len < n2->len) {
+        return -1;
+    } else {
+        // Se chegou até aqui, n1 e n2 tem mesmo comprimento, então precisamos checar membro a membro qual o maior.
+        atual_n1 = n1->fim;
+        atual_n2 = n2->fim;
+
+        while (atual_n1 && atual_n2)
+        {
+            if (atual_n1->valor > atual_n2->valor) {
+                return 1;
+            } else if (atual_n1->valor < atual_n2->valor) {
+                return -1;
+            }
+
+            // Avança os ponteiros pro membro menos significativo do número.
+            atual_n1 = atual_n1->ant;
+            atual_n2 = atual_n2->ant;
+        }
+
+        // Se n1 e n2 tem mesmo comprimento e todos os seus membros são iguais, então n1 e n2 são iguais.
+        return 0;
+    }
+}
+
 void soma_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
 {
     // Queremos ignorar o valor anterior da lista antes de realizar quaisquer cálculos.

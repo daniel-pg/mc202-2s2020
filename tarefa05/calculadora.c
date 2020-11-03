@@ -33,6 +33,11 @@ void seleciona_operacao(char op, lista_ligada_t *resultado, lista_ligada_t *n1, 
             divide_ngrande(resultado, n1, n2);
             break;
 
+        case '?':
+            /* compara dois números, usado apenas para debugging */
+            printf("%d", compara_ngrande(n1, n2));
+            break;
+
         default:
             break;
     }
