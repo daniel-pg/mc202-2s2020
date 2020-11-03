@@ -9,10 +9,8 @@
 #include <stdio.h>
 #include "int_grande.h"
 
-void seleciona_operacao(char op, lista_ligada_t *n1, lista_ligada_t *n2)
+void seleciona_operacao(char op, lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
 {
-    lista_ligada_t *resultado = inicializa_lista();
-
     switch (op)
     {
         case '+':
@@ -38,16 +36,14 @@ void seleciona_operacao(char op, lista_ligada_t *n1, lista_ligada_t *n2)
         default:
             break;
     }
-
-    imprime_ngrande(resultado);
-    libera_lista(resultado);
 }
 
 int main(void)
 {
-    lista_ligada_t *n1, *n2;
+    lista_ligada_t *n1, *n2, *resultado;
     n1 = inicializa_lista();
     n2 = inicializa_lista();
+    resultado = inicializa_lista();
 
     size_t n;
     char op;
@@ -62,9 +58,11 @@ int main(void)
 
         le_ngrande(n1);
         le_ngrande(n2);
-        seleciona_operacao(op, n1, n2);
+        seleciona_operacao(op, resultado, n1, n2);
+        imprime_ngrande(resultado);
     }
 
+    libera_lista(resultado);
     libera_lista(n2);
     libera_lista(n1);
     return 0;
