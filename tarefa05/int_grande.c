@@ -19,7 +19,7 @@
 #define XSTR(x) STR(x)
 
 // Maximo de algarismos decimais que cabem em um int de 64 bits, menos um algarismo para caber o resto da soma.
-#define MAX_DIG_DECIMAL 18
+#define MAX_DIG_DECIMAL 2
 #define MAX_VAL_DECIMAL (item_t) pow(10, MAX_DIG_DECIMAL)
 
 #define MAX_NUM_LENGTH 64
@@ -175,20 +175,53 @@ void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada
     esvazia_lista(resultado);
 
     // Garante que a subtração sempre seja feita em módulo.
-    if (n1->len > n2->len) {
+    if (compara_ngrande(n1, n2) > 0) {
         copia_lista(resultado, n1);
-    }
-    else if (n1->len < n2->len) {
+    } else {
         copia_lista(resultado, n2);
-    }
-    else if (n1->fim->valor > n2->fim->valor) {
-        copia_lista(resultado, n1);
-    }
-    else {
-        copia_lista(resultado, n2);
+        n2 = n1;
     }
 
     // TODO: Algoritmo de subtração aqui
+    item_t emprestimo = 0;
+    celula_t *atual_result, *atual_n2;
+    atual_result = resultado->inicio;
+    atual_n2 = n2->inicio;
+
+    for (size_t i = 0; i < resultado->len; i++)
+    {
+        // Caso estejamos subtraindo os dígitos de n1 e n2 em paralelo...
+        if (i < n2->len) {
+            if (atual_result->valor < atual_n2->valor + emprestimo) {
+                atual_result->valor += MAX_VAL_DECIMAL;
+                atual_result->valor -= atual_n2->valor + emprestimo;
+                emprestimo = 1;
+            } else {
+                atual_result->valor -= atual_n2->valor + emprestimo;
+                emprestimo = 0;
+            }
+
+            atual_n2 = atual_n2->prox;
+        } else {
+            // Caso contrário, apenas propagar os empréstimos.
+            if (atual_result->valor < emprestimo) {
+                atual_result->valor += MAX_VAL_DECIMAL;
+                atual_result->valor -= emprestimo;
+                emprestimo = 1;
+            } else {
+                atual_result->valor -= emprestimo;
+                emprestimo = 0;
+            }
+        }
+
+        atual_result = atual_result->prox;
+    }
+
+    // Remove os zeros à esquerda.
+    if (resultado->len > 1 && resultado->fim->valor == 0)
+    {
+        retira_elemento(resultado, resultado->len);
+    }
 }
 
 void divide_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
