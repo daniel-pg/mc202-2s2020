@@ -53,9 +53,11 @@ void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento)
         lista->fim = NULL;
     }
     else if (elemento->ant == NULL) {
+        lista->inicio = elemento->prox;
         elemento->prox->ant = NULL;
     }
     else if (elemento->prox == NULL) {
+        lista->fim = elemento->ant;
         elemento->ant->prox = NULL;
     }
     else {
