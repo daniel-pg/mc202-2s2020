@@ -65,6 +65,7 @@ int main(void)
         le_ngrande(n2);
         seleciona_operacao(op, resultado, n1, n2);
         imprime_ngrande(resultado);
+        esvazia_lista(resultado);
     }
 
     libera_lista(resultado);

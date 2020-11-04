@@ -93,53 +93,57 @@ int compara_ngrande(lista_ligada_t *n1, lista_ligada_t *n2)
         return 1;
     } else if (n1->len < n2->len) {
         return -1;
-    } else {
-        // Se chegou até aqui, n1 e n2 tem mesmo comprimento, então precisamos checar membro a membro qual o maior.
-        atual_n1 = n1->fim;
-        atual_n2 = n2->fim;
+    }
 
-        while (atual_n1 && atual_n2)
-        {
-            if (atual_n1->valor > atual_n2->valor) {
-                return 1;
-            } else if (atual_n1->valor < atual_n2->valor) {
-                return -1;
-            }
+    // Se chegou até aqui, n1 e n2 tem mesmo comprimento, então precisamos checar membro a membro qual o maior.
+    atual_n1 = n1->fim;
+    atual_n2 = n2->fim;
 
-            // Avança os ponteiros pro membro menos significativo do número.
-            atual_n1 = atual_n1->ant;
-            atual_n2 = atual_n2->ant;
+    while (atual_n1 && atual_n2)
+    {
+        if (atual_n1->valor > atual_n2->valor) {
+            return 1;
+        } else if (atual_n1->valor < atual_n2->valor) {
+            return -1;
         }
 
-        // Se n1 e n2 tem mesmo comprimento e todos os seus membros são iguais, então n1 e n2 são iguais.
-        return 0;
+        // Avança os ponteiros pro membro menos significativo do número.
+        atual_n1 = atual_n1->ant;
+        atual_n2 = atual_n2->ant;
     }
+
+    // Se n1 e n2 tem mesmo comprimento e todos os seus membros são iguais, então n1 e n2 são iguais.
+    return 0;
 }
 
 void soma_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
 {
-    // Queremos ignorar o valor anterior da lista antes de realizar quaisquer cálculos.
-    esvazia_lista(resultado);
+    lista_ligada_t *acumulador;
+
+    // O uso de um acumulador é necessário caso um dos operandos seja também a variável de destino.
+    if (resultado == n1 || resultado == n2) {
+        acumulador = inicializa_lista();
+    } else {
+        acumulador = resultado;
+    }
 
     // Garante que a soma sempre seja feita a partir do menor número sobre o maior. Facilita a implementação do algoritmo.
     // Caso um número seja maior que outro mas ocupe o mesmo espaço na memória, o resultado será o mesmo.
     if (n1->len > n2->len) {
-        copia_lista(resultado, n1);
-    }
-    else {
-        copia_lista(resultado, n2);
+        copia_lista(acumulador, n1);
+    } else {
+        copia_lista(acumulador, n2);
         n2 = n1; // Não é necessário guardar uma referência para n2 uma vez feita a sua cópia.
     }
 
-    anexa_elemento(resultado, 0); // Cria um espaço a mais para caso a soma ultrapasse o tamanho da lista.
+    anexa_elemento(acumulador, 0); // Cria um espaço a mais para caso a soma ultrapasse o tamanho da lista.
 
-    // TODO: Algoritmo de soma aqui
     item_t resto_soma = 0;
     celula_t *atual_result, *atual_n2;
-    atual_result = resultado->inicio;
+    atual_result = acumulador->inicio;
     atual_n2 = n2->inicio;
 
-    for (size_t i = 0; i < resultado->len; i++)
+    for (size_t i = 0; i < acumulador->len; i++)
     {
         // Caso estejamos somando os dígitos de n1 e n2 em paralelo...
         if (i < n2->len) {
@@ -163,20 +167,55 @@ void soma_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t 
         atual_result = atual_result->prox;
     }
 
-    remove_zeros_a_esquerda(resultado);
+    remove_zeros_a_esquerda(acumulador);
+
+    // Copia o resultado do acumulador devolta para a variável do resultado
+    if (resultado == n1 || resultado == n2) {
+        copia_lista(resultado, acumulador);
+        libera_lista(acumulador);
+    }
+
 }
 
 void multiplica_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
 {
-    esvazia_lista(resultado);
+    celula_t *atual_result, *atual_n2;
+    lista_ligada_t *produto_parcial, *acumulador;
 
-    // TODO: Algoritmo de multiplicação aqui
+    // A multiplicação é comutativa, mas o maior número da entrada ser o primeiro argumento facilita as coisas.
+    if (n1->len < n2->len) {
+        multiplica_ngrande(resultado, n2, n1);
+        return;
+    }
+
+    // O uso de um acumulador é necessário caso um dos operandos seja também a variável de destino.
+    if (resultado == n1 || resultado == n2) {
+        acumulador = inicializa_lista();
+    } else {
+        acumulador = resultado;
+    }
+
+    copia_lista(acumulador, n1);
+    produto_parcial = inicializa_lista();
+
+    for (size_t i = 0; i < resultado->len; i++)
+    {
+        soma_ngrande(acumulador, acumulador, produto_parcial);
+    }
+
+    remove_zeros_a_esquerda(resultado);
+
+    // Copia o resultado do acumulador devolta para a variável do resultado
+    if (resultado == n1 || resultado == n2) {
+        copia_lista(resultado, acumulador);
+        libera_lista(acumulador);
+    }
+
+    libera_lista(produto_parcial);
 }
 
 void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
 {
-    esvazia_lista(resultado);
-
     // Garante que a subtração sempre seja feita em módulo.
     if (compara_ngrande(n1, n2) > 0) {
         copia_lista(resultado, n1);
@@ -185,7 +224,6 @@ void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada
         n2 = n1;
     }
 
-    // TODO: Algoritmo de subtração aqui
     item_t emprestimo = 0;
     celula_t *atual_result, *atual_n2;
     atual_result = resultado->inicio;
@@ -225,7 +263,5 @@ void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada
 
 void divide_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
 {
-    esvazia_lista(resultado);
-
     // TODO: Algoritmo de divisão aqui
 }
