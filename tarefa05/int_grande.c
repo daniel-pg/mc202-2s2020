@@ -9,7 +9,6 @@
 #include <inttypes.h>
 #include <math.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "int_grande.h"
@@ -19,7 +18,7 @@
 #define XSTR(x) STR(x)
 
 // Maximo de algarismos decimais que cabem em um int de 64 bits, menos um algarismo para caber o resto da soma.
-#define MAX_DIG_DECIMAL 18
+#define MAX_DIG_DECIMAL 9
 #define MAX_VAL_DECIMAL (item_t) pow(10, MAX_DIG_DECIMAL)
 
 #define MAX_NUM_LENGTH 64
@@ -171,22 +170,120 @@ void soma_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t 
 
     // Copia o resultado do acumulador devolta para a variável do resultado
     if (resultado == n1 || resultado == n2) {
+        esvazia_lista(resultado);
         copia_lista(resultado, acumulador);
         libera_lista(acumulador);
     }
 
 }
 
+
+// Função auxiliar do multiplica_ngrande para computar multiplicações modulares sem risco de overflow.
+item_t multiplicacao_modular(item_t a, item_t b, item_t m)
+{
+    // Ideia central: (a*b) % m == ((a % m) * (b % m)) % m
+    item_t resultado = 0;
+    if (a >= m) a %= m;
+    if (b >= m) b %= m;
+
+    /* Se ambos a e b forem menores do que meia palavra de máquina, retorne o resultado diretamente, pois não há risco
+    de overflow */
+    if ( (a|b) < sizeof(item_t)*4 ) return (a*b) % m;
+
+    while (b > 0)
+    {
+        if (b % 2 != 0) {
+            resultado += a;
+            if (resultado >= m) resultado %= m;
+        }
+        a = (a * 2) % m;
+        b /= 2;
+    }
+
+    return resultado;
+}
+
 void multiplica_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
 {
-    celula_t *atual_result, *atual_n2;
-    lista_ligada_t *produto_parcial, *acumulador;
+    lista_ligada_t *produto_parcial, *auxiliar;
 
     // A multiplicação é comutativa, mas o maior número da entrada ser o primeiro argumento facilita as coisas.
     if (n1->len < n2->len) {
         multiplica_ngrande(resultado, n2, n1);
         return;
     }
+
+    // O uso de uma variável auxiliar é necessário caso um dos operandos seja também a variável de destino.
+    if (resultado == n1 || resultado == n2) {
+        auxiliar = inicializa_lista();
+    } else {
+        auxiliar = resultado;
+    }
+
+    produto_parcial = inicializa_lista();
+    item_t prod_item, resto_produto;
+    celula_t *atual_n1, *atual_n2;
+
+    atual_n1 = n1->inicio;
+
+    size_t i, j;
+    for (i = 0; i < n1->len; i++)
+    {
+        // 1. Zera produto parcial e o resto.
+        resto_produto = 0;
+        esvazia_lista(produto_parcial);
+
+        // 2. Volta ponteiro do n2 pro início para iniciar um novo produto parcial
+        atual_n2 = n2->inicio;
+
+        // 3. Multiplica n1[i] * n2 e guarda no produto parcial
+        for (j = 0; j < n2->len; j++)
+        {
+            prod_item = multiplicacao_modular(atual_n1->valor, atual_n2->valor, MAX_VAL_DECIMAL) + resto_produto;
+
+            /* TODO: Se eu conseguir descobrir uma maneira eficiente de computar esse resto junto com a função de
+             multiplicação modular, de maneira a não correr risco de ter um overflow, então eu posso voltar a aumentar o
+             limite numérico pra cada membro e economizar 50% de memória */
+            resto_produto = (atual_n1->valor * atual_n2->valor) / MAX_VAL_DECIMAL;
+
+            if (prod_item >= MAX_VAL_DECIMAL) {
+                prod_item -= MAX_VAL_DECIMAL;
+                resto_produto++;
+            }
+
+            anexa_elemento(produto_parcial, prod_item);
+            atual_n2 = atual_n2->prox;
+        }
+
+        // 4. Adiciona resto ao final no número. Não é necessário remover os zeros à esquerda ainda, só no final.
+        anexa_elemento(produto_parcial, resto_produto);
+
+        // 5. Multiplica produto parcial por 10^(i * MAX_VAL_DECIMAL), i.e. anexa "i" membros nulos à direita.
+        for (j = 0; j < i; j++)
+        {
+            insere_elemento(produto_parcial, 0, 0);
+        }
+
+        // 6. Somar o produto parcial ao resultado
+        soma_ngrande(auxiliar, auxiliar, produto_parcial);
+
+        // 7. Vai pro próximo n1[i].
+        atual_n1 = atual_n1->prox;
+    }
+
+    // Copia o resultado do auxiliar devolta para a variável do resultado
+    if (resultado == n1 || resultado == n2) {
+        esvazia_lista(resultado);
+        copia_lista(resultado, auxiliar);
+        libera_lista(auxiliar);
+    }
+
+    libera_lista(produto_parcial);
+}
+
+void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
+{
+    lista_ligada_t *acumulador;
 
     // O uso de um acumulador é necessário caso um dos operandos seja também a variável de destino.
     if (resultado == n1 || resultado == n2) {
@@ -195,41 +292,20 @@ void multiplica_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_lig
         acumulador = resultado;
     }
 
-    copia_lista(acumulador, n1);
-    produto_parcial = inicializa_lista();
-
-    for (size_t i = 0; i < resultado->len; i++)
-    {
-        soma_ngrande(acumulador, acumulador, produto_parcial);
-    }
-
-    remove_zeros_a_esquerda(resultado);
-
-    // Copia o resultado do acumulador devolta para a variável do resultado
-    if (resultado == n1 || resultado == n2) {
-        copia_lista(resultado, acumulador);
-        libera_lista(acumulador);
-    }
-
-    libera_lista(produto_parcial);
-}
-
-void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
-{
     // Garante que a subtração sempre seja feita em módulo.
     if (compara_ngrande(n1, n2) > 0) {
-        copia_lista(resultado, n1);
+        copia_lista(acumulador, n1);
     } else {
-        copia_lista(resultado, n2);
+        copia_lista(acumulador, n2);
         n2 = n1;
     }
 
     item_t emprestimo = 0;
     celula_t *atual_result, *atual_n2;
-    atual_result = resultado->inicio;
+    atual_result = acumulador->inicio;
     atual_n2 = n2->inicio;
 
-    for (size_t i = 0; i < resultado->len; i++)
+    for (size_t i = 0; i < acumulador->len; i++)
     {
         // Caso estejamos subtraindo os dígitos de n1 e n2 em paralelo...
         if (i < n2->len) {
@@ -258,7 +334,14 @@ void subtrai_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada
         atual_result = atual_result->prox;
     }
 
-    remove_zeros_a_esquerda(resultado);
+    remove_zeros_a_esquerda(acumulador);
+
+    // Copia o resultado do acumulador devolta para a variável do resultado
+    if (resultado == n1 || resultado == n2) {
+        esvazia_lista(resultado);
+        copia_lista(resultado, acumulador);
+        libera_lista(acumulador);
+    }
 }
 
 void divide_ngrande(lista_ligada_t *resultado, lista_ligada_t *n1, lista_ligada_t *n2)
