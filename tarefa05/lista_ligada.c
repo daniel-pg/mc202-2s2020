@@ -71,17 +71,38 @@ void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento)
 
 void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos)
 {
-    if (lista == NULL)
+    if (pos > lista->len)
     {
-        return; // Operação inválida: inserção numa lista vazia. Ver documentação em "lista_ligada.h".
+        return; // Operação inválida: inserção em posição fora do limite da lista. Ver documentação em "lista_ligada.h".
     }
 
-    register size_t i;
-    celula_t *atual;
-    celula_t *novo_elemento;
+    // Inserir nessa posição é a mesma coisa que simplesmente anexá-lo.
+    if (pos == lista->len) {
+        anexa_elemento(lista, item);
+        return;
+    }
+
+    celula_t *atual, *novo_elemento;
 
     if ( (novo_elemento = malloc(sizeof(*novo_elemento))) == NULL ) exit(1);
     novo_elemento->valor = item;
+
+    // Inserir no início da lista
+    if (pos == 0)
+    {
+        if (lista->fim == NULL)
+            lista->fim = novo_elemento;
+        else
+            lista->inicio->ant = novo_elemento;
+
+        novo_elemento->prox = lista->inicio;
+        novo_elemento->ant = NULL;
+        lista->inicio = novo_elemento;
+        lista->len++;
+        return;
+    }
+
+    register size_t i;
 
     // Percorre a lista da esquerda para a direita ou ao contrário dependendo de qual caminho for mais curto.
     if (pos < lista->len / 2)
@@ -96,8 +117,7 @@ void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos)
         atual->prox->ant = novo_elemento;
         atual->prox = novo_elemento;
 
-    } else
-    {
+    } else {
         atual = lista->fim;
         for (i = lista->len - 1; i > pos; i--)
         {
