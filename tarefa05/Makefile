@@ -10,7 +10,6 @@ CC_FLAGS=\
 -std=c99        \
 -pedantic       \
 -Wall           \
--Werror         \
 -Werror=vla     \
 -Wextra
 
