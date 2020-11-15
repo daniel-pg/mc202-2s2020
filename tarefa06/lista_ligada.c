@@ -6,13 +6,12 @@
  * Descrição: Implementa funções do módulo lista_ligada.h
  */
 
-#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "lista_ligada.h"
 
-lista_ligada_t * inicializa_lista(void)
+lista_ligada_t * inicializa_lista(enum tipo_lista tipoLista)
 {
     lista_ligada_t *lista;
     if ( (lista = malloc(sizeof(lista_ligada_t))) == NULL ) exit(1);
@@ -20,11 +19,12 @@ lista_ligada_t * inicializa_lista(void)
     lista->inicio = NULL;
     lista->fim = NULL;
     lista->len = 0;
+    lista->tipoLista = tipoLista;
 
     return lista;
 }
 
-void esvazia_lista(lista_ligada_t *lista)
+void esvazia_lista(lista_ligada_t *lista, bool libera_valor)
 {
     celula_t *anterior;
 
@@ -32,7 +32,7 @@ void esvazia_lista(lista_ligada_t *lista)
     {
         anterior = lista->inicio;
         lista->inicio = anterior->prox;
-        free(anterior);
+        libera_celula(anterior, lista->tipoLista, libera_valor);
     }
 
     // Quando o fluxo de execução chegar aqui, necessariamente: lista->inicio == NULL;
@@ -40,9 +40,21 @@ void esvazia_lista(lista_ligada_t *lista)
     lista->len = 0;
 }
 
-void libera_lista(lista_ligada_t *lista)
+void libera_celula(celula_t *celula, enum tipo_lista tipoLista, bool libera_valor)
 {
-    esvazia_lista(lista);
+    if (libera_valor && tipoLista == PACIENTE)
+    {
+        struct paciente *paciente_atual = (struct paciente*) celula->valor;
+        libera_lista(paciente_atual->lista_id, true);
+    }
+    if (libera_valor) free(celula->valor);
+
+    free(celula);
+}
+
+void libera_lista(lista_ligada_t *lista, bool libera_valor)
+{
+    esvazia_lista(lista, libera_valor);
     free(lista);
 }
 
@@ -65,11 +77,11 @@ void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento)
         elemento->prox->ant = elemento->ant;
     }
 
-    free(elemento);
+    libera_celula(elemento, lista->tipoLista, true);
     lista->len--;
 }
 
-void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos)
+void insere_elemento(lista_ligada_t *lista, item_t item, size_t pos)
 {
     if (pos > lista->len)
     {
@@ -132,7 +144,7 @@ void insere_elemento(lista_ligada_t *lista, const item_t item, size_t pos)
     lista->len++;
 }
 
-void anexa_elemento(lista_ligada_t *lista, const item_t item)
+void anexa_elemento(lista_ligada_t *lista, item_t item)
 {
     celula_t *novo_elemento;
     if ( (novo_elemento = malloc(sizeof(*novo_elemento))) == NULL ) exit(1);
@@ -155,7 +167,7 @@ void concatena_listas(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_liga
     copia_lista(nova_lista, l2);
 }
 
-void remove_elemento(lista_ligada_t *lista, const item_t item)
+void remove_elemento(lista_ligada_t *lista, item_t item)
 {
     celula_t *atual = lista->inicio;
 
@@ -221,7 +233,7 @@ void imprime_lista(lista_ligada_t *lista, const char *sep)
 
     while (atual != NULL)
     {
-        printf("%" PRIu64, atual->valor);
+        printf("%p", atual->valor);
         printf("%s", sep);
 
         atual = atual->prox;
@@ -236,22 +248,11 @@ void imprime_lista_inverso(lista_ligada_t *lista, const char *sep)
 
     while (atual != NULL)
     {
-        printf("%" PRIu64, atual->valor);
+        printf("%p", atual->valor);
         printf("%s", sep);
 
         atual = atual->ant;
     }
 
     printf("\n");
-}
-
-void ler_lista(lista_ligada_t *lista, size_t n)
-{
-    item_t el;
-
-    for (size_t i = 0; i < n; i++)
-    {
-        scanf(" %" PRIu64, &el);
-        anexa_elemento(lista, el);
-    }
 }
