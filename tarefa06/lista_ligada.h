@@ -55,7 +55,7 @@ void libera_celula(celula_t *celula, enum tipo_lista tipoLista, bool libera_valo
 void libera_lista(lista_ligada_t *lista, bool libera_valor);
 
 // Libera/remove o elemento da lista e "costura" as pontas soltas da lista de volta.
-void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento);
+void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento, bool libera_valor);
 
 // Insere elemento na posição anterior à especificada.
 void insere_elemento(lista_ligada_t *lista, item_t item, size_t pos);
@@ -67,10 +67,10 @@ void anexa_elemento(lista_ligada_t *lista, item_t item);
 void concatena_listas(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_ligada_t *l2);
 
 // Remove primeira ocorrência do elemento especificado da lista e devolve seu indice.
-void remove_elemento(lista_ligada_t *lista, item_t item);
+void remove_elemento(lista_ligada_t *lista, item_t item, bool libera_valor);
 
 // Retira o elemento na posição especificada.
-void retira_elemento(lista_ligada_t *lista, size_t pos);
+void retira_elemento(lista_ligada_t *lista, size_t pos, bool libera_valor);
 
 // Copia a lista de origem para a lista de destino.
 void copia_lista(lista_ligada_t *dest, lista_ligada_t *orig);

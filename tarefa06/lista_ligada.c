@@ -58,7 +58,7 @@ void libera_lista(lista_ligada_t *lista, bool libera_valor)
     free(lista);
 }
 
-void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento)
+void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento, bool libera_valor)
 {
     if (elemento->ant == NULL && elemento->prox == NULL) {
         lista->inicio = NULL;
@@ -77,7 +77,7 @@ void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *elemento)
         elemento->prox->ant = elemento->ant;
     }
 
-    libera_celula(elemento, lista->tipoLista, true);
+    libera_celula(elemento, lista->tipoLista, libera_valor);
     lista->len--;
 }
 
@@ -167,7 +167,7 @@ void concatena_listas(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_liga
     copia_lista(nova_lista, l2);
 }
 
-void remove_elemento(lista_ligada_t *lista, item_t item)
+void remove_elemento(lista_ligada_t *lista, item_t item, bool libera_valor)
 {
     celula_t *atual = lista->inicio;
 
@@ -175,7 +175,7 @@ void remove_elemento(lista_ligada_t *lista, item_t item)
     {
         if (atual->valor == item)
         {
-            libera_elemento_costura_lista(lista, atual);
+            libera_elemento_costura_lista(lista, atual, libera_valor);
             break;
         }
 
@@ -183,7 +183,7 @@ void remove_elemento(lista_ligada_t *lista, item_t item)
     }
 }
 
-void retira_elemento(lista_ligada_t *lista, size_t pos)
+void retira_elemento(lista_ligada_t *lista, size_t pos, bool libera_valor)
 {
     celula_t *atual;
     size_t i;
@@ -199,7 +199,7 @@ void retira_elemento(lista_ligada_t *lista, size_t pos)
         for (i = lista->len; i > pos; i--) atual = atual->ant; // Avança o ponteiro atual até o elemento que será removido.
     }
 
-    libera_elemento_costura_lista(lista, atual);
+    libera_elemento_costura_lista(lista, atual, libera_valor);
 }
 
 void copia_lista(lista_ligada_t *dest, lista_ligada_t *orig)
