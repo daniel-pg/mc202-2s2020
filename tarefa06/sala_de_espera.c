@@ -16,9 +16,12 @@
 
 #define NUM_ESPECIALISTAS 9
 
+#define STR(x) XSTR(x)
+#define XSTR(x) #x
+
 struct horario
 {
-    int hora, minutos;
+    unsigned hora, minutos;
 };
 
 void incrementa_horario(struct horario *horario)
@@ -33,6 +36,11 @@ void incrementa_horario(struct horario *horario)
     }
 }
 
+void imprime_horario(struct horario horario, const char* nome)
+{
+    printf("%02d:%02d %s\n", horario.hora, horario.minutos, nome);
+}
+
 lista_ligada_t * le_entrada(void)
 {
     lista_ligada_t *fila_pacientes = inicializa_lista(PACIENTE);
@@ -43,7 +51,7 @@ lista_ligada_t * le_entrada(void)
 
     while (true)
     {
-        if (scanf("%*[\"]%49[^\"]%*[\"]", buff_nome) == EOF) break;
+        if (scanf("%*[\"]%" STR(MAX_NOME) "[^\"]%*[\"]", buff_nome) == EOF) break; // TODO: Deveria ser MAX_NOME - 1
 
         if ( (paciente_atual = malloc(sizeof(*paciente_atual))) == NULL) exit(1);
         anexa_elemento(fila_pacientes, paciente_atual);
@@ -60,18 +68,11 @@ lista_ligada_t * le_entrada(void)
         paciente_atual->ocupado = false;
         paciente_atual->lista_id = inicializa_lista(ID);
 
-        while ((c = getchar()) != '\n')
+        while (scanf("%d", &c) == 1)
         {
-            if (isdigit(c))
-            {
-                if ( (id_atual = malloc(sizeof(*id_atual))) == NULL) exit(1);
-                *id_atual = c - '0';
-                anexa_elemento(paciente_atual->lista_id, id_atual);
-            }
-            else if (c == EOF)
-            {
-                goto retorna;
-            }
+            if ( (id_atual = malloc(sizeof(*id_atual))) == NULL) exit(1);
+            *id_atual = c;
+            anexa_elemento(paciente_atual->lista_id, id_atual);
         }
 
     }
@@ -80,40 +81,35 @@ lista_ligada_t * le_entrada(void)
     return fila_pacientes;
 }
 
-int main(void)
+void processa_filas(lista_ligada_t *fila_pacientes, lista_ligada_t* filas_atendimento[], const size_t tmh_filas_atendimento[])
 {
     // Horário do início do atendimento.
     struct horario horario = {8, 0};
 
-    // Cria filas de atendimento para cada especialidade e indica quantos profissionais estão disponíveis em cada fila.
-    lista_ligada_t* filas_atendimento[NUM_ESPECIALISTAS];
-    size_t tmh_filas_atendimento[NUM_ESPECIALISTAS] = {10, 2, 5, 3, 4, 7, 2, 1, 4};
-    for (size_t i = 0; i < NUM_ESPECIALISTAS; i++) filas_atendimento[i] = inicializa_lista(PACIENTE);
-
-    // A fila de pacientes nunca é alterada uma vez criada, o que mudam são só as filas de atendimento e as listas dos
-    // IDs dos atendimentos requisitados por cada paciente.
-    lista_ligada_t *fila_pacientes = le_entrada();
-
-    celula_t *celulaPacienteatual, *celulaIdAtual;
+    celula_t *celulaPacienteAtual, *celulaIdAtual;
     struct paciente *pacienteAtual;
     int *idAtual;
 
     while (fila_pacientes->len > 0)
     {
-        celulaPacienteatual = fila_pacientes->inicio;
+        celulaPacienteAtual = fila_pacientes->inicio;
 
-        while (celulaPacienteatual != NULL)
+        // Percorre fila de pacientes e redireciona-os para as devidas filas de atendimento.
+        while (celulaPacienteAtual != NULL)
         {
-            pacienteAtual = (struct paciente*) celulaPacienteatual->valor;
+            pacienteAtual = (struct paciente*) celulaPacienteAtual->valor;
             celulaIdAtual = pacienteAtual->lista_id->inicio;
 
             if (celulaIdAtual == NULL)
             {
-                printf("%d:%d %s", horario.hora, horario.minutos, pacienteAtual->nome);
-                libera_elemento_costura_lista(fila_pacientes, celulaPacienteatual, true);
+                imprime_horario(horario, pacienteAtual->nome);
+                celula_t *aux = celulaPacienteAtual;
+                celulaPacienteAtual = celulaPacienteAtual->prox;
+                libera_elemento_costura_lista(fila_pacientes, aux, true);
+                continue;
+            } else {
+                idAtual = (int*) celulaIdAtual->valor;
             }
-
-            idAtual = (int*) celulaIdAtual->valor;
 
             // Adiciona paciente ao fim ou início da fila de atendimento requisitado, de acordo com a sua prioridade, e
             // remove pendência de atendimento. Se o paciente já estiver ocupado, não faça nada.
@@ -129,7 +125,7 @@ int main(void)
                 retira_elemento(pacienteAtual->lista_id, 0, true);
             }
 
-            celulaPacienteatual = celulaPacienteatual->prox;
+            celulaPacienteAtual = celulaPacienteAtual->prox;
         }
 
         for (int i = 0; i < NUM_ESPECIALISTAS; i++)
@@ -144,6 +140,57 @@ int main(void)
 
         incrementa_horario(&horario);
     }
+}
+
+/* Função usada apenas para debug (verificar os valores lidos pelo programa) */
+void imprime_lista_prioridade(lista_ligada_t *lista)
+{
+    celula_t *atual = lista->inicio;
+
+    while (atual != NULL)
+    {
+        printf("%d ", *((int*)(atual->valor)) );
+
+        atual = atual->prox;
+    }
+
+    printf("\n");
+}
+
+/* Função usada apenas para debug (verificar os valores lidos pelo programa) */
+void imprime_fila_pacientes(lista_ligada_t *fila)
+{
+    celula_t *atual = fila->inicio;
+    struct paciente *paciente_atual;
+
+    while (atual != NULL)
+    {
+        paciente_atual = (struct paciente*) atual->valor;
+        printf("\"%s\"", paciente_atual->nome);
+
+        if (paciente_atual->prioridade == PREFERENCIAL) {
+            printf(" preferencial ");
+        } else {
+            printf(" normal ");
+        }
+
+        imprime_lista_prioridade(paciente_atual->lista_id);
+
+        atual = atual->prox;
+    }
+}
+
+int main(void)
+{
+    // Cria filas de atendimento para cada especialidade e indica quantos profissionais estão disponíveis em cada fila.
+    lista_ligada_t* filas_atendimento[NUM_ESPECIALISTAS];
+    size_t tmh_filas_atendimento[NUM_ESPECIALISTAS] = {10, 2, 5, 3, 4, 7, 2, 1, 4};
+    for (size_t i = 0; i < NUM_ESPECIALISTAS; i++) filas_atendimento[i] = inicializa_lista(PACIENTE);
+
+    // Lê fila de pacientes da entrada e depois processa-a.
+    lista_ligada_t *fila_pacientes = le_entrada();
+    imprime_fila_pacientes(fila_pacientes);
+    // processa_filas(fila_pacientes, filas_atendimento, tmh_filas_atendimento);
 
     // Libera memória e termina o programa.
     libera_lista(fila_pacientes, true);
