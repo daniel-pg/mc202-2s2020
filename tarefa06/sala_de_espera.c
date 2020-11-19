@@ -94,10 +94,12 @@ void processa_filas(lista_ligada_t *fila_pacientes, lista_ligada_t* filas_atendi
     {
         paciente_atual = fila_pacientes->inicio;
 
+        // Percorre cada paciente da fila de espera.
         while (paciente_atual != NULL)
         {
             structpaciente = (struct paciente*) paciente_atual->valor;
 
+            // Se o paciente não tem mais pendências, imprima seu horário de saída
             if (structpaciente->lista_id->inicio == NULL) {
                 imprime_horario(horario, structpaciente->nome);
                 celula_t *aux = paciente_atual;
@@ -106,6 +108,7 @@ void processa_filas(lista_ligada_t *fila_pacientes, lista_ligada_t* filas_atendi
                 continue;
             }
 
+            // Se o paciente não está ocupado em outra fila, adicione-o à fila de atendimento requisitada.
             if (!structpaciente->ocupado)
             {
                 id = *((int*)structpaciente->lista_id->inicio->valor);
@@ -124,6 +127,8 @@ void processa_filas(lista_ligada_t *fila_pacientes, lista_ligada_t* filas_atendi
 
         incrementa_horario(&horario);
 
+        // Remove um número 'n' de pacientes de cada fila de atendimento e retira as pendências de cada paciente, onde
+        // 'n' é o número de profissionais de cada categoria de atendimento.
         for (size_t i = 0; i < NUM_ESPECIALISTAS; i++)
         {
             for (size_t j = 0; j < tmh_filas_atendimento[i] && filas_atendimento[i]->len > 0; j++)
