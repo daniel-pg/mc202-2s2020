@@ -1,12 +1,28 @@
-CFLAGS = -std=c99 -Wall -Werror -Werror=vla -g
-LDFLAGS = -lm
+# C Compiler
+CC=gcc
 
-.PHONY: all clean
+# Compiler flags
+CC_FLAGS=\
+-g              \
+-O3             \
+-march=native   \
+-std=c99        \
+-pedantic       \
+-Wall           \
+-Werror         \
+-Werror=vla     \
+-Wextra
 
+LD_FLAGS=\
+-lm             \
+-fuse-ld=gold
+
+.PHONY: all
 all: seaofwords
 
 seaofwords: seaofwords.c
-	gcc $(CFLAGS) seaofwords.c -o seaofwords $(LDFLAGS)
+	$(CC) $(CC_FLAGS) seaofwords.c -o seaofwords $(LD_FLAGS)
 
+.PHONY: clean
 clean:
 	rm -f seaofwords

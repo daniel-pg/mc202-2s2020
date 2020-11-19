@@ -61,43 +61,44 @@ void escreve_pistas(const struct pistas *p)
 
 void procura_palavras(struct cacapalavras *c, const struct pistas *p, bool *resultados)
 {
-    unsigned int tmh_palavra;
+    int i, j, k;
 
-    // Para cada palavra
-    for (int k = 0; k < p->q; k++)
+    // Se a tabela está vazia, todos os resultados da pesquisa serão falsos.
+    if (!c->n || !c->m)
     {
-        // Caso básico: A tabela está vazia
-        if (!c->n || !c->m)
-        {
-            resultados[k] = false;
-            continue;
-        }
+        memset(resultados, 0, sizeof(*resultados) * p->q);
+        return;
+    }
 
-        tmh_palavra = strlen(&p->palavras[k * MAX_PALAVRA]);
-
-        for (int i = 0; i < c->n; i++)
+    // Para cada palavra...
+    for (k = 0; k < p->q; k++)
+    {
+        // Para cada linha da matriz...
+        for (i = 0; i < c->n; i++)
         {
-            for (int j = 0; j < c->m; j++)
+            // Para cada coluna da matriz...
+            for (j = 0; j < c->m; j++)
             {
-                if (encontra_palavra_na_posicao(c, &p->palavras[k * MAX_PALAVRA], tmh_palavra, 0, i, j))
+                if (encontra_palavra_na_posicao(c, &p->palavras[k * MAX_PALAVRA], i, j))
                 {
                     resultados[k] = true;
                     goto proxima_palavra;
                 }
             }
         }
-        resultados[k] = 0;
 
+        resultados[k] = false;
         proxima_palavra: ;
-
     }
 
 }
 
-bool encontra_palavra_na_posicao(struct cacapalavras *c, const char *palavra, unsigned int tmh_palavra, int index, int i, int j)
+bool encontra_palavra_na_posicao(struct cacapalavras *c, const char *palavra, int i, int j)
 {
-    if (c->matriz[i * c->m + j] != palavra[index]) return false;
-    if (index == tmh_palavra - 1) return true;
+    if (c->matriz[i * c->m + j] != *palavra) return false;
+
+    const char *prox_letra_palavra = palavra + 1; // Pré-computa o endereço da próxima letra na palavra.
+    if (*prox_letra_palavra == '\0') return true;
 
     bool encontrou = false;
     char acessado = c->matriz[i * c->m + j];
@@ -105,22 +106,22 @@ bool encontra_palavra_na_posicao(struct cacapalavras *c, const char *palavra, un
 
     if (i > 0)
     {
-        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i-1, j);
+        encontrou |= encontra_palavra_na_posicao(c, prox_letra_palavra, i-1, j);
         if (encontrou) goto retorna_valor;
     }
     if (j > 0)
     {
-        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i, j-1);
+        encontrou |= encontra_palavra_na_posicao(c, prox_letra_palavra, i, j-1);
         if (encontrou) goto retorna_valor;
     }
     if (i < c->n - 1)
     {
-        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i+1, j);
+        encontrou |= encontra_palavra_na_posicao(c, prox_letra_palavra, i+1, j);
         if (encontrou) goto retorna_valor;
     }
     if (j < c->m - 1)
     {
-        encontrou |= encontra_palavra_na_posicao(c, palavra, tmh_palavra, index+1, i, j+1);
+        encontrou |= encontra_palavra_na_posicao(c, prox_letra_palavra, i, j+1);
         if (encontrou) goto retorna_valor;
     }
 

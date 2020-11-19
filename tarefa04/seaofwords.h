@@ -22,7 +22,7 @@ void le_pistas(struct pistas *p, int q);
 void escreve_cacapalavras(const struct cacapalavras *c);
 void escreve_pistas(const struct pistas *p);
 void procura_palavras(struct cacapalavras *c, const struct pistas *p, bool *resultados);
-bool encontra_palavra_na_posicao(struct cacapalavras *c, const char *palavra, unsigned int tmh_palavra, int index, int i, int j);
+bool encontra_palavra_na_posicao(struct cacapalavras *c, const char *palavra, int i, int j);
 void imprime_resultados(const bool *resultados, int q);
 
 #endif //TAREFA04_SEAOFWORDS_H
