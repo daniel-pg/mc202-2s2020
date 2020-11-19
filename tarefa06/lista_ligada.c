@@ -188,7 +188,7 @@ void retira_elemento(lista_ligada_t *lista, size_t pos, bool libera_valor)
     celula_t *atual;
     size_t i;
 
-    if (pos < lista->len / 2)
+    if (pos <= lista->len / 2)
     {
         atual = lista->inicio;
         for (i = 0; i < pos; i++) atual = atual->prox; // Avança o ponteiro atual até o elemento que será removido.
