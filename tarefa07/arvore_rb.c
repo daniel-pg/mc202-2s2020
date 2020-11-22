@@ -56,3 +56,48 @@ nodo_rb * arvore_maximo(arvore_rb *t)
     while (raiz->dir != NULL) raiz = raiz->dir;
     return raiz;
 }
+
+void __percorrer_preordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg)
+{
+    if (raiz != NULL)
+    {
+        func(raiz, arg);
+        __percorrer_preordem_recursivo(raiz->esq, func, arg);
+        __percorrer_preordem_recursivo(raiz->dir, func, arg);
+    }
+}
+
+void percorrer_preordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg)
+{
+    __percorrer_preordem_recursivo(t->raiz, func, arg);
+}
+
+void __percorrer_inordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg)
+{
+    if (raiz != NULL)
+    {
+        __percorrer_inordem_recursivo(raiz->esq, func, arg);
+        func(raiz, arg);
+        __percorrer_inordem_recursivo(raiz->dir, func, arg);
+    }
+}
+
+void percorrer_inordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg)
+{
+    __percorrer_inordem_recursivo(t->raiz, func, arg);
+}
+
+void __percorrer_posordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg)
+{
+    if (raiz != NULL)
+    {
+        __percorrer_posordem_recursivo(raiz->esq, func, arg);
+        __percorrer_posordem_recursivo(raiz->dir, func, arg);
+        func(raiz, arg);
+    }
+}
+
+void percorrer_posordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg)
+{
+    __percorrer_posordem_recursivo(t->raiz, func, arg);
+}
