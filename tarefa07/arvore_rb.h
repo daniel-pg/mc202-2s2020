@@ -29,36 +29,109 @@ typedef struct arvore_rb
     int (*cmp_chaves) (const void*, const void*); /* Função para comparar duas chaves; deve ser providenciada pelo usuário */
 } arvore_rb;
 
-// Criar árvore
+/**
+ * Cria uma nova árvore vazia com a função de comparação de chaves fornecida, e aloca memória para ela.
+ *
+ * @param cmp_chaves Função que compara duas chaves, de maneira similar ao strcmp().
+ * @return Ponteiro para a árvore criada.
+ */
+arvore_rb * arvore_criar(int (*cmp_chaves) (const void*, const void*));
 
-// Inicializar árvore
+/**
+ * Inicializa uma árvore previamente alocada pelo usuário.
+ *
+ * @param t Ponteiro para árvore não inicializada.
+ * @param cmp_chaves Função que compara duas chaves, de maneira similar ao strcmp().
+ */
+void arvore_inicializar(arvore_rb *t, int (*cmp_chaves) (const void*, const void*));
 
-// Insere elemento
+/**
+ * Insere um novo nó na árvore.
+ *
+ * @param t Árvore onde se quer inserir o nó.
+ * @param nd Nó a ser inserido.
+ * @return Ponteiro nd em caso de sucesso, NULL caso a chave do novo nó coincida com a de algum outro nó da árvore.
+ */
+nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd);
 
-// Deleta elemento
+/**
+ * Remove da árvore o nó cuja chave é igual à chave fornecida. É de responsabilidade do usuário liberar a memória do nó
+ * removido.
+ *
+ * @param t Árvore de onde se deseja retirar o nó.
+ * @param k Chave do nó que será retirado.
+ * @return Ponteiro para o nó removido, ou NULL caso o nó não seja encontrado.
+ */
+nodo_rb * arvore_deletar(arvore_rb *t, const void *k);
 
-// Busca um nó da árvore cuja chave seja igual à chave fornecida.
+/**
+ * Busca um nó da árvore cuja chave seja igual à chave fornecida.
+ *
+ * @param t Árvore onde se quer buscar.
+ * @param k Chave do nó a ser buscado.
+ * @return Ponteiro para o nó encontrado, ou NULL se não foi encontrado.
+ */
 nodo_rb * arvore_buscar(arvore_rb *t, const void *k);
 
-// Mínimo
+/**
+ * Encontra o nó mínimo, ou seja, aquele mais à esquerda de todos na árvore.
+ *
+ * @param t Árvore onde se quer buscar.
+ * @return Ponteiro para o nó mínimo, ou NULL se a árvore estiver vazia.
+ */
 nodo_rb * arvore_minimo(arvore_rb *t);
 
-// Máximo
+/**
+ * Encontra o nó máximo, ou seja, aquele mais à direita de todos na árvore.
+ *
+ * @param t Árvore onde se quer buscar.
+ * @return Ponteiro para o nó máximo, ou NULL se a árvore estiver vazia.
+ */
 nodo_rb * arvore_maximo(arvore_rb *t);
 
-// Predecessor
+/**
+ * Encontra o predecessor do nó fornecido.
+ *
+ * @param nd Nó cujo predecessor será buscado.
+ * @return Ponteiro para o predecessor, ou NULL se não houver predecessor.
+ */
 nodo_rb * arvore_predecessor(nodo_rb *nd);
 
-// Sucessor
+/**
+ * Encontra o sucessor do nó fornecido.
+ *
+ * @param nd Nó cujo sucessor será buscado.
+ * @return Ponteiro para o sucessor, ou NULL se não houver sucessor.
+ */
 nodo_rb * arvore_sucessor(nodo_rb *nd);
 
-// Percurso em pré-ordem
+/**
+ * Faz o percurso em pré-ordem na árvore, e executa a função fornecida em cada elemento acessado.
+ *
+ * @param t Árvore binária.
+ * @param func Função executada para cada nó percorrido.
+ * @param arg Parâmetro opcional da função func (fornecido pelo usuário).
+ */
 void percorrer_preordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg);
 
-// Percurso em inordem
+/**
+ * Faz o percurso em inordem na árvore, e executa a função fornecida em cada elemento acessado.
+ *
+ * @param t Árvore binária.
+ * @param func Função executada para cada nó percorrido.
+ * @param arg Parâmetro opcional da função func (fornecido pelo usuário).
+ */
 void percorrer_inordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg);
 
-// Percurso em pós-ordem
+/**
+ * Faz o percurso em pós-ordem na árvore, e executa a função fornecida em cada elemento acessado. O percuso em pós-ordem
+ * é especialmente útil para liberar todos os recursos alocados pela árvore, já que todos os nós filhos são acessados
+ * antes dos pais.
+ *
+ * @param t Árvore binária.
+ * @param func Função executada para cada nó percorrido.
+ * @param arg Parâmetro opcional da função func (fornecido pelo usuário).
+ */
 void percorrer_posordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg);
 
 // OBS: Essas funções abaixo provavelmente vão fazer parte apenas da implementação, e não da interface do módulo.
