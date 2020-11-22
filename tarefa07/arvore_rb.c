@@ -57,6 +57,54 @@ nodo_rb * arvore_maximo(arvore_rb *t)
     return raiz;
 }
 
+nodo_rb * arvore_predecessor(nodo_rb *nd)
+{
+    nodo_rb *pai;
+
+    // Se o nó tem filho esquerdo, então o predecessor só pode ser o máximo da subárvore esquerda.
+    if (nd->esq != NULL)
+    {
+        nd = nd->esq;
+        while (nd->dir != NULL) nd = nd->dir;
+        return nd;
+    }
+    else
+    {
+        // Caso contrário, procura o primeiro ancestral do nó que seja filho direito de outro nó.
+        pai = nd->pai;
+        while (pai != NULL && pai->esq == nd)
+        {
+            nd = pai;
+            pai = pai->pai; // Essa foi de lascar hein...
+        }
+        return pai;
+    }
+}
+
+nodo_rb * arvore_sucessor(nodo_rb *nd)
+{
+    nodo_rb *pai;
+
+    // Se o nó tem filho direito, então o sucessor só pode ser o mínimo da subárvore direita.
+    if (nd->dir != NULL)
+    {
+        nd = nd->dir;
+        while (nd->esq != NULL) nd = nd->esq;
+        return nd;
+    }
+    else
+    {
+        // Caso contrário, procura o primeiro ancestral do nó que seja filho esquerdo de outro nó.
+        pai = nd->pai;
+        while (pai != NULL && pai->dir == nd)
+        {
+            nd = pai;
+            pai = pai->pai; // Como diz o ditado: "Tao Pai Pai, Tao Filho Filho..."
+        }
+        return pai;
+    }
+}
+
 void __percorrer_preordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg)
 {
     if (raiz != NULL)
