@@ -12,6 +12,22 @@
 
 #include "arvore_rb.h"
 
+// Funções auxiliares
+void arvore_rotacao_esquerda(arvore_rb *t, nodo_rb *x);
+void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y);
+void arvore_consertar_insercao(arvore_rb *t, nodo_rb *nd);
+void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v);
+void arvore_consertar_delecao(arvore_rb *t, nodo_rb *nd);
+
+// Implementações de funções
+nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chaves) (const void*, const void*));
+inline nodo_rb * __busca_arvore_iterativo(arvore_rb *t, const void *k);
+inline nodo_rb * __arvore_minimo(nodo_rb *raiz);
+inline nodo_rb * __arvore_maximo(nodo_rb *raiz);
+void __percorrer_preordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg);
+void __percorrer_inordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg);
+void __percorrer_posordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg);
+
 // Nó nulo (o T.nil descrito no livro do Cormen). Alocado globalmente (o professor vai me matar agora).
 nodo_rb arvore_nodo_nulo = {
         ARVORE_NULL,    /* Nó esquerdo */
@@ -184,12 +200,68 @@ nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
 
     // Restaura propriedades da árvore rubro-negra
     arvore_consertar_insercao(t, nd);
+    t->tmh_arvore++;
     return nd;
+}
+
+void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v)
+{
+    if (u->pai == ARVORE_NULL)
+        t->raiz = v;
+    else if (u == u->pai->esq)
+        u->pai->esq = v;
+    else
+        u->pai->dir = v;
+
+    v->pai = u->pai;
+}
+
+void arvore_consertar_delecao(arvore_rb *t, nodo_rb *nd)
+{
+
 }
 
 nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
 {
-    return NULL;
+    nodo_rb *nd;
+    nodo_rb *x, *y;
+    enum cor_no cor_orig_y;
+
+    // Busca nó a ser deletado. Se não encontrar, cancela a operação de deleção e retorna NULL
+    if ((nd = arvore_buscar(t, k)) == NULL) return NULL;
+
+    y = nd;
+    cor_orig_y = y->cor;
+
+    if (nd->esq == ARVORE_NULL) {
+        x = nd->dir;
+        arvore_transplantar(t, nd, nd->dir);
+    } else if (nd->dir == ARVORE_NULL) {
+        x = nd->esq;
+        arvore_transplantar(t, nd, nd->esq);
+    } else {
+        y = __arvore_minimo(nd->dir);
+        cor_orig_y = y->cor;
+        x = y->dir;
+
+        if (y->pai == nd) {
+            x->pai = y;
+        } else {
+            arvore_transplantar(t, y, y->dir);
+            y->dir = nd->dir;
+            y->dir->pai = y;
+        }
+
+        arvore_transplantar(t, nd, y);
+
+        y->esq = nd->esq;
+        y->esq->pai = y;
+        y->cor = nd->cor;
+    }
+
+    if (cor_orig_y == NEGRO) arvore_consertar_delecao(t, x);
+    t->tmh_arvore--;
+    return nd;
 }
 
 nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chaves) (const void*, const void*))
@@ -235,18 +307,26 @@ nodo_rb * arvore_buscar(arvore_rb *t, const void *k)
     return __busca_arvore_iterativo(t, k);
 }
 
+inline nodo_rb * __arvore_minimo(nodo_rb *raiz)
+{
+    while (raiz->esq != ARVORE_NULL) raiz = raiz->esq;
+    return raiz;
+}
+
 nodo_rb * arvore_minimo(arvore_rb *t)
 {
-    nodo_rb *raiz = t->raiz;
-    while (raiz->esq != ARVORE_NULL) raiz = raiz->esq;
+    return __arvore_minimo(t->raiz);
+}
+
+inline nodo_rb * __arvore_maximo(nodo_rb *raiz)
+{
+    while (raiz->dir != ARVORE_NULL) raiz = raiz->dir;
     return raiz;
 }
 
 nodo_rb * arvore_maximo(arvore_rb *t)
 {
-    nodo_rb *raiz = t->raiz;
-    while (raiz->dir != ARVORE_NULL) raiz = raiz->dir;
-    return raiz;
+    return __arvore_maximo(t->raiz);
 }
 
 nodo_rb * arvore_predecessor(nodo_rb *nd)
@@ -256,8 +336,7 @@ nodo_rb * arvore_predecessor(nodo_rb *nd)
     // Se o nó tem filho esquerdo, então o predecessor só pode ser o máximo da subárvore esquerda.
     if (nd->esq != ARVORE_NULL)
     {
-        nd = nd->esq;
-        while (nd->dir != ARVORE_NULL) nd = nd->dir;
+        nd = __arvore_maximo(nd->esq);
     }
     else
     {
@@ -281,8 +360,7 @@ nodo_rb * arvore_sucessor(nodo_rb *nd)
     // Se o nó tem filho direito, então o sucessor só pode ser o mínimo da subárvore direita.
     if (nd->dir != ARVORE_NULL)
     {
-        nd = nd->dir;
-        while (nd->esq != ARVORE_NULL) nd = nd->esq;
+        nd = __arvore_minimo(nd->dir);
     }
     else
     {
