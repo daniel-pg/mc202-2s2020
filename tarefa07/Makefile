@@ -21,7 +21,7 @@ LD_FLAGS=\
 all: mensageiro
 
 mensageiro: mensageiro.o arvore_rb.o
-	$(CC) -o mensageiro mensageiro.o $(LD_FLAGS)
+	$(CC) -o mensageiro mensageiro.o arvore_rb.o $(LD_FLAGS)
 
 mensageiro.o: mensageiro.c
 	$(CC) -o mensageiro.o mensageiro.c $(CC_FLAGS)
