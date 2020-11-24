@@ -41,10 +41,55 @@ void arvore_inicializar(arvore_rb *t, int (*cmp_chaves) (const void*, const void
     t->tmh_arvore = 0;
 }
 
-// TODO: Funções auxiliares que falta implementar:
-// Reparar árvore
+/*
+ * Diagrama das rotações de uma árvore.
+ * Da esquerda para a direita: rotação à esquerda
+ * Da direita para a esquerda: rotação à direita
+ *
+ *      X               Y
+ *    ┌─┴─┐           ┌─┴─┐
+ *    α   Y     ⇔     X   γ
+ *      ┌─┴─┐       ┌─┴─┐
+ *      β   γ       α   β
+ */
+
 // Rotação à esquerda
+void arvore_rotacao_esquerda(arvore_rb *t, nodo_rb *x)
+{
+    nodo_rb *y = x->dir;    // Obtém nó y
+    x->dir = y->esq;
+    if (y->esq != ARVORE_NULL) y->esq->pai = x;
+
+    y->pai = x->pai;
+    if (x->pai == ARVORE_NULL)
+        t->raiz = y;
+    else if (x == x->pai->esq)
+        x->pai->esq = y;
+    else
+        x->pai->dir = y;
+
+    y->esq = x;
+    x->pai = y;
+}
+
 // Rotação à direita
+void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y)
+{
+    nodo_rb *x = y->esq;    // Obtém nó x
+    y->esq = x->dir;
+    if (x->dir != ARVORE_NULL) x->dir->pai = y;
+
+    x->pai = y->pai;
+    if (y->pai == ARVORE_NULL)
+        t->raiz = x;
+    else if (y == y->pai->dir)
+        y->pai->dir = x;
+    else
+        y->pai->esq = x;
+
+    x->dir = y;
+    y->pai = x;
+}
 
 nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
 {
