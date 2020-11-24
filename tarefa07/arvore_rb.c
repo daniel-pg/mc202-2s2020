@@ -93,16 +93,62 @@ void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y)
 
 void arvore_consertar_insercao(arvore_rb *t, nodo_rb *nd)
 {
-    return;
+    nodo_rb *tio;
+
+    while (nd->pai->cor == RUBRO)
+    {
+        if (nd->pai == nd->pai->pai->esq)
+        {
+            tio = nd->pai->pai->dir;
+
+            if (tio->cor == RUBRO) {
+                nd->pai->cor = NEGRO;
+                tio->cor = NEGRO;
+                nd->pai->pai->cor = RUBRO;
+                nd = nd->pai->pai;
+            } else {
+                if (nd == nd->pai->dir) {
+                    nd = nd->pai;
+                    arvore_rotacao_esquerda(t, nd);
+                }
+
+                nd->pai->cor = NEGRO;
+                nd->pai->pai->cor = RUBRO;
+                arvore_rotacao_direita(t, nd->pai->pai);
+            }
+
+        } else {
+            /* Mesmíssima coisa de antes, basta trocar todos os "esq" e "dir" de lugar */
+            tio = nd->pai->pai->esq;
+
+            if (tio->cor == RUBRO) {
+                nd->pai->cor = NEGRO;
+                tio->cor = NEGRO;
+                nd->pai->pai->cor = RUBRO;
+                nd = nd->pai->pai;
+            } else {
+                if (nd == nd->pai->esq) {
+                    nd = nd->pai;
+                    arvore_rotacao_direita(t, nd);
+                }
+
+                nd->pai->cor = NEGRO;
+                nd->pai->pai->cor = RUBRO;
+                arvore_rotacao_esquerda(t, nd->pai->pai);
+            }
+        }
+    }
+
+    t->raiz->cor = NEGRO;
 }
 
 nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
 {
-    nodo_rb *x, *y;
+    nodo_rb *x, *pai;
     int cmp;
 
     // Iniciamos pela raíz da árvore
-    y = ARVORE_NULL;    // Nó pai
+    pai = ARVORE_NULL;    // Nó pai
     x = t->raiz;        // Nó auxiliar
 
     // Executa o programa do ratinho pra fazer o teste de DNA e encontrar o novo pai do nó a ser inserido.
@@ -114,22 +160,22 @@ nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
         if (cmp == 0)
             return NULL;
 
-        y = x;
+        pai = x;
         if (cmp < 0)
             x = x->esq;
         else
             x = x->dir;
     }
 
-    nd->pai = y;
+    nd->pai = pai;
 
     // Insere nó na árvore
-    if (y == ARVORE_NULL)
+    if (pai == ARVORE_NULL)
         t->raiz = nd;
-    else if (t->cmp_chaves(nd->chave, y->chave) < 0)
-        y->esq = nd;
+    else if (t->cmp_chaves(nd->chave, pai->chave) < 0)
+        pai->esq = nd;
     else
-        y->dir = nd;
+        pai->dir = nd;
 
     // Inicializa nó
     nd->esq = ARVORE_NULL;
