@@ -91,9 +91,54 @@ void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y)
     y->pai = x;
 }
 
+void arvore_consertar_insercao(arvore_rb *t, nodo_rb *nd)
+{
+    return;
+}
+
 nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
 {
-    return NULL;
+    nodo_rb *x, *y;
+    int cmp;
+
+    // Iniciamos pela raíz da árvore
+    y = ARVORE_NULL;    // Nó pai
+    x = t->raiz;        // Nó auxiliar
+
+    // Executa o programa do ratinho pra fazer o teste de DNA e encontrar o novo pai do nó a ser inserido.
+    while (x != ARVORE_NULL)
+    {
+        cmp = t->cmp_chaves(nd->chave, x->chave);
+
+        // Se encontrarmos uma chave duplicada, retorna NULL e cancela a inserção.
+        if (cmp == 0)
+            return NULL;
+
+        y = x;
+        if (cmp < 0)
+            x = x->esq;
+        else
+            x = x->dir;
+    }
+
+    nd->pai = y;
+
+    // Insere nó na árvore
+    if (y == ARVORE_NULL)
+        t->raiz = nd;
+    else if (t->cmp_chaves(nd->chave, y->chave) < 0)
+        y->esq = nd;
+    else
+        y->dir = nd;
+
+    // Inicializa nó
+    nd->esq = ARVORE_NULL;
+    nd->dir = ARVORE_NULL;
+    nd->cor = RUBRO;
+
+    // Restaura propriedades da árvore rubro-negra
+    arvore_consertar_insercao(t, nd);
+    return nd;
 }
 
 nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
