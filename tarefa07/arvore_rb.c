@@ -21,6 +21,41 @@ nodo_rb arvore_nodo_nulo = {
         NEGRO           /* Cor do nó */
 };
 
+arvore_rb * arvore_criar(int (*cmp_chaves) (const void*, const void*))
+{
+    arvore_rb *nova_arvore;
+
+    nova_arvore = malloc(sizeof(*nova_arvore));
+    if (!nova_arvore)
+        return NULL;
+    else
+        arvore_inicializar(nova_arvore, cmp_chaves);
+
+    return nova_arvore;
+}
+
+void arvore_inicializar(arvore_rb *t, int (*cmp_chaves) (const void*, const void*))
+{
+    t->raiz = ARVORE_NULL;
+    t->cmp_chaves = cmp_chaves;
+    t->tmh_arvore = 0;
+}
+
+// TODO: Funções auxiliares que falta implementar:
+// Reparar árvore
+// Rotação à esquerda
+// Rotação à direita
+
+nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
+{
+    return NULL;
+}
+
+nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
+{
+    return NULL;
+}
+
 nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chaves) (const void*, const void*))
 {
     if (raiz == ARVORE_NULL) return NULL;
