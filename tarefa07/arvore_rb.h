@@ -29,6 +29,9 @@ typedef struct arvore_rb
     int (*cmp_chaves) (const void*, const void*); /* Função para comparar duas chaves; deve ser providenciada pelo usuário */
 } arvore_rb;
 
+#define ARVORE_NULL &arvore_nodo_nulo
+extern nodo_rb arvore_nodo_nulo;
+
 /**
  * Cria uma nova árvore vazia com a função de comparação de chaves fornecida, e aloca memória para ela.
  *
@@ -134,9 +137,5 @@ void percorrer_inordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg);
  */
 void percorrer_posordem(arvore_rb *t, void (*func)(nodo_rb*, void*), void *arg);
 
-// OBS: Essas funções abaixo provavelmente vão fazer parte apenas da implementação, e não da interface do módulo.
-// Reparar árvore
-// Rotação à esquerda
-// Rotação à direita
 
 #endif //TAREFA07_ARVORE_RB_H
