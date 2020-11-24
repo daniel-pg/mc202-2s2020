@@ -216,9 +216,80 @@ void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v)
     v->pai = u->pai;
 }
 
-void arvore_consertar_delecao(arvore_rb *t, nodo_rb *nd)
+void arvore_consertar_delecao(arvore_rb *t, nodo_rb *x)
 {
+    nodo_rb *w;
 
+    while (x != ARVORE_NULL && x->cor == NEGRO)
+    {
+        if (x == x->pai->esq) {
+            w = x->pai->dir;
+
+            // Caso 1
+            if (w->cor == RUBRO) {
+                w->cor = NEGRO;
+                x->pai->cor = RUBRO;
+                arvore_rotacao_esquerda(t, x->pai);
+                w = x->pai->dir;
+            }
+
+            // Caso 2
+            if (w->esq->cor == NEGRO && w->dir->cor == NEGRO) {
+                w->cor = RUBRO;
+                x = x->pai;
+            } else {
+                // Caso 3
+                if (w->dir->cor == NEGRO) {
+                    w->esq->cor = NEGRO;
+                    w->cor = RUBRO;
+                    arvore_rotacao_direita(t, w);
+                    w = x->pai->dir;
+                }
+
+                // Caso 4
+                w->cor = x->pai->cor;
+                x->pai->cor = NEGRO;
+                w->dir->cor = NEGRO;
+                arvore_rotacao_esquerda(t, x->pai);
+                x = t->raiz;
+            }
+
+        } else {
+            /* Mesmíssima coisa de antes, basta trocar todos os "esq" e "dir" de lugar */
+            w = x->pai->esq;
+
+            // Caso 1
+            if (w->cor == RUBRO) {
+                w->cor = NEGRO;
+                x->pai->cor = RUBRO;
+                arvore_rotacao_direita(t, x->pai);
+                w = x->pai->esq;
+            }
+
+            // Caso 2
+            if (w->dir->cor == NEGRO && w->esq->cor == NEGRO) {
+                w->cor = RUBRO;
+                x = x->pai;
+            } else {
+                // Caso 3
+                if (w->esq->cor == NEGRO) {
+                    w->dir->cor = NEGRO;
+                    w->cor = RUBRO;
+                    arvore_rotacao_esquerda(t, w);
+                    w = x->pai->esq;
+                }
+
+                // Caso 4
+                w->cor = x->pai->cor;
+                x->pai->cor = NEGRO;
+                w->esq->cor = NEGRO;
+                arvore_rotacao_direita(t, x->pai);
+                x = t->raiz;
+            }
+        }
+    }
+
+    x->cor = NEGRO;
 }
 
 nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
