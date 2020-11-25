@@ -21,9 +21,9 @@ void arvore_consertar_delecao(arvore_rb *t, nodo_rb *nd);
 
 // Implementações de funções
 nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chaves) (const void*, const void*));
-inline nodo_rb * __busca_arvore_iterativo(arvore_rb *t, const void *k);
-inline nodo_rb * __arvore_minimo(nodo_rb *raiz);
-inline nodo_rb * __arvore_maximo(nodo_rb *raiz);
+nodo_rb * __busca_arvore_iterativo(arvore_rb *t, const void *k);
+nodo_rb * __arvore_minimo(nodo_rb *raiz);
+nodo_rb * __arvore_maximo(nodo_rb *raiz);
 void __percorrer_preordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg);
 void __percorrer_inordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg);
 void __percorrer_posordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*), void *arg);
@@ -331,6 +331,13 @@ nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
     }
 
     if (cor_orig_y == NEGRO) arvore_consertar_delecao(t, x);
+
+    // Desconecta totalmente o nó da árvore
+    nd->esq = ARVORE_NULL;
+    nd->dir = ARVORE_NULL;
+    nd->pai = ARVORE_NULL;
+    nd->cor = NEGRO;
+
     t->tmh_arvore--;
     return nd;
 }
@@ -349,7 +356,7 @@ nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chave
         return __busca_arvore_recursivo(raiz->dir, k, cmp_chaves);
 }
 
-inline nodo_rb * __busca_arvore_iterativo(arvore_rb *t, const void *k)
+nodo_rb * __busca_arvore_iterativo(arvore_rb *t, const void *k)
 {
     register int cmp;
     register nodo_rb *raiz = t->raiz;
@@ -378,7 +385,7 @@ nodo_rb * arvore_buscar(arvore_rb *t, const void *k)
     return __busca_arvore_iterativo(t, k);
 }
 
-inline nodo_rb * __arvore_minimo(nodo_rb *raiz)
+nodo_rb * __arvore_minimo(nodo_rb *raiz)
 {
     while (raiz->esq != ARVORE_NULL) raiz = raiz->esq;
     return raiz;
@@ -389,7 +396,7 @@ nodo_rb * arvore_minimo(arvore_rb *t)
     return __arvore_minimo(t->raiz);
 }
 
-inline nodo_rb * __arvore_maximo(nodo_rb *raiz)
+nodo_rb * __arvore_maximo(nodo_rb *raiz)
 {
     while (raiz->dir != ARVORE_NULL) raiz = raiz->dir;
     return raiz;
