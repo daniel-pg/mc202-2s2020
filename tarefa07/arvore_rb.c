@@ -292,14 +292,10 @@ void arvore_consertar_delecao(arvore_rb *t, nodo_rb *x)
     x->cor = NEGRO;
 }
 
-nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
+nodo_rb * arvore_deletar_nodo(arvore_rb *t, nodo_rb *nd)
 {
-    nodo_rb *nd;
     nodo_rb *x, *y;
     enum cor_no cor_orig_y;
-
-    // Busca nó a ser deletado. Se não encontrar, cancela a operação de deleção e retorna NULL
-    if ((nd = arvore_buscar(t, k)) == NULL) return NULL;
 
     y = nd;
     cor_orig_y = y->cor;
@@ -340,6 +336,17 @@ nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
 
     t->tmh_arvore--;
     return nd;
+}
+
+nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
+{
+    nodo_rb *nd;
+
+    // Busca nó a ser deletado. Se não encontrar, cancela a operação de deleção e retorna NULL
+    if ((nd = arvore_buscar(t, k)) == NULL)
+        return NULL;
+
+    return arvore_deletar_nodo(t, nd);
 }
 
 nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chaves) (const void*, const void*))

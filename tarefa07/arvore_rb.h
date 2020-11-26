@@ -58,6 +58,15 @@ void arvore_inicializar(arvore_rb *t, int (*cmp_chaves) (const void*, const void
 nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd);
 
 /**
+ * Remove o nó da árvore se ele já for conhecido. É de responsabilidade do usuário liberar a memória do nó removido.
+ *
+ * @param t Árvore de onde se deseja retirar o nó.
+ * @param nd Ponteiro para o nó que se quer remover da árvore.
+ * @return Ponteiro para o nó removido, ou NULL caso o nó não seja encontrado.
+ */
+nodo_rb * arvore_deletar_nodo(arvore_rb *t, nodo_rb *nd);
+
+/**
  * Remove da árvore o nó cuja chave é igual à chave fornecida. É de responsabilidade do usuário liberar a memória do nó
  * removido.
  *
