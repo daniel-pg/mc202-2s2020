@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "arvore_rb.h"
 
@@ -19,7 +20,7 @@
 
 struct cartao
 {
-    char texto[MAX_TEXTO_MSG];
+    char *texto;
     int numero;
 };
 
@@ -28,84 +29,108 @@ int cmp_cartoes(const void *msg1, const void *msg2)
     return ((struct cartao*) msg1)->numero - ((struct cartao*) msg2)->numero;
 }
 
-nodo_rb * cria_nodo_cartao()
+nodo_rb * cria_nodo_cartao(const char *texto, int numero, size_t tmh_string)
 {
     nodo_rb *novo_nodo;
 
     // Aloca espaço para o nó e para a chave
-    if ( (novo_nodo = malloc(sizeof(*novo_nodo))) == NULL) abort();
-    if ( (novo_nodo->chave = malloc(sizeof(struct cartao))) == NULL) abort();
+    if ( (novo_nodo = malloc(sizeof(*novo_nodo))) == NULL)
+        return NULL;
 
-    novo_nodo->esq = ARVORE_NULL;
-    novo_nodo->dir = ARVORE_NULL;
-    novo_nodo->pai = ARVORE_NULL;
-    novo_nodo->cor = NEGRO;
+    if ( (novo_nodo->chave = malloc(sizeof(struct cartao))) == NULL) {
+        free(novo_nodo);
+        return NULL;
+    }
+
+    ((struct cartao*)novo_nodo->chave)->texto = malloc(sizeof(char) * tmh_string);
+    if (((struct cartao*)novo_nodo->chave)->texto == NULL) {
+        free((struct cartao*) novo_nodo->chave);
+        free(novo_nodo);
+        return NULL;
+    }
+
+    // Inicializa chave
+    strncpy( ((struct cartao*)novo_nodo->chave)->texto, texto, tmh_string - 1);
+    ((struct cartao*)novo_nodo->chave)->texto[tmh_string - 1] = '\0';
+    ((struct cartao*)novo_nodo->chave)->numero = numero;
 
     return novo_nodo;
 }
 
 void libera_nodo_cartao(nodo_rb *nd, void *uu)
 {
-    // A variável "uu" não é usada
-    free((struct cartao *) nd->chave);
+    (void) uu;
+
+//    if (nd != NULL) {
+//        if ( (struct cartao *)nd->chave != NULL) {
+            free(((struct cartao *) nd->chave)->texto);
+//        }
+        free( (struct cartao *) nd->chave);
+//    }
     free(nd);
 }
 
 void imprime_nodo(nodo_rb *nd, void* uu)
 {
-    // A variável "uu" não é usada
+    (void) uu;
+
     printf("%s", ((struct cartao*)nd->chave)->texto);
 }
 
 void processa_trio(arvore_rb *t, int soma)
 {
     /* Basicamente resolve o problema da soma do subconjunto para o caso especial em que n=3 */
+    struct cartao chave_procurada;
     nodo_rb *n0, *n1, *n2;
-    nodo_rb *aux;
+    nodo_rb *novo_nodo;
+    size_t tmh_string = 0;
 
-    // Preferir alocação estática para variáveis temporárias
-    nodo_rb nd_soma;
-    struct cartao meu_cartao;
-    nd_soma.chave = &meu_cartao;
-
-    int *resto = &((struct cartao*) nd_soma.chave)->numero;
-
+    chave_procurada.texto = NULL;
     n0 = arvore_minimo(t);
     while (n0 != ARVORE_NULL)
     {
         n1 = arvore_sucessor(n0);
         while (n1 != ARVORE_NULL)
         {
-            *resto = soma - ((struct cartao*) n0->chave)->numero - ((struct cartao*) n1->chave)->numero;
-            n2 = arvore_buscar(t, nd_soma.chave);
+            chave_procurada.numero = soma - ((struct cartao*) n0->chave)->numero - ((struct cartao*) n1->chave)->numero;
+            n2 = arvore_buscar(t, &chave_procurada);
 
             if (n2 != NULL)
             {
-                imprime_nodo(n0, NULL);
-                imprime_nodo(n1, NULL);
-                imprime_nodo(n2, NULL);
-                libera_nodo_cartao(arvore_deletar(t, n0->chave), NULL);
-                libera_nodo_cartao(arvore_deletar(t, n1->chave), NULL);
-                libera_nodo_cartao(arvore_deletar(t, n2->chave), NULL);
-                goto fim;
+                // Computar tamanho da string antes de alocar espaço suficiente na memória
+                tmh_string += strlen(((struct cartao*) n0->chave)->texto);
+                tmh_string += strlen(((struct cartao*) n1->chave)->texto);
+                tmh_string += strlen(((struct cartao*) n2->chave)->texto);
+
+                // Cria um novo nó correspondente ao trio encontrado. Note que esse tmh_string+1 serve pra guardar o caractere nulo.
+                novo_nodo = cria_nodo_cartao(((struct cartao*) n0->chave)->texto, soma, tmh_string + 1);
+
+                // Concatena as próximas duas strings ao texto
+                strcat(((struct cartao*) novo_nodo->chave)->texto, ((struct cartao*) n1->chave)->texto);
+                strcat(((struct cartao*) novo_nodo->chave)->texto, ((struct cartao*) n2->chave)->texto);
+
+                // Remove os nós antigos
+                libera_nodo_cartao(arvore_deletar_nodo(t, n2), NULL);
+                libera_nodo_cartao(arvore_deletar_nodo(t, n1), NULL);
+                libera_nodo_cartao(arvore_deletar_nodo(t, n0), NULL);
+
+                arvore_inserir(t, novo_nodo);
+                return;
             }
 
             n1 = arvore_sucessor(n1);
         }
 
-        imprime_nodo(n0, NULL);
-        aux = n0;
         n0 = arvore_sucessor(n0);
-        libera_nodo_cartao(arvore_deletar(t, aux->chave), NULL);
     }
-
-    fim: ;
 }
 
 int ler_mensagem(arvore_rb *t)
 {
     nodo_rb *novo_nodo;
-    struct cartao *novo_cartao;
+    char buffer_entrada[MAX_TEXTO_MSG];
+    int numero_cartao;
+    int soma_autoridade;
     int m, n;
     int i;
 
@@ -115,25 +140,22 @@ int ler_mensagem(arvore_rb *t)
     // Lê os cartões
     for (i = 0; i < m; i++)
     {
-        novo_nodo = cria_nodo_cartao();
-        novo_cartao = (struct cartao*) novo_nodo->chave;
-
         //TODO: Ainda não descobri como subtrair números com macros. Deveria ser MAX_TEXTO_MSG - 1
-        scanf("%d %*[\"]%" STR(MAX_TEXTO_MSG) "[^\"]%*[\"]", &novo_cartao->numero, novo_cartao->texto);
-
+        scanf("%d %*[\"]%" STR(MAX_TEXTO_MSG) "[^\"]%*[\"]", &numero_cartao, buffer_entrada);
+        // Não vale a pena chamar um strlen() aqui, mais fácil colocar o tamanho máximo da string de entrada.
+        novo_nodo = cria_nodo_cartao(buffer_entrada, numero_cartao, MAX_TEXTO_MSG);
         arvore_inserir(t, novo_nodo);
     }
 
-    // Para cada "autoridade", imprime o trio.
-    int soma;
+    // Para cada "autoridade", concatena os trios correspondentes.
     for (i = 0; i < n; i++)
     {
-        scanf("%d", &soma);
-        processa_trio(t, soma);
+        scanf("%d", &soma_autoridade);
+        processa_trio(t, soma_autoridade);
     }
 
-    // Imprime o resto em ordem
-//    percorrer_inordem(t, imprime_nodo, NULL);
+    // Imprime a árvore final em ordem
+    percorrer_inordem(t, imprime_nodo, NULL);
     printf("\n");
 
     return 0;
