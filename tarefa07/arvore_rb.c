@@ -13,11 +13,11 @@
 #include "arvore_rb.h"
 
 // Funções auxiliares
-void arvore_rotacao_esquerda(arvore_rb *t, nodo_rb *x);
-void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y);
-void arvore_consertar_insercao(arvore_rb *t, nodo_rb *nd);
-void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v);
-void arvore_consertar_delecao(arvore_rb *t, nodo_rb *nd);
+static void arvore_rotacao_esquerda(arvore_rb *t, nodo_rb *x);
+static void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y);
+static void arvore_consertar_insercao(arvore_rb *t, nodo_rb *nd);
+static void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v);
+static void arvore_consertar_delecao(arvore_rb *t, nodo_rb *nd);
 
 // Implementações de funções
 nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chaves) (const void*, const void*));
@@ -30,11 +30,11 @@ void __percorrer_posordem_recursivo(nodo_rb *raiz, void (*func)(nodo_rb*, void*)
 
 // Nó nulo (o T.nil descrito no livro do Cormen). Alocado globalmente (o professor vai me matar agora).
 nodo_rb arvore_nodo_nulo = {
-        ARVORE_NULL,    /* Nó esquerdo */
-        ARVORE_NULL,    /* Nó direito */
-        ARVORE_NULL,    /* Nó pai */
-        NULL,           /* Chave */
-        NEGRO           /* Cor do nó */
+        .esq = ARVORE_NULL,    /* Nó esquerdo */
+        .dir = ARVORE_NULL,    /* Nó direito */
+        .pai = ARVORE_NULL,    /* Nó pai */
+        .chave = NULL,         /* Chave */
+        .cor = NEGRO           /* Cor do nó */
 };
 
 arvore_rb * arvore_criar(int (*cmp_chaves) (const void*, const void*))
@@ -44,9 +44,8 @@ arvore_rb * arvore_criar(int (*cmp_chaves) (const void*, const void*))
     nova_arvore = malloc(sizeof(*nova_arvore));
     if (!nova_arvore)
         return NULL;
-    else
-        arvore_inicializar(nova_arvore, cmp_chaves);
 
+    arvore_inicializar(nova_arvore, cmp_chaves);
     return nova_arvore;
 }
 
@@ -70,7 +69,7 @@ void arvore_inicializar(arvore_rb *t, int (*cmp_chaves) (const void*, const void
  */
 
 // Rotação à esquerda
-void arvore_rotacao_esquerda(arvore_rb *t, nodo_rb *x)
+static void arvore_rotacao_esquerda(arvore_rb *t, nodo_rb *x)
 {
     nodo_rb *y = x->dir;    // Obtém nó y
     x->dir = y->esq;
@@ -89,7 +88,7 @@ void arvore_rotacao_esquerda(arvore_rb *t, nodo_rb *x)
 }
 
 // Rotação à direita
-void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y)
+static void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y)
 {
     nodo_rb *x = y->esq;    // Obtém nó x
     y->esq = x->dir;
@@ -107,7 +106,7 @@ void arvore_rotacao_direita(arvore_rb *t, nodo_rb *y)
     y->pai = x;
 }
 
-void arvore_consertar_insercao(arvore_rb *t, nodo_rb *nd)
+static void arvore_consertar_insercao(arvore_rb *t, nodo_rb *nd)
 {
     nodo_rb *tio;
 
@@ -183,7 +182,11 @@ nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
             x = x->dir;
     }
 
+    // Inicializa nó
     nd->pai = pai;
+    nd->esq = ARVORE_NULL;
+    nd->dir = ARVORE_NULL;
+    nd->cor = RUBRO;
 
     // Insere nó na árvore
     if (pai == ARVORE_NULL)
@@ -193,18 +196,13 @@ nodo_rb * arvore_inserir(arvore_rb *t, nodo_rb *nd)
     else
         pai->dir = nd;
 
-    // Inicializa nó
-    nd->esq = ARVORE_NULL;
-    nd->dir = ARVORE_NULL;
-    nd->cor = RUBRO;
-
     // Restaura propriedades da árvore rubro-negra
     arvore_consertar_insercao(t, nd);
     t->tmh_arvore++;
     return nd;
 }
 
-void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v)
+static void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v)
 {
     if (u->pai == ARVORE_NULL)
         t->raiz = v;
@@ -216,86 +214,89 @@ void arvore_transplantar(arvore_rb *t, nodo_rb *u, nodo_rb *v)
     v->pai = u->pai;
 }
 
-void arvore_consertar_delecao(arvore_rb *t, nodo_rb *x)
+static void arvore_consertar_delecao(arvore_rb *t, nodo_rb *nd)
 {
     nodo_rb *w;
 
-    while (x != ARVORE_NULL && x->cor == NEGRO)
+    while (nd != t->raiz && nd->cor == NEGRO)
     {
-        if (x == x->pai->esq) {
-            w = x->pai->dir;
+        if (nd == nd->pai->esq) {
+            w = nd->pai->dir;
 
             // Caso 1
             if (w->cor == RUBRO) {
                 w->cor = NEGRO;
-                x->pai->cor = RUBRO;
-                arvore_rotacao_esquerda(t, x->pai);
-                w = x->pai->dir;
+                nd->pai->cor = RUBRO;
+                arvore_rotacao_esquerda(t, nd->pai);
+                w = nd->pai->dir;
             }
 
             // Caso 2
             if (w->esq->cor == NEGRO && w->dir->cor == NEGRO) {
                 w->cor = RUBRO;
-                x = x->pai;
+                nd = nd->pai;
             } else {
                 // Caso 3
                 if (w->dir->cor == NEGRO) {
                     w->esq->cor = NEGRO;
                     w->cor = RUBRO;
                     arvore_rotacao_direita(t, w);
-                    w = x->pai->dir;
+                    w = nd->pai->dir;
                 }
 
                 // Caso 4
-                w->cor = x->pai->cor;
-                x->pai->cor = NEGRO;
+                w->cor = nd->pai->cor;
+                nd->pai->cor = NEGRO;
                 w->dir->cor = NEGRO;
-                arvore_rotacao_esquerda(t, x->pai);
-                x = t->raiz;
+                arvore_rotacao_esquerda(t, nd->pai);
+                nd = t->raiz;
             }
 
         } else {
             /* Mesmíssima coisa de antes, basta trocar todos os "esq" e "dir" de lugar */
-            w = x->pai->esq;
+            w = nd->pai->esq;
 
             // Caso 1
             if (w->cor == RUBRO) {
                 w->cor = NEGRO;
-                x->pai->cor = RUBRO;
-                arvore_rotacao_direita(t, x->pai);
-                w = x->pai->esq;
+                nd->pai->cor = RUBRO;
+                arvore_rotacao_direita(t, nd->pai);
+                w = nd->pai->esq;
             }
 
             // Caso 2
             if (w->dir->cor == NEGRO && w->esq->cor == NEGRO) {
                 w->cor = RUBRO;
-                x = x->pai;
+                nd = nd->pai;
             } else {
                 // Caso 3
                 if (w->esq->cor == NEGRO) {
                     w->dir->cor = NEGRO;
                     w->cor = RUBRO;
                     arvore_rotacao_esquerda(t, w);
-                    w = x->pai->esq;
+                    w = nd->pai->esq;
                 }
 
                 // Caso 4
-                w->cor = x->pai->cor;
-                x->pai->cor = NEGRO;
+                w->cor = nd->pai->cor;
+                nd->pai->cor = NEGRO;
                 w->esq->cor = NEGRO;
-                arvore_rotacao_direita(t, x->pai);
-                x = t->raiz;
+                arvore_rotacao_direita(t, nd->pai);
+                nd = t->raiz;
             }
         }
     }
 
-    x->cor = NEGRO;
+    nd->cor = NEGRO;
 }
 
 nodo_rb * arvore_deletar_nodo(arvore_rb *t, nodo_rb *nd)
 {
     nodo_rb *x, *y;
     enum cor_no cor_orig_y;
+
+    if (nd == NULL || nd == ARVORE_NULL)
+        return NULL;
 
     y = nd;
     cor_orig_y = y->cor;
@@ -326,7 +327,8 @@ nodo_rb * arvore_deletar_nodo(arvore_rb *t, nodo_rb *nd)
         y->cor = nd->cor;
     }
 
-    if (cor_orig_y == NEGRO) arvore_consertar_delecao(t, x);
+    if (cor_orig_y == NEGRO)
+        arvore_consertar_delecao(t, x);
 
     // Desconecta totalmente o nó da árvore
     nd->esq = ARVORE_NULL;
@@ -342,10 +344,8 @@ nodo_rb * arvore_deletar(arvore_rb *t, const void *k)
 {
     nodo_rb *nd;
 
-    // Busca nó a ser deletado. Se não encontrar, cancela a operação de deleção e retorna NULL
-    if ((nd = arvore_buscar(t, k)) == NULL)
-        return NULL;
-
+    // Busca nó a ser deletado e o remove.
+    nd = arvore_buscar(t, k);
     return arvore_deletar_nodo(t, nd);
 }
 
@@ -365,25 +365,22 @@ nodo_rb * __busca_arvore_recursivo(nodo_rb *raiz, const void *k, int (*cmp_chave
 
 nodo_rb * __busca_arvore_iterativo(arvore_rb *t, const void *k)
 {
-    register int cmp;
     register nodo_rb *raiz = t->raiz;
+    int cmp;
 
     while (raiz != ARVORE_NULL)
     {
         cmp = t->cmp_chaves(raiz->chave, k);
 
         if (cmp == 0)
-            break;
+            return raiz;
         else if (cmp > 0)
             raiz = raiz->esq;
         else
             raiz = raiz->dir;
     }
 
-    if (raiz == ARVORE_NULL)
-        return NULL;
-    else
-        return raiz;
+    return NULL;
 }
 
 nodo_rb * arvore_buscar(arvore_rb *t, const void *k)
