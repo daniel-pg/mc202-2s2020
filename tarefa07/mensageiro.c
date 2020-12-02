@@ -24,6 +24,25 @@ struct cartao
     int numero;
 };
 
+/* Função utilizada apenas para debugging do programa. Gera um código que permite visualizar o estado atual da
+ * árvore rubro-negra no site https://dreampuf.github.io/GraphvizOnline/ .*/
+void graphviz(nodo_rb *raiz, int id)
+{
+    int n = ((struct cartao*) raiz->chave)->numero;
+
+    printf("\"%d_%" "d" "\" [label=\"%" "d" "\" fillcolor=%s, style=filled, fontcolor=white];\n", id, n, n, raiz->cor == RUBRO ? "red" : "black");
+
+    if (raiz->esq != ARVORE_NULL) {
+        graphviz(raiz->esq, id);
+        printf("\"%d_%" "d" "\" -> \"%d_%" "d" "\";\n", id, n, id, ((struct cartao*) raiz->esq->chave)->numero);
+    }
+
+    if (raiz->dir != ARVORE_NULL) {
+        graphviz(raiz->dir, id);
+        printf("\"%d_%" "d" "\" -> \"%d_%" "d" "\";\n", id, n, id, ((struct cartao*) raiz->dir->chave)->numero);
+    }
+}
+
 int cmp_cartoes(const void *msg1, const void *msg2)
 {
     return ((struct cartao*) msg1)->numero - ((struct cartao*) msg2)->numero;
@@ -50,8 +69,7 @@ nodo_rb * cria_nodo_cartao(const char *texto, int numero, size_t tmh_string)
     }
 
     // Inicializa chave
-    strncpy( ((struct cartao*)novo_nodo->chave)->texto, texto, tmh_string - 1);
-    ((struct cartao*)novo_nodo->chave)->texto[tmh_string - 1] = '\0';
+    strncpy( ((struct cartao*)novo_nodo->chave)->texto, texto, tmh_string);
     ((struct cartao*)novo_nodo->chave)->numero = numero;
 
     return novo_nodo;
@@ -61,12 +79,8 @@ void libera_nodo_cartao(nodo_rb *nd, void *uu)
 {
     (void) uu;
 
-//    if (nd != NULL) {
-//        if ( (struct cartao *)nd->chave != NULL) {
-            free(((struct cartao *) nd->chave)->texto);
-//        }
-        free( (struct cartao *) nd->chave);
-//    }
+    free(((struct cartao *) nd->chave)->texto);
+    free( (struct cartao *) nd->chave);
     free(nd);
 }
 
@@ -142,7 +156,6 @@ int ler_mensagem(arvore_rb *t)
     {
         //TODO: Ainda não descobri como subtrair números com macros. Deveria ser MAX_TEXTO_MSG - 1
         scanf("%d %*[\"]%" STR(MAX_TEXTO_MSG) "[^\"]%*[\"]", &numero_cartao, buffer_entrada);
-        // Não vale a pena chamar um strlen() aqui, mais fácil colocar o tamanho máximo da string de entrada.
         novo_nodo = cria_nodo_cartao(buffer_entrada, numero_cartao, MAX_TEXTO_MSG);
         arvore_inserir(t, novo_nodo);
     }
@@ -154,10 +167,6 @@ int ler_mensagem(arvore_rb *t)
         processa_trio(t, soma_autoridade);
     }
 
-    // Imprime a árvore final em ordem
-    percorrer_inordem(t, imprime_nodo, NULL);
-    printf("\n");
-
     return 0;
 }
 
@@ -166,10 +175,11 @@ int main(void)
     arvore_rb *t = arvore_criar(cmp_cartoes);
 
     // Lê e decodifica cada mensagem enquanto não acabar a entrada, e depois libera os nós da árvore.
-    while (1)
+    while (ler_mensagem(t) != EOF)
     {
-        if (ler_mensagem(t) == EOF)
-            break;
+        // Imprime a árvore final em ordem
+        percorrer_inordem(t, imprime_nodo, NULL);
+        printf("\n");
 
         percorrer_posordem(t, libera_nodo_cartao, NULL);
         arvore_inicializar(t, cmp_cartoes);
