@@ -1,13 +1,35 @@
-CFLAGS = -std=c99 -Wall -Werror -Werror=vla -g
-LDFLAGS = -lm
+# C Compiler
+CC=gcc
 
-.PHONY: all clean
+# Compiler flags
+CC_FLAGS=\
+-c              \
+-g              \
+-O2             \
+-march=native   \
+-std=c99        \
+-pedantic       \
+-Wall           \
+-Werror=vla     \
+-Wextra
 
+LD_FLAGS=\
+-lm             \
+-fuse-ld=gold
+
+.PHONY: all
 all: diadeuber
 
-diadeuber: *.c
-	gcc $(CFLAGS) *.c -o diadeuber $(LDFLAGS)
+diadeuber: diadeuber.o heapq.o
+	$(CC) -o diadeuber diadeuber.o heapq.o $(LD_FLAGS)
 
+diadeuber.o: diadeuber.c
+	$(CC) -o diadeuber.o diadeuber.c $(CC_FLAGS)
+
+heapq.o: heapq.c
+	$(CC) -o heapq.o heapq.c $(CC_FLAGS)
+
+.PHONY: clean
 clean:
 	rm -f diadeuber
 	rm -f *.o
