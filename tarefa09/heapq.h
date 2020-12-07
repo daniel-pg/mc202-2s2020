@@ -11,7 +11,7 @@
 
 #include <stddef.h>
 
-typedef struct heapq
+typedef struct heapq_t
 {
     // Atributos
     void **chaves;      /* vetor de ponteiros para os dados */
@@ -40,28 +40,113 @@ heapq_t * heapq_criar(size_t tmh_heapq, int (*cmp_chaves) (const void*, const vo
  * @param tmh_heapq Tamanho máximo da fila de prioridade.
  * @param cmp_chaves Função que compara duas chaves, de maneira similar ao strcmp().
  */
-void heapq_inicializar(heapq_t *heapq, void **chaves, size_t tmh_heapq, int (*cmp_chaves) (const void*, const void*));
+void heapq_inicializar(heapq_t *heapq, void *chaves[], size_t tmh_heapq, int (*cmp_chaves) (const void*, const void*));
 
-// Inserir elemento
+/**
+ * Libera a memória alocada pela função heapq_criar() associada à heap. Não libera os elementos individuais da heap, que
+ * devem ser liberados manualmente pelo usuário.
+ *
+ * @param heapq Ponteiro para a heap a ser destruída.
+ */
+void heapq_destroi(heapq_t *heapq);
 
-// Remover elemento
+/**
+ * Insere um elemento na heap, dada a sua chave de acesso.
+ *
+ * @param heapq Ponteiro para a heap onde se quer inserir o elemento.
+ * @param chave Endereço do valor a ser inserido.
+ * @return Índice de inserção do valor no vetor.
+ */
+size_t heapq_inserir(heapq_t *heapq, const void *chave);
 
-// Buscar elemento
+/**
+ * Deleta elemento da heap na posição especificada.
+ *
+ * @param heapq Ponteiro para a heap de onde se quer deletar o elemento.
+ * @param idx Índice de remoção do valor no vetor.
+ * @return Chave (ponteiro) do valor removido.
+ */
+void * heapq_deletar(heapq_t *heapq, size_t idx);
 
-// Extrai máximo
+/**
+ * Remove elemento da heap cuja chave é igual à especificada.
+ *
+ * @param heapq Ponteiro para a heap de onde se quer remover o elemento.
+ * @param chave Endereço do valor a ser removido.
+ * @return Índice de remoção do valor no vetor.
+ */
+size_t heapq_remover(heapq_t *heapq, const void *chave);
 
-// Constroi heap
+/**
+ * Faz uma busca na heap pelo valor cuja chave é igual a fornecida. A busca é semelhante à busca linear/sequencial,
+ * e tem complexidade O(n) no pior caso, exceto que na vida real muitas vezes o valor procurado pode não estar em uma
+ * das subárvores de heap, o que diminui o tempo de busca.
+ *
+ * @param heapq Ponteiro para a heap onde se quer buscar o elemento.
+ * @param chave Endereço do valor a ser buscado.
+ * @return Índice do valor encontrado no vetor.
+ */
+size_t heapq_buscar(heapq_t *heapq, const void *chave);
 
-// Heapify
+/**
+ * Extrai a chave na posição de índice 0 da heap.
+ *
+ * @param heapq Ponteiro para a heap.
+ * @return Chave de máximo da heap.
+ */
+void * heapq_extrai_max(heapq_t *heapq);
 
-// Heapsort
+/**
+ * Algoritmo in-place para transformar um vetor de chaves qualquer em uma heap.
+ *
+ * @param chaves Vetor de ponteiros para os dados.
+ * @param tmh_heapq Tamanho do vetor.
+ * @param cmp_chaves Função que compara duas chaves, de maneira similar ao strcmp().
+ */
+void heapq_heapify(void *chaves[], size_t tmh_heapq, int (*cmp_chaves) (const void*, const void*));
 
-// Percurso pré-ordem
+/**
+ * Constroi um vetor ordenado a partir dos elementos da heap.
+ *
+ * @param heapq Ponteiro para a heap.
+ * @param arr Vetor com tamanho suficiente para armazenar todos os elementos da heap.
+ */
+void heapq_heapsort(heapq_t *heapq, void *arr[]);
 
-// Percurso inordem
+/**
+ * Faz o percurso em pré-ordem na heap, e executa a função fornecida em cada elemento acessado.
+ *
+ * @param heapq Ponteiro para a heap.
+ * @param func Função executada para cada elemento percorrido.
+ * @param arg Parâmetro opcional da função func (fornecida pelo usuário).
+ */
+void heapq_percorrer_preordem(heapq_t *heapq, void (*func)(void*, void*), void *arg);
 
-// Percurso pós-ordem
+/**
+ * Faz o percurso em inordem na heap, e executa a função fornecida em cada elemento acessado.
+ *
+ * @param heapq Ponteiro para a heap.
+ * @param func Função executada para cada elemento percorrido.
+ * @param arg Parâmetro opcional da função func (fornecida pelo usuário).
+ */
+void heapq_percorrer_inordem(heapq_t *heapq, void (*func)(void*, void*), void *arg);
 
-// Percurso em largura
+/**
+ * Faz o percurso em pós-ordem na heap, e executa a função fornecida em cada elemento acessado.
+ *
+ * @param heapq Ponteiro para a heap.
+ * @param func Função executada para cada elemento percorrido.
+ * @param arg Parâmetro opcional da função func (fornecida pelo usuário).
+ */
+void heapq_percorrer_posordem(heapq_t *heapq, void (*func)(void*, void*), void *arg);
+
+/**
+ * Faz o percurso em largura na heap, e executa a função fornecida em cada elemento acessado.
+ *
+ * @param heapq Ponteiro para a heap.
+ * @param func Função executada para cada elemento percorrido.
+ * @param arg Parâmetro opcional da função func (fornecida pelo usuário).
+ */
+void heapq_percorrer_largura(heapq_t *heapq, void (*func)(void*, void*), void *arg);
 
 #endif //TAREFA09_HEAPQ_H
