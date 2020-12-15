@@ -28,7 +28,7 @@ typedef struct heapq_t
  *
  * @param tmh_heapq Tamanho máximo da fila de prioridade.
  * @param cmp_chaves Função que compara duas chaves, de maneira similar ao strcmp().
- * @return Ponteiro para a fila criada.
+ * @return Ponteiro para a fila criada, ou NULL se a função falhar.
  */
 heapq_t * heapq_criar(size_t tmh_heapq, int (*cmp_chaves) (const void*, const void*));
 
@@ -55,9 +55,9 @@ void heapq_destroi(heapq_t *heapq);
  *
  * @param heapq Ponteiro para a heap onde se quer inserir o elemento.
  * @param chave Endereço do valor a ser inserido.
- * @return Índice de inserção do valor no vetor.
+ * @return Índice de inserção do valor no vetor, ou -1 se a operação falhar.
  */
-size_t heapq_inserir(heapq_t *heapq, const void *chave);
+long heapq_inserir(heapq_t *heapq, void *chave);
 
 /**
  * Deleta elemento da heap na posição especificada.
