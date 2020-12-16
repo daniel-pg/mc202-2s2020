@@ -97,13 +97,12 @@ long heapq_buscar(heapq_t *heapq, const void *chave);
 void * heapq_extrai_max(heapq_t *heapq);
 
 /**
- * Algoritmo in-place para transformar um vetor de chaves qualquer em uma heap.
+ * Algoritmo in-place para transformar um vetor de chaves qualquer em uma heap. Interessantemente, algumas pessoas
+ * gostam de chamar essa operação de "buildheap", enquanto que a operação fixdown/fixup seria o "heapify". Sem nexo.
  *
- * @param chaves Vetor de ponteiros para os dados.
- * @param tmh_heapq Tamanho do vetor.
- * @param cmp_chaves Função que compara duas chaves, de maneira similar ao strcmp().
+ * @param heapq Ponteiro para a estrutura de heap que contém o vetor a ser transformado.
  */
-void heapq_heapify(void *chaves[], size_t tmh_heapq, int (*cmp_chaves) (const void*, const void*));
+void heapq_heapify(heapq_t *heapq);
 
 /**
  * Constroi um vetor ordenado a partir dos elementos da heap.

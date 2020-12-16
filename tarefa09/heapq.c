@@ -143,6 +143,22 @@ void * heapq_extrai_max(heapq_t *heapq)
     return heapq_extrair(heapq, 0);
 }
 
+void heapq_heapify(heapq_t *heapq)
+{
+    for (size_t i = heapq->len / 2; i > 0; i--)
+    {
+        desce_heap(heapq, i);
+    }
+}
+
+void heapq_heapsort(heapq_t *heapq, void *arr[])
+{
+    for (long i = (long) heapq->len - 1; i >= 0; i--)
+    {
+        arr[i] = heapq_extrai_max(heapq);
+    }
+}
+
 void heapq_percorrer_largura(heapq_t *heapq, void (*func)(void*, void*), void *arg)
 {
     for (size_t i = 0; i < heapq->len; i++)
