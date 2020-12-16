@@ -60,22 +60,22 @@ void heapq_destroi(heapq_t *heapq);
 long heapq_inserir(heapq_t *heapq, void *chave);
 
 /**
- * Deleta elemento da heap na posição especificada.
+ * Extrai elemento da heap na posição especificada, efetivamente removendo-o da heap.
  *
- * @param heapq Ponteiro para a heap de onde se quer deletar o elemento.
+ * @param heapq Ponteiro para a heap de onde se quer extrair o elemento.
  * @param idx Índice de remoção do valor no vetor.
- * @return Chave (ponteiro) do valor removido.
+ * @return Chave (ponteiro) do valor extraído, ou NULL se a operação falhar.
  */
-void * heapq_deletar(heapq_t *heapq, size_t idx);
+void * heapq_extrair(heapq_t *heapq, size_t idx);
 
 /**
  * Remove elemento da heap cuja chave é igual à especificada.
  *
  * @param heapq Ponteiro para a heap de onde se quer remover o elemento.
  * @param chave Endereço do valor a ser removido.
- * @return Índice de remoção do valor no vetor.
+ * @return Índice de remoção do valor no vetor, ou -1 se a operação falhar.
  */
-size_t heapq_remover(heapq_t *heapq, const void *chave);
+long heapq_remover(heapq_t *heapq, const void *chave);
 
 /**
  * Faz uma busca na heap pelo valor cuja chave é igual a fornecida. A busca é semelhante à busca linear/sequencial,
@@ -84,15 +84,15 @@ size_t heapq_remover(heapq_t *heapq, const void *chave);
  *
  * @param heapq Ponteiro para a heap onde se quer buscar o elemento.
  * @param chave Endereço do valor a ser buscado.
- * @return Índice do valor encontrado no vetor.
+ * @return Índice do valor encontrado no vetor, ou -1 se a operação falhar.
  */
-size_t heapq_buscar(heapq_t *heapq, const void *chave);
+long heapq_buscar(heapq_t *heapq, const void *chave);
 
 /**
- * Extrai a chave na posição de índice 0 da heap.
+ * Atalho para extrair a chave na posição de índice 0 da heap.
  *
  * @param heapq Ponteiro para a heap.
- * @return Chave de máximo da heap.
+ * @return Chave de máximo da heap, ou NULL se a operação falhar.
  */
 void * heapq_extrai_max(heapq_t *heapq);
 

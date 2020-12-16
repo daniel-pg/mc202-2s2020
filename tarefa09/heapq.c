@@ -102,14 +102,45 @@ long heapq_inserir(heapq_t *heapq, void *chave)
     return sobe_heap(heapq, heapq->len - 1);
 }
 
+void * heapq_extrair(heapq_t *heapq, size_t idx)
+{
+    if (!heapq || heapq->len == 0 || !heapq->chaves)
+        return NULL;
+
+    void *chave_extraida = heapq->chaves[idx];
+    troca_chaves(&heapq->chaves[idx], &heapq->chaves[heapq->len - 1]);
+    heapq->len--;
+    desce_heap(heapq, idx);
+
+    return chave_extraida;
+}
+
+long heapq_remover(heapq_t *heapq, const void *chave)
+{
+    long idx = heapq_buscar(heapq, chave);
+    if (idx < 0) return -1;
+
+    troca_chaves(&heapq->chaves[idx], &heapq->chaves[heapq->len - 1]);
+    heapq->len--;
+    desce_heap(heapq, idx);
+
+    return idx;
+}
+
+long heapq_buscar(heapq_t *heapq, const void *chave)
+{
+    // TODO: Por enquanto só faz uma busca linear mesmo... melhorar depois.
+    for (size_t i = 0; i < heapq->len; i++)
+    {
+        if (heapq->chaves[i] == chave) return i;
+    }
+
+    return -1;
+}
+
 void * heapq_extrai_max(heapq_t *heapq)
 {
-    void *chave_max = heapq->chaves[0];
-    troca_chaves(&heapq->chaves[0], &heapq->chaves[heapq->len - 1]);
-    heapq->len--;
-    desce_heap(heapq, 0);
-
-    return chave_max;
+    return heapq_extrair(heapq, 0);
 }
 
 void heapq_percorrer_largura(heapq_t *heapq, void (*func)(void*, void*), void *arg)
