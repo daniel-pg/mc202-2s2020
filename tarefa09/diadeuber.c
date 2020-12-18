@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "heapq.h"
 
@@ -44,20 +45,50 @@ int cmp_clientes(const void *c1, const void *c2)
 static void aceita_solicitacao(heapq_t *fila_corridas, struct cliente **cliente_atual, bool *motorista_ocupado)
 {
     struct cliente *novo_cliente;
-    novo_cliente = malloc(sizeof(*novo_cliente) * MAX_CLIENTES);
+    novo_cliente = malloc(sizeof(*novo_cliente));
 
-    scanf("%" STR(MAX_NOME) "s" "%lf %d %d %d %d",
+    scanf(" %" STR(MAX_NOME) "s" "%lf %d %d %d %d",
           novo_cliente->nome, &novo_cliente->avaliacao,
           &novo_cliente->pos_origem[0], &novo_cliente->pos_origem[1],
           &novo_cliente->pos_destino[0], &novo_cliente->pos_destino[1]);
 
     // Se o motorista estiver ocupado, coloque o cliente na fila de espera. Caso contrário, atenda-o.
-    if (*motorista_ocupado){
+    if (*motorista_ocupado) {
         heapq_inserir(fila_corridas, novo_cliente);
     } else {
         *cliente_atual = novo_cliente;
         *motorista_ocupado = true;
     }
+
+    printf("Cliente %s foi adicionado(a)\n", novo_cliente->nome);
+}
+
+static void finaliza_corrida(heapq_t *fila_corridas, struct cliente *cliente_atual, bool *motorista_ocupado)
+{
+    if (*motorista_ocupado) {
+        *motorista_ocupado = false;
+    } else {
+        cliente_atual = heapq_extrai_max(fila_corridas);
+    }
+
+    printf("A corrida de %s foi finalizada\n", cliente_atual->nome);
+    free(cliente_atual);
+}
+
+static void cancela_corrida(heapq_t *fila_corridas, char *nome_cliente_cancelado)
+{
+    struct cliente *cliente_cancelado = NULL;
+
+    for (size_t i = 0; i < fila_corridas->len; i++)
+    {
+        if ( strcmp(nome_cliente_cancelado, ((struct cliente*) fila_corridas->chaves[i])->nome) == 0) {
+            cliente_cancelado = heapq_extrair(fila_corridas, i);
+            break;
+        }
+    }
+
+    printf("%s cancelou a corrida\n", nome_cliente_cancelado);
+    free(cliente_cancelado);
 }
 
 static void imprime_relatorio_final(int km_total, double rend_bruto)
@@ -70,23 +101,24 @@ static void imprime_relatorio_final(int km_total, double rend_bruto)
     const double despesas = km_total * custo_por_km_rodado + custo_aluguel_diario;
     const double rend_liquid = 0.75 * rend_bruto - despesas;
 
-    printf("Jornada finalizada. Aqui esta o seu rendimento de hoje");
-    printf("Km total: %d", km_total);
-    printf("Rendimento bruto: %2lf", rend_bruto);
-    printf("Despesas: %2lf", despesas);
-    printf("Rendimento liquido: %2lf", rend_liquid);
+    printf("\nJornada finalizada. Aqui esta o seu rendimento de hoje\n");
+    printf("Km total: %d\n", km_total);
+    printf("Rendimento bruto: %2lf\n", rend_bruto);
+    printf("Despesas: %2lf\n", despesas);
+    printf("Rendimento liquido: %2lf\n", rend_liquid);
 }
 
 static void le_processa_entrada(heapq_t *fila_corridas)
 {
-    struct cliente *cliente_atual;
+    char nome_cliente_cancelado[MAX_NOME];
+    struct cliente *cliente_atual = NULL;
     double rend_bruto = 0;
     int km_total = 0;
     char operacao;
     bool motorista_ocupado = false;
 
     do {
-        scanf("%c", &operacao);
+        scanf(" %c", &operacao);
 
         switch (operacao)
         {
@@ -97,10 +129,13 @@ static void le_processa_entrada(heapq_t *fila_corridas)
 
             case 'F':
                 /* O motorista finalizou a corrida atual. */
+                finaliza_corrida(fila_corridas, cliente_atual, &motorista_ocupado);
                 break;
 
             case 'C':
                 /* O cliente indicado cancelou sua solicitação. */
+                scanf(" %" STR(MAX_NOME) "s", nome_cliente_cancelado);
+                cancela_corrida(fila_corridas, nome_cliente_cancelado);
                 break;
 
             case 'T':
