@@ -10,9 +10,9 @@
 
 #include "heapq.h"
 
-#define HP_PAI(i) (i/2)
-#define HP_ESQ(i) (2*i)
-#define HP_DIR(i) (2*i + 1)
+#define HP_PAI(i) ((i - 1)/2)
+#define HP_ESQ(i) (2*i + 1)
+#define HP_DIR(i) (2*i + 2)
 
 static void troca_chaves(void **a, void **b)
 {
