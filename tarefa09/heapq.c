@@ -37,14 +37,14 @@ static size_t desce_heap(heapq_t *heapq, size_t idx)
     size_t maior_filho;
     size_t l, r;
 
-    while (HP_DIR(idx) < heapq->len) {
+    while (HP_ESQ(idx) < heapq->len) {
         l = HP_ESQ(idx);
         r = HP_DIR(idx);
 
-        if(heapq->cmp_chaves(heapq->chaves[l], heapq->chaves[r]) > 0)
-            maior_filho = l;
-        else
+        if(r < heapq->len && heapq->cmp_chaves(heapq->chaves[l], heapq->chaves[r]) < 0)
             maior_filho = r;
+        else
+            maior_filho = l;
 
         troca_chaves(&heapq->chaves[idx], &heapq->chaves[maior_filho]);
         idx = maior_filho;
@@ -92,9 +92,24 @@ void heapq_destroi(heapq_t *heapq)
 
 long heapq_inserir(heapq_t *heapq, void *chave)
 {
+    void **temp;
+
     // Operação inválida
-    if (!heapq || heapq->len == heapq->tmh_heapq || !heapq->chaves)
-        return -1; // TODO: aumentar o tamanho da heap caso ultrapasse o limite
+    if (!heapq || !heapq->chaves)
+        return -1;
+
+    // Aumentar o tamanho da heap caso ultrapasse o limite
+    if (heapq->len == heapq->tmh_heapq) {
+        temp = realloc(heapq->chaves, heapq->tmh_heapq * 2);
+
+        // Se a realocação de memória falhar, cancele a operação de inserção.
+        if (temp == NULL) {
+            return -1;
+        } else {
+            heapq->chaves = temp;
+            heapq->tmh_heapq *= 2;
+        }
+    }
 
     heapq->chaves[heapq->len] = chave;
     heapq->len++;
@@ -145,7 +160,7 @@ void * heapq_extrai_max(heapq_t *heapq)
 
 void heapq_heapify(heapq_t *heapq)
 {
-    for (size_t i = heapq->len / 2; i > 0; i--)
+    for (long i = (long) heapq->len/2; i >= 0; i--)
     {
         desce_heap(heapq, i);
     }
