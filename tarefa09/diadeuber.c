@@ -26,10 +26,17 @@ struct cliente
     double avaliacao;
     int pos_origem[2];
     int pos_destino[2];
+    bool eh_passageiro;
 };
 
 int cmp_clientes(const void *c1, const void *c2)
 {
+    // Se o cliente já é passageiro, então obviamente ele tem prioridade independentemente da sua avaliação.
+    if (((struct cliente*) c1)->eh_passageiro)
+        return 1;
+    else if (((struct cliente*) c2)->eh_passageiro)
+        return -1;
+
     double a1 = ((struct cliente*) c1)->avaliacao;
     double a2 = ((struct cliente*) c2)->avaliacao;
 
@@ -42,43 +49,66 @@ int cmp_clientes(const void *c1, const void *c2)
         return -1;
 }
 
-static void aceita_solicitacao(heapq_t *fila_corridas, struct cliente **cliente_atual, bool *motorista_ocupado)
+static int distancia_de_manhattan(int pos1[], int pos2[])
+{
+    return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1]);
+}
+
+static void aceita_solicitacao(heapq_t *fila_corridas)
 {
     struct cliente *novo_cliente;
     novo_cliente = malloc(sizeof(*novo_cliente));
 
     scanf(" %" STR(MAX_NOME) "s" "%lf %d %d %d %d",
-          novo_cliente->nome, &novo_cliente->avaliacao,
+          novo_cliente->nome,
+          &novo_cliente->avaliacao,
           &novo_cliente->pos_origem[0], &novo_cliente->pos_origem[1],
           &novo_cliente->pos_destino[0], &novo_cliente->pos_destino[1]);
 
-    // Se o motorista estiver ocupado, coloque o cliente na fila de espera. Caso contrário, atenda-o.
-    if (*motorista_ocupado) {
-        heapq_inserir(fila_corridas, novo_cliente);
-    } else {
-        *cliente_atual = novo_cliente;
-        *motorista_ocupado = true;
-    }
+    if (fila_corridas->len == 0)
+        novo_cliente->eh_passageiro = true;
+    else
+        novo_cliente->eh_passageiro = false;
 
+    heapq_inserir(fila_corridas, novo_cliente);
     printf("Cliente %s foi adicionado(a)\n", novo_cliente->nome);
 }
 
-static void finaliza_corrida(heapq_t *fila_corridas, struct cliente *cliente_atual, bool *motorista_ocupado)
+static void finaliza_corrida(heapq_t *fila_corridas, int *km_total, double *rend_bruto, int pos_motorista[])
 {
-    if (*motorista_ocupado) {
-        *motorista_ocupado = false;
-    } else {
-        cliente_atual = heapq_extrai_max(fila_corridas);
-    }
+    struct cliente *cliente_atendido;
+    int dist_percorrida;
 
-    printf("A corrida de %s foi finalizada\n", cliente_atual->nome);
-    free(cliente_atual);
+    const double pagamento_por_km = 1.4;
+
+    cliente_atendido = heapq_extrai_max(fila_corridas);
+
+    if (fila_corridas->len > 0)
+        ((struct cliente *) fila_corridas->chaves[0])->eh_passageiro = true;
+
+
+    *km_total += distancia_de_manhattan(pos_motorista, cliente_atendido->pos_origem);
+    pos_motorista[0] = cliente_atendido->pos_origem[0];
+    pos_motorista[1] = cliente_atendido->pos_origem[1];
+
+    dist_percorrida = distancia_de_manhattan(pos_motorista, cliente_atendido->pos_destino);
+    pos_motorista[0] = cliente_atendido->pos_destino[0];
+    pos_motorista[1] = cliente_atendido->pos_destino[1];
+    *km_total += dist_percorrida;
+    *rend_bruto += pagamento_por_km * dist_percorrida;
+
+    printf("A corrida de %s foi finalizada\n", cliente_atendido->nome);
+    free(cliente_atendido);
 }
 
-static void cancela_corrida(heapq_t *fila_corridas, char *nome_cliente_cancelado)
+static void cancela_corrida(heapq_t *fila_corridas)
 {
+    char nome_cliente_cancelado[MAX_NOME];
     struct cliente *cliente_cancelado = NULL;
 
+    scanf(" %" STR(MAX_NOME) "s", nome_cliente_cancelado);
+
+    // Procura pelo cliente que quer cancelar a corrida através de uma busca linear
     for (size_t i = 0; i < fila_corridas->len; i++)
     {
         if ( strcmp(nome_cliente_cancelado, ((struct cliente*) fila_corridas->chaves[i])->nome) == 0) {
@@ -96,26 +126,27 @@ static void imprime_relatorio_final(int km_total, double rend_bruto)
     // Constantes dadas no problema
     const double custo_aluguel_diario = 57.0;
     const double custo_por_km_rodado = 0.4104;
+    const double taxa_uber = 0.25;
 
     // Valores calculados
     const double despesas = km_total * custo_por_km_rodado + custo_aluguel_diario;
-    const double rend_liquid = 0.75 * rend_bruto - despesas;
+    const double rend_liquid = (1.0 - taxa_uber) * rend_bruto - despesas;
 
     printf("\nJornada finalizada. Aqui esta o seu rendimento de hoje\n");
     printf("Km total: %d\n", km_total);
-    printf("Rendimento bruto: %2lf\n", rend_bruto);
-    printf("Despesas: %2lf\n", despesas);
-    printf("Rendimento liquido: %2lf\n", rend_liquid);
+    printf("Rendimento bruto: %.2lf\n", rend_bruto);
+    printf("Despesas: %.2lf\n", despesas);
+    printf("Rendimento liquido: %.2lf\n", rend_liquid);
 }
 
 static void le_processa_entrada(heapq_t *fila_corridas)
 {
-    char nome_cliente_cancelado[MAX_NOME];
-    struct cliente *cliente_atual = NULL;
+    int pos_motorista[2] = {0, 0};
     double rend_bruto = 0;
     int km_total = 0;
     char operacao;
-    bool motorista_ocupado = false;
+
+    const double taxa_cancelamento = 7.0;
 
     do {
         scanf(" %c", &operacao);
@@ -124,18 +155,18 @@ static void le_processa_entrada(heapq_t *fila_corridas)
         {
             case 'A':
                 /* O motorista aceitou a solicitação de um cliente, deixando-o em espera. */
-                aceita_solicitacao(fila_corridas, &cliente_atual, &motorista_ocupado);
+                aceita_solicitacao(fila_corridas);
                 break;
 
             case 'F':
                 /* O motorista finalizou a corrida atual. */
-                finaliza_corrida(fila_corridas, cliente_atual, &motorista_ocupado);
+                finaliza_corrida(fila_corridas, &km_total, &rend_bruto, pos_motorista);
                 break;
 
             case 'C':
                 /* O cliente indicado cancelou sua solicitação. */
-                scanf(" %" STR(MAX_NOME) "s", nome_cliente_cancelado);
-                cancela_corrida(fila_corridas, nome_cliente_cancelado);
+                cancela_corrida(fila_corridas);
+                rend_bruto += taxa_cancelamento;
                 break;
 
             case 'T':
