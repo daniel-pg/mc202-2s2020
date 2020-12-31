@@ -106,6 +106,8 @@ static void cancela_corrida(heapq_t *fila_corridas)
     char nome_cliente_cancelado[MAX_NOME];
     struct cliente *cliente_cancelado = NULL;
 
+    // TODO: Mais uma vez, o correto deveria ser (MAX_NOME - 1), mas a porcaria mal-feita das macros de C não permitem
+    // fazer operações aritméticas simples.
     scanf(" %" STR(MAX_NOME) "s", nome_cliente_cancelado);
 
     // Procura pelo cliente que quer cancelar a corrida através de uma busca linear

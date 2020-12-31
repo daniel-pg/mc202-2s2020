@@ -46,8 +46,13 @@ static size_t desce_heap(heapq_t *heapq, size_t idx)
         else
             maior_filho = l;
 
-        troca_chaves(&heapq->chaves[idx], &heapq->chaves[maior_filho]);
-        idx = maior_filho;
+        if (heapq->cmp_chaves(heapq->chaves[idx], heapq->chaves[maior_filho]) < 0) {
+            troca_chaves(&heapq->chaves[idx], &heapq->chaves[maior_filho]);
+            idx = maior_filho;
+        } else {
+            break;
+        }
+        
     }
 
     return idx;
