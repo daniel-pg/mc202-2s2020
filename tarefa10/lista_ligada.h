@@ -36,7 +36,7 @@ typedef struct lista_ligada
 lista_ligada_t * lista_criar(void);
 
 /**
- * @brief Remove todos os elementos da lista
+ * @brief Remove todos os elementos da lista.
  * 
  * @param lista 
  */
@@ -47,7 +47,7 @@ void lista_esvaziar(lista_ligada_t *lista);
  * 
  * @param lista 
  */
-void lista_liberar(lista_ligada_t *lista);
+void lista_destruir(lista_ligada_t *lista);
 
 /**
  * @brief Insere elemento na posição anterior à especificada.
@@ -56,7 +56,16 @@ void lista_liberar(lista_ligada_t *lista);
  * @param valor 
  * @param pos 
  */
-void lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos);
+celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos);
+
+/**
+ * @brief Anexa elemento ao início da lista.
+ * 
+ * @param lista 
+ * @param valor 
+ * @return celula_t* 
+ */
+celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor);
 
 /**
  * @brief Anexa elemento ao final da lista.
@@ -64,24 +73,7 @@ void lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos);
  * @param lista 
  * @param valor 
  */
-void lista_anexar(lista_ligada_t *lista, const char *valor);
-
-/**
- * @brief Concatena duas listas.
- * 
- * @param nova_lista 
- * @param l1 
- * @param l2 
- */
-void lista_concatenar(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_ligada_t *l2);
-
-/**
- * @brief Copia a lista de origem para a lista de destino.
- * 
- * @param dest 
- * @param orig 
- */
-void lista_copiar(lista_ligada_t *dest, lista_ligada_t *orig);
+celula_t * lista_anexar_fim(lista_ligada_t *lista, const char *valor);
 
 /**
  * @brief Remove primeira ocorrência do elemento especificado da lista e devolve seu indice.
@@ -89,7 +81,7 @@ void lista_copiar(lista_ligada_t *dest, lista_ligada_t *orig);
  * @param lista 
  * @param valor 
  */
-void lista_remover(lista_ligada_t *lista, const char *valor);
+size_t lista_remover(lista_ligada_t *lista, const char *valor);
 
 /**
  * @brief Retira o elemento na posição especificada.
@@ -98,6 +90,22 @@ void lista_remover(lista_ligada_t *lista, const char *valor);
  * @param pos 
  */
 void lista_deletar(lista_ligada_t *lista, size_t pos);
+
+/**
+ * @brief Concatena a lista de origem ao final da lista destino.
+ * 
+ * @param dest 
+ * @param orig 
+ */
+void lista_concatenar(lista_ligada_t *dest, lista_ligada_t *orig);
+
+/**
+ * @brief Copia a lista de origem para a lista de destino.
+ * 
+ * @param dest 
+ * @param orig 
+ */
+void lista_copiar(lista_ligada_t *dest, lista_ligada_t *orig);
 
 
 #endif //TAREFA09_LISTA_LIGADA_H

@@ -42,69 +42,56 @@ void lista_esvaziar(lista_ligada_t *lista)
     lista->len = 0;
 }
 
-void lista_liberar(lista_ligada_t *lista)
+void lista_destruir(lista_ligada_t *lista)
 {
     lista_esvaziar(lista);
     free(lista);
 }
 
-void lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos)
+celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos)
 {
-    if (pos > lista->len) {
-        // Operação inválida: inserção em posição fora do limite da lista. Ver documentação em "lista_ligada.h".
-        return;
-    }
+    // Operação inválida: inserção em posição fora do limite da lista.
+    if (pos > lista->len)
+        return NULL;
 
-    // Inserir nessa posição é a mesma coisa que simplesmente anexá-lo.
-    if (pos == lista->len) {
-        lista_anexar(lista, valor);
-        return;
-    }
+    // Inserir um elemento no início é a mesma coisa que anexá-lo ao início da lista.
+    if (pos == 0)
+        return lista_anexar_inicio(lista, valor);
+
+    // Inserir um elemento no final é a mesma coisa que anexá-lo ao fim da lista.
+    if (pos == lista->len)
+        return lista_anexar_fim(lista, valor);
+
 
     celula_t *atual, *novo_elemento;
+    register size_t i;
 
     novo_elemento = malloc(sizeof(*novo_elemento));
-    if (novo_elemento == NULL )
-        exit(1);
+    if (novo_elemento == NULL)
+        return NULL;
 
     strncpy(novo_elemento->valor, valor, MAX_PALAVRA - 1);
-
-    // Inserir no início da lista
-    if (pos == 0)
-    {
-        if (lista->fim == NULL)
-            lista->fim = novo_elemento;
-        else
-            lista->inicio->ant = novo_elemento;
-
-        novo_elemento->prox = lista->inicio;
-        novo_elemento->ant = NULL;
-        lista->inicio = novo_elemento;
-        lista->len++;
-        return;
-    }
-
-    register size_t i;
 
     // Percorre a lista da esquerda para a direita ou ao contrário dependendo de qual caminho for mais curto.
     if (pos < lista->len / 2)
     {
         atual = lista->inicio;
-        for (i = 0; i < pos - 1; i++)
-        {
+
+        for (i = 0; i < pos - 1; i++) {
             atual = atual->prox;
         }
+
         novo_elemento->ant = atual;
         novo_elemento->prox = atual->prox;
         atual->prox->ant = novo_elemento;
         atual->prox = novo_elemento;
-
     } else {
         atual = lista->fim;
-        for (i = lista->len - 1; i > pos; i--)
-        {
+
+        for (i = lista->len - 1; i > pos; i--) {
             atual = atual->ant;
         }
+
         novo_elemento->prox = atual;
         novo_elemento->ant = atual->ant;
         atual->ant->prox = novo_elemento;
@@ -112,14 +99,36 @@ void lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos)
     }
 
     lista->len++;
+    return novo_elemento;
 }
 
-void lista_anexar(lista_ligada_t *lista, const char *valor)
+celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor)
 {
     celula_t *novo_elemento = malloc(sizeof(*novo_elemento));
 
     if (novo_elemento == NULL)
-        exit(1);
+        return NULL;
+
+    strncpy(novo_elemento->valor, valor, MAX_PALAVRA - 1);
+
+    if (lista->fim == NULL)
+        lista->fim = novo_elemento;
+    else
+        lista->inicio->ant = novo_elemento;
+
+    novo_elemento->prox = lista->inicio;
+    novo_elemento->ant = NULL;
+    lista->inicio = novo_elemento;
+    lista->len++;
+    return novo_elemento;
+}
+
+celula_t * lista_anexar_fim(lista_ligada_t *lista, const char *valor)
+{
+    celula_t *novo_elemento = malloc(sizeof(*novo_elemento));
+
+    if (novo_elemento == NULL)
+        return NULL;
 
     strncpy(novo_elemento->valor, valor, MAX_PALAVRA - 1);
 
@@ -132,12 +141,7 @@ void lista_anexar(lista_ligada_t *lista, const char *valor)
     novo_elemento->prox = NULL;
     lista->fim = novo_elemento;
     lista->len++;
-}
-
-void lista_concatenar(lista_ligada_t *nova_lista, lista_ligada_t *l1, lista_ligada_t *l2)
-{
-    lista_copiar(nova_lista, l1);
-    lista_copiar(nova_lista, l2);
+    return novo_elemento;
 }
 
 // Libera/remove o elemento da lista e "costura" as pontas soltas da lista de volta.
@@ -164,20 +168,24 @@ static void libera_elemento_costura_lista(lista_ligada_t *lista, celula_t *eleme
     lista->len--;
 }
 
-void lista_remover(lista_ligada_t *lista, const char *valor)
+size_t lista_remover(lista_ligada_t *lista, const char *valor)
 {
     celula_t *atual = lista->inicio;
+    size_t pos = 0;
 
     while (atual != NULL)
     {
-        if (atual->valor == valor)
+        if (strcmp(atual->valor, valor) == 0)
         {
             libera_elemento_costura_lista(lista, atual);
             break;
         }
 
         atual = atual->prox;
+        pos++;
     }
+
+    return pos;
 }
 
 void lista_deletar(lista_ligada_t *lista, size_t pos)
@@ -185,21 +193,19 @@ void lista_deletar(lista_ligada_t *lista, size_t pos)
     celula_t *atual;
     size_t i;
 
-    if (pos < lista->len / 2)
-    {
+    // Avança o ponteiro atual até o elemento que será removido percorrendo o menor caminho.
+    if (pos < lista->len / 2) {
         atual = lista->inicio;
-        for (i = 0; i < pos; i++) atual = atual->prox; // Avança o ponteiro atual até o elemento que será removido.
-    }
-    else
-    {
+        for (i = 0; i < pos; i++) atual = atual->prox;
+    } else {
         atual = lista->fim;
-        for (i = lista->len; i > pos; i--) atual = atual->ant; // Avança o ponteiro atual até o elemento que será removido.
+        for (i = lista->len; i > pos; i--) atual = atual->ant;
     }
 
     libera_elemento_costura_lista(lista, atual);
 }
 
-void lista_copiar(lista_ligada_t *dest, lista_ligada_t *orig)
+void lista_concatenar(lista_ligada_t *dest, lista_ligada_t *orig)
 {
     celula_t *atual = orig->inicio;
     celula_t *novo_elemento;
@@ -225,5 +231,13 @@ void lista_copiar(lista_ligada_t *dest, lista_ligada_t *orig)
     }
 
     dest->fim->prox = NULL;
-    dest->len = orig->len;
+    dest->len += orig->len;
+}
+
+void lista_copiar(lista_ligada_t *dest, lista_ligada_t *orig)
+{
+    if (dest != orig) {
+        lista_esvaziar(dest);
+        lista_concatenar(dest, orig);
+    }
 }
