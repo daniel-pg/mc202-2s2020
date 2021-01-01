@@ -70,7 +70,7 @@ celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos)
     if (novo_elemento == NULL)
         return NULL;
 
-    strncpy(novo_elemento->valor, valor, MAX_PALAVRA - 1);
+    strcpy(novo_elemento->valor, valor);
 
     // Percorre a lista da esquerda para a direita ou ao contrário dependendo de qual caminho for mais curto.
     if (pos < lista->len / 2)
@@ -109,7 +109,7 @@ celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor)
     if (novo_elemento == NULL)
         return NULL;
 
-    strncpy(novo_elemento->valor, valor, MAX_PALAVRA - 1);
+    strcpy(novo_elemento->valor, valor);
 
     if (lista->fim == NULL)
         lista->fim = novo_elemento;
@@ -130,7 +130,7 @@ celula_t * lista_anexar_fim(lista_ligada_t *lista, const char *valor)
     if (novo_elemento == NULL)
         return NULL;
 
-    strncpy(novo_elemento->valor, valor, MAX_PALAVRA - 1);
+    strcpy(novo_elemento->valor, valor);
 
     if (lista->inicio == NULL)
         lista->inicio = novo_elemento;
@@ -217,7 +217,7 @@ void lista_concatenar(lista_ligada_t *dest, lista_ligada_t *orig)
         if (novo_elemento == NULL)
             exit(1);
 
-        strncpy(novo_elemento->valor, atual->valor, MAX_PALAVRA - 1);
+        strcpy(novo_elemento->valor, atual->valor);
 
         if (dest->inicio == NULL)
             dest->inicio = novo_elemento;
