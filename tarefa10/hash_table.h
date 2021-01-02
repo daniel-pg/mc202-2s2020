@@ -13,18 +13,18 @@
 
 #include "lista_ligada.h"
 
-#define TAMANHO_TABELA 1823
+#define TMH_TABELA 1823
 
 typedef struct hash_table_t
 {
-    lista_ligada_t tabela[TAMANHO_TABELA];
+    lista_ligada_t tabela[TMH_TABELA];
 } hash_table_t;
 
 
 /**
  * @brief Cria e aloca memória para uma nova hash table.
  * 
- * @return hash_table_t* Ponteiro para a nova hash table.
+ * @return hash_table_t* Ponteiro para a nova hash table, ou NULL caso a função falhe.
  */
 hash_table_t * hashtable_criar();
 
