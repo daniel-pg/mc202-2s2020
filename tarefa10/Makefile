@@ -15,7 +15,6 @@ CC_FLAGS=\
 -Wcast-align
 
 LD_FLAGS=\
--lm             \
 -fuse-ld=gold
 
 
