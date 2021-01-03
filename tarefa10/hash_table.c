@@ -20,8 +20,6 @@ hash_table_t * hashtable_criar()
     // Inicializa todas as posições da tabela com listas vazias.
     for (size_t i = 0; i < TMH_TABELA; i++) {
         nova_tabela->tabela[i].inicio = NULL;
-        nova_tabela->tabela[i].fim = NULL;
-        nova_tabela->tabela[i].len = 0;
     }
 
     return nova_tabela;
@@ -29,6 +27,10 @@ hash_table_t * hashtable_criar()
 
 void hashtable_destruir(hash_table_t *ht)
 {
+    for (size_t i = 0; i < TMH_TABELA; i++) {
+        lista_esvaziar(&ht->tabela[i]);
+    }
+    
     free(ht);
 }
 
@@ -47,20 +49,20 @@ static celula_t * __buscar_chave(lista_ligada_t *l, char *chave)
 {
     celula_t *atual = l->inicio;
 
-    while (atual != NULL && strcmp(atual->valor, chave) != 0) {
+    while (atual != NULL && strcmp(atual->chave, chave) != 0) {
         atual = atual->prox;
     }
     
     return atual;
 }
 
-void hashtable_inserir(hash_table_t *ht, char *chave)
+void hashtable_inserir(hash_table_t *ht, char *chave, bool dado)
 {
     size_t idx = hashtable_hash(chave);
     celula_t *elemento_antigo = __buscar_chave(&ht->tabela[idx], chave);
 
     if (elemento_antigo == NULL) {
-        lista_anexar_fim(&ht->tabela[idx], chave);
+        lista_anexar_inicio(&ht->tabela[idx], chave, dado);
     }
 }
 

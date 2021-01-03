@@ -57,7 +57,8 @@ void lista_destruir(lista_ligada_t *lista);
  * @brief Anexa elemento no início da lista.
  * 
  * @param lista Ponteiro para a lista onde se quer inserir o novo elemento.
- * @param chave Valor de inicialização do novo elemento.
+ * @param chave Valor de inicialização da chave do novo elemento.
+ * @param dado Valor de inicialização do dado do novo elemento.
  */
 celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *chave, bool dado);
 

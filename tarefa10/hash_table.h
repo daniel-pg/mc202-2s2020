@@ -42,8 +42,9 @@ void hashtable_destruir(hash_table_t *ht);
  * 
  * @param ht Ponteiro para a hash table onde se quer inserir a chave.
  * @param chave Chave a ser inserida na hash table.
+ * @param dado Dado do novo elemento.
  */
-void hashtable_inserir(hash_table_t *ht, char *chave);
+void hashtable_inserir(hash_table_t *ht, char *chave, bool dado);
 
 
 /**
@@ -56,10 +57,11 @@ void hashtable_deletar(hash_table_t *ht, char *chave);
 
 
 /**
- * @brief Busca uma chave na tabela.
+ * @brief Busca um elemento com a chave fornecida na tabela.
  * 
- * @param ht Ponteiro para a hash table onde se quer buscar a chave.
+ * @param ht Ponteiro para a hash table onde se quer buscar o elemento.
  * @param chave Chave a ser buscada.
+ * 
  * @return celula_t* Ponteiro para o elemento encontrado na tabela em caso de sucesso, ou NULL em caso contrário.
  */
 celula_t * hashtable_buscar(hash_table_t *ht, char *chave);
