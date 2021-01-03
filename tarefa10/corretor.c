@@ -54,47 +54,22 @@ static void inserir_variacoes(hash_table_t *ht, const char *chave)
 }
 
 
-static celula_t * busca_variacoes(hash_table_t *ht, const char *chave)
+static celula_t * busca_variacoes(hash_table_t *ht, char *chave)
 {
     celula_t *encontrado = NULL;
-    char tmp[MAX_PALAVRA];
-    size_t i, len;
+    size_t i;
     char c;
 
-    strcpy(tmp, chave);
-    len = strlen(chave);
-
-    // Busca chaves com letras trocadas.
-    for (i = 0; i < len; i++)
+    // Busca chaves com letras trocadas ou adicionais.
+    for (i = 0; chave[i] != '\0'; i++)
     {
         c = chave[i];
-        tmp[i] = '*';
+        chave[i] = '*';
 
-        encontrado = hashtable_buscar(ht, tmp);
+        encontrado = hashtable_buscar(ht, chave);
         if (encontrado != NULL) return encontrado;
 
-        tmp[i] = c;
-    }
-
-    // Busca chaves com letras adicionais.
-    for (i = len; i > 0; i--)
-    {
-        tmp[i - 1] = chave[i];
-        encontrado = hashtable_buscar(ht, tmp);
-        if (encontrado != NULL && encontrado->dado) return encontrado;
-    }
-    
-
-    // Busca chaves com letras faltantes.
-    tmp[0] = '*';
-    strcpy(&tmp[1], chave);
-    for (i = 0; i <= len; i++)
-    {
-        encontrado = hashtable_buscar(ht, tmp);
-        if (encontrado != NULL) return encontrado;
-        
-        tmp[i] = tmp[i+1];
-        tmp[i+1] = '*';
+        chave[i] = c;
     }
 
     return encontrado;
@@ -122,11 +97,15 @@ int main(void)
 
         chave_encontrada = hashtable_buscar(dicionario, entrada);
 
-        if (chave_encontrada != NULL) {
+        if (chave_encontrada != NULL && chave_encontrada->dado) {
             printf("verde\n");
+        } else if (chave_encontrada != NULL && !chave_encontrada->dado) {
+            // Esse caso só ocorre quando uma palavra com letras faltando é buscada.
+            printf("amarelo\n");
         } else {
             chave_encontrada = busca_variacoes(dicionario, entrada);
-            if (chave_encontrada != NULL && !chave_encontrada->dado) {
+            
+            if (chave_encontrada != NULL) {
                 printf("amarelo\n");
             } else {
                 printf("vermelho\n");
