@@ -13,7 +13,7 @@
 
 #include "lista_ligada.h"
 
-#define TMH_TABELA 919
+#define TMH_TABELA 1823
 
 typedef struct hash_table_t
 {
