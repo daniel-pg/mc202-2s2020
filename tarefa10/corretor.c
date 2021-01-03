@@ -30,7 +30,7 @@ static void inserir_variacoes(hash_table_t *ht, const char *chave)
     {
         c = chave[i];
         tmp[i] = '*';
-        hashtable_inserir(ht, tmp);
+        hashtable_inserir(ht, tmp, false);
         tmp[i] = c;
     }
 
@@ -38,7 +38,7 @@ static void inserir_variacoes(hash_table_t *ht, const char *chave)
     for (i = len; i > 0; i--)
     {
         tmp[i - 1] = chave[i];
-        hashtable_inserir(ht, tmp);
+        hashtable_inserir(ht, tmp, false);
     }
     
 
@@ -47,26 +47,57 @@ static void inserir_variacoes(hash_table_t *ht, const char *chave)
     strcpy(&tmp[1], chave);
     for (i = 0; i <= len; i++)
     {
-        hashtable_inserir(ht, tmp);
+        hashtable_inserir(ht, tmp, false);
         tmp[i] = tmp[i+1];
         tmp[i+1] = '*';
     }
-    
-
 }
 
-// TODO: Remover essa função e criar um campo que diga se a palavra está grafada corretamente ou não
-static int contar_asteriscos(char *chave)
+
+static celula_t * busca_variacoes(hash_table_t *ht, const char *chave)
 {
-    for (size_t i = 0; chave[i] != '\0'; i++)
+    celula_t *encontrado = NULL;
+    char tmp[MAX_PALAVRA];
+    size_t i, len;
+    char c;
+
+    strcpy(tmp, chave);
+    len = strlen(chave);
+
+    // Busca chaves com letras trocadas.
+    for (i = 0; i < len; i++)
     {
-        if (chave[i] == '*'){
-            // É garantido que a palavra tem apenas um ou nenhum asterisco
-            return 1;
-        }
+        c = chave[i];
+        tmp[i] = '*';
+
+        encontrado = hashtable_buscar(ht, tmp);
+        if (encontrado != NULL) return encontrado;
+
+        tmp[i] = c;
     }
 
-    return 0;
+    // Busca chaves com letras adicionais.
+    for (i = len; i > 0; i--)
+    {
+        tmp[i - 1] = chave[i];
+        encontrado = hashtable_buscar(ht, tmp);
+        if (encontrado != NULL && encontrado->dado) return encontrado;
+    }
+    
+
+    // Busca chaves com letras faltantes.
+    tmp[0] = '*';
+    strcpy(&tmp[1], chave);
+    for (i = 0; i <= len; i++)
+    {
+        encontrado = hashtable_buscar(ht, tmp);
+        if (encontrado != NULL) return encontrado;
+        
+        tmp[i] = tmp[i+1];
+        tmp[i+1] = '*';
+    }
+
+    return encontrado;
 }
 
 int main(void)
@@ -81,7 +112,7 @@ int main(void)
     for (i = 0; i < n; i++)
     {
         scanf("%" STR(MAX_PALAVRA) "s", entrada);
-        hashtable_inserir(dicionario, entrada);
+        hashtable_inserir(dicionario, entrada, true);
         inserir_variacoes(dicionario, entrada);
     }
 
@@ -89,16 +120,17 @@ int main(void)
     {
         scanf("%" STR(MAX_PALAVRA) "s", entrada);
 
-        //TODO: usar uma função de busca que considere caracteres coringa e variações (busca/remoção)
         chave_encontrada = hashtable_buscar(dicionario, entrada);
 
-        if (chave_encontrada == NULL) {
-            printf("vermelho\n");
-        } else if (contar_asteriscos(chave_encontrada->valor)) {
-            // TODO: Essa lógica está errada, pois palavras com letras a menos também não tem coringas.
-            printf("amarelo\n");
-        } else {
+        if (chave_encontrada != NULL) {
             printf("verde\n");
+        } else {
+            chave_encontrada = busca_variacoes(dicionario, entrada);
+            if (chave_encontrada != NULL && !chave_encontrada->dado) {
+                printf("amarelo\n");
+            } else {
+                printf("vermelho\n");
+            }
         }
     }
 
