@@ -48,7 +48,7 @@ void lista_destruir(lista_ligada_t *lista)
     free(lista);
 }
 
-celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos)
+celula_t * lista_inserir(lista_ligada_t *lista, double valor[], size_t pos)
 {
     // Operação inválida: inserção em posição fora do limite da lista.
     if (pos > lista->len)
@@ -71,7 +71,8 @@ celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos)
         return NULL;
 
     // Inicializa novo elemento
-    strcpy(novo_elemento->valor, valor);
+    memcpy(novo_elemento->coords, valor, 2 * sizeof(double));
+    novo_elemento->status = 0x0;
 
     // Percorre a lista da esquerda para a direita ou ao contrário dependendo de qual caminho for mais curto.
     if (pos < lista->len / 2)
@@ -103,7 +104,7 @@ celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos)
     return novo_elemento;
 }
 
-celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor)
+celula_t * lista_anexar_inicio(lista_ligada_t *lista, double valor[])
 {
     celula_t *novo_elemento = malloc(sizeof(*novo_elemento));
 
@@ -111,7 +112,8 @@ celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor)
         return NULL;
 
     // Inicializa novo elemento
-    strcpy(novo_elemento->valor, valor);
+    memcpy(novo_elemento->coords, valor, 2 * sizeof(double));
+    novo_elemento->status = 0x0;
 
     if (lista->fim == NULL)
         lista->fim = novo_elemento;
@@ -125,7 +127,7 @@ celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor)
     return novo_elemento;
 }
 
-celula_t * lista_anexar_fim(lista_ligada_t *lista, const char *valor)
+celula_t * lista_anexar_fim(lista_ligada_t *lista, double valor[])
 {
     celula_t *novo_elemento = malloc(sizeof(*novo_elemento));
 
@@ -133,7 +135,8 @@ celula_t * lista_anexar_fim(lista_ligada_t *lista, const char *valor)
         return NULL;
 
     // Inicializa novo elemento
-    strcpy(novo_elemento->valor, valor);
+    memcpy(novo_elemento->coords, valor, 2 * sizeof(double));
+    novo_elemento->status = 0x0;
 
     if (lista->inicio == NULL)
         lista->inicio = novo_elemento;
@@ -171,13 +174,13 @@ static void remove_elemento(lista_ligada_t *lista, celula_t *elemento)
     lista->len--;
 }
 
-celula_t * lista_remover(lista_ligada_t *lista, const char *valor)
+celula_t * lista_remover(lista_ligada_t *lista, double valor[])
 {
     celula_t *atual = lista->inicio;
 
     while (atual != NULL)
     {
-        if (strcmp(atual->valor, valor) == 0)
+        if (memcmp(atual->coords, valor, 2 * sizeof(double)) == 0)
         {
             remove_elemento(lista, atual);
             break;
@@ -222,7 +225,8 @@ void lista_concatenar(lista_ligada_t *dest, lista_ligada_t *orig)
         }
 
         // Inicializa novo elemento
-        strcpy(novo_elemento->valor, atual->valor);
+        memcpy(novo_elemento->coords, atual->coords, 2 * sizeof(double));
+        novo_elemento->status = 0x0;
 
         if (dest->inicio == NULL)
             dest->inicio = novo_elemento;

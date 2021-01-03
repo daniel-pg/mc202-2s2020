@@ -16,7 +16,12 @@ typedef struct celula_t
 {
     struct celula_t *prox;
     struct celula_t *ant;
-    char valor[8];
+
+    double coords[2];        /* coordenadas das Pokestops/Raids */
+    char status;            /* vetor de bits de flags
+                             * bit 0: Indica se o ponto é um Lugia
+                             * bit 1: Indica se o ponto já foi visitado.
+                             * */
 } celula_t;
 
 typedef struct lista_ligada
@@ -60,7 +65,7 @@ void lista_destruir(lista_ligada_t *lista);
  * 
  * @return celula_t* Ponteiro para o elemento inserido, ou NULL caso a operação falhe.
  */
-celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos);
+celula_t * lista_inserir(lista_ligada_t *lista, double valor[], size_t pos);
 
 
 /**
@@ -71,7 +76,7 @@ celula_t * lista_inserir(lista_ligada_t *lista, const char *valor, size_t pos);
  * 
  * @return celula_t* Ponteiro para o elemento inserido, ou NULL caso a operação falhe.
  */
-celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor);
+celula_t * lista_anexar_inicio(lista_ligada_t *lista, double valor[]);
 
 
 /**
@@ -82,7 +87,7 @@ celula_t * lista_anexar_inicio(lista_ligada_t *lista, const char *valor);
  * 
  * @return Ponteiro para o elemento inserido, ou NULL caso a operação falhe.
  */
-celula_t * lista_anexar_fim(lista_ligada_t *lista, const char *valor);
+celula_t * lista_anexar_fim(lista_ligada_t *lista, double valor[]);
 
 
 /**
@@ -93,7 +98,7 @@ celula_t * lista_anexar_fim(lista_ligada_t *lista, const char *valor);
  * 
  * @return Ponteiro para o elemento removido, ou NULL caso a operação falhe.
  */
-celula_t * lista_remover(lista_ligada_t *lista, const char *valor);
+celula_t * lista_remover(lista_ligada_t *lista, double valor[]);
 
 
 /**
