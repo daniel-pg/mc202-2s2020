@@ -9,11 +9,99 @@
  */
 
 #include <stdio.h>
+#include <string.h> 
 
 #include "hash_table.h"
 
+#define XSTR(x) #x
+#define STR(x) XSTR(x)
+
+static void inserir_variacoes(hash_table_t *ht, const char *chave)
+{
+    char tmp[MAX_PALAVRA];
+    size_t i, len;
+    char c;
+
+    strcpy(tmp, chave);
+    len = strlen(chave);
+
+    // Insere chaves com letras trocadas.
+    for (i = 0; i < len; i++)
+    {
+        c = chave[i];
+        tmp[i] = '*';
+        hashtable_inserir(ht, tmp);
+        tmp[i] = c;
+    }
+
+    // Insere chaves com letras faltantes.
+    for (i = len; i > 0; i--)
+    {
+        tmp[i - 1] = chave[i];
+        hashtable_inserir(ht, tmp);
+    }
+    
+
+    // Insere chaves com letras adicionais.
+    tmp[0] = '*';
+    strcpy(&tmp[1], chave);
+    for (i = 0; i <= len; i++)
+    {
+        hashtable_inserir(ht, tmp);
+        tmp[i] = tmp[i+1];
+        tmp[i+1] = '*';
+    }
+    
+
+}
+
+// TODO: Remover essa função e criar um campo que diga se a palavra está grafada corretamente ou não
+static int contar_asteriscos(char *chave)
+{
+    for (size_t i = 0; chave[i] != '\0'; i++)
+    {
+        if (chave[i] == '*'){
+            // É garantido que a palavra tem apenas um ou nenhum asterisco
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 int main(void)
 {
-    /* code */
+    hash_table_t *dicionario = hashtable_criar();
+    celula_t *chave_encontrada;
+    char entrada[MAX_PALAVRA];
+    int n, q, i;
+
+    scanf("%d %d", &n, &q);
+
+    for (i = 0; i < n; i++)
+    {
+        scanf("%" STR(MAX_PALAVRA) "s", entrada);
+        hashtable_inserir(dicionario, entrada);
+        inserir_variacoes(dicionario, entrada);
+    }
+
+    for (i = 0; i < q; i++)
+    {
+        scanf("%" STR(MAX_PALAVRA) "s", entrada);
+
+        //TODO: usar uma função de busca que considere caracteres coringa e variações (busca/remoção)
+        chave_encontrada = hashtable_buscar(dicionario, entrada);
+
+        if (chave_encontrada == NULL) {
+            printf("vermelho\n");
+        } else if (contar_asteriscos(chave_encontrada->valor)) {
+            // TODO: Essa lógica está errada, pois palavras com letras a menos também não tem coringas.
+            printf("amarelo\n");
+        } else {
+            printf("verde\n");
+        }
+    }
+
+    hashtable_destruir(dicionario);
     return 0;
 }

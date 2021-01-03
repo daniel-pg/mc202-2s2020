@@ -43,6 +43,17 @@ static size_t hashtable_hash(char *chave)
     return n;
 }
 
+static celula_t * __buscar_chave(lista_ligada_t *l, char *chave)
+{
+    celula_t *atual = l->inicio;
+
+    while (atual != NULL && strcmp(atual->valor, chave) != 0) {
+        atual = atual->prox;
+    }
+    
+    return atual;
+}
+
 void hashtable_inserir(hash_table_t *ht, char *chave)
 {
     size_t idx = hashtable_hash(chave);
@@ -57,17 +68,6 @@ void hashtable_deletar(hash_table_t *ht, char *chave)
 {
     size_t idx = hashtable_hash(chave);
     lista_remover(&ht->tabela[idx], chave);
-}
-
-static celula_t * __buscar_chave(lista_ligada_t *l, char *chave)
-{
-    celula_t *atual = l->inicio;
-
-    while (atual != NULL && strcmp(atual->valor, chave) != 0) {
-        atual = atual->prox;
-    }
-    
-    return atual;
 }
 
 celula_t * hashtable_buscar(hash_table_t *ht, char *chave)
