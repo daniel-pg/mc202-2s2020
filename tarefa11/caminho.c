@@ -64,39 +64,21 @@ static int procura_lugia(lista_ligada_t *grafo)
 {
     double menor_max_dist;  /* menor das distâncias máximas dentre todos os caminhos */
     double max_dist = 0;    /* distância máxima entre dois vértices consecutivos no caminho encontrado */
-    double media;           /**/
 
     // Primeira estimativa para o caminho de menor distância máxima entre vértices
     menor_max_dist = busca_dfs(grafo, grafo->inicio, 0, INFINITY);
-    printf("%lf\n", menor_max_dist);
     for(celula_t *v = grafo->inicio; v != NULL; v = v->prox) v->status &= ~(1UL << 1);
 
-    // Método gambiarra de resolução enquanto a busca binária não funciona
-    while (menor_max_dist != -1)
+    /** Método gambiarra de resolução enquanto a busca binária não funciona. Executa em tempo surpreendentemente
+     * razoável, e mais importante, resolve a tarefa. */
+    while (max_dist != -1)
     {
-        menor_max_dist = busca_dfs(grafo, grafo->inicio, 0, menor_max_dist);
-        printf("%lf\n", menor_max_dist);
+        max_dist = busca_dfs(grafo, grafo->inicio, 0, menor_max_dist);
+        if (max_dist != -1) menor_max_dist = max_dist;
         for(celula_t *v = grafo->inicio; v != NULL; v = v->prox) v->status &= ~(1UL << 1);
     }
-    
 
-    // Refina a busca aplicando uma nova restrição até encontrar o caminho ideal
-    // while (max_dist < menor_max_dist) {
-    //     media = floor(0.5 * (max_dist + menor_max_dist));
-
-    //     max_dist = ceil(busca_dfs(grafo, grafo->inicio, 0, media));
-    //     for(celula_t *v = grafo->inicio; v != NULL; v = v->prox) v->status &= ~(1UL << 1);
-
-    //     if (max_dist == -1) {
-    //         max_dist = media;
-    //     }
-    //     else {
-    //         menor_max_dist = media;
-    //     }
-
-    // }
-
-    return ((int) floor(menor_max_dist));
+    return ((int) ceil(menor_max_dist));
 }
 
 int main(void)
