@@ -8,6 +8,8 @@
  */
 
 
+#include <assert.h>
+#include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,7 +54,47 @@ static void planilha_liberar(planilha_t *p)
     free(p->planilha);
 }
 
-static void ler_formula(celula_t *celula, char *formula)
+static long planilha_coord_to_idx(planilha_t *p, const char *coord)
+{
+    long idx;
+    int linha, ret;
+    char col;
+
+    ret = sscanf(coord, " %c%d", &col, &linha);
+    if (ret != 2 || !isupper(col)) {
+        /* leitura da coordenada a partir do token falhou */
+        fprintf(stderr, "Coordenada invalida em: \"%s\"\n", coord);
+        idx =  -1;
+    }
+    else {
+        /* coordenada válida */
+        idx = (linha - 1) * p->w + (col - 'A');
+    }
+    
+    return idx;
+}
+
+static void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
+{
+    assert(idx < ((size_t) p->w * (size_t) p->h));  // Checa se o índice da matriz é válido
+
+    celula_t *cel_atual = &p->planilha[idx];
+
+    if (cel_atual->tmh_formula == -1) {
+        /* a célula contém apenas um número */
+        printf("%s: %d\n", coord, cel_atual->valor);
+    }
+    else if (cel_atual->formula != NULL) {
+        /* a célula contém uma fórmula */
+        // TODO: Falta implementar
+    }
+    else {
+        /* célula inválida */
+        fprintf(stderr, "Coordenada invalida no índice: %lu\n", idx);
+    }
+}
+
+static void ler_formula(celula_t *celula, char formula[MAX_TOKEN])
 {
     celula->tmh_formula = 0;
     size_t i;
@@ -68,12 +110,10 @@ static void ler_formula(celula_t *celula, char *formula)
     if (celula->formula == NULL)
         exit(1);
     
+    // Copia tokens de entrada para a célula
     for (i = 0; NULL != (token = strtok(formula, " ")); i++) {
-        strncpy(celula->formula[i], token, MAX_TOKEN - 1);
+        memcpy(celula->formula[i], token, MAX_TOKEN * sizeof(*token));
     }
-
-    // É seguro apagar essa linha e trocar o limite do strncpy(), mas aí o compilador reclama.
-    celula->formula[i][MAX_TOKEN - 1] = '\0';
 }
 
 static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
@@ -104,6 +144,7 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
                 /* a célula contém uma fórmula */
                 p->planilha[idx].valor = 0;
                 ler_formula(&p->planilha[idx], token);
+                // TODO: Transformar a notação da fórmula de infixa para pós-fixa
             }
             else {
                 /* a célula contém um número */
@@ -119,14 +160,44 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
     fclose(arquivo_csv);
 }
 
+static void realiza_operacoes(planilha_t *p)
+{
+    size_t idx;
+    char token[MAX_TOKEN];
+    char op;
+
+    while (EOF != scanf(" %c", &op))
+    {
+        // ! Deveria ser (MAX_TOKEN - 1)
+        scanf(" %" STR(MAX_TOKEN) "s", token);
+        idx = planilha_coord_to_idx(p, token);
+
+        if (op == 'G') {
+            /* ler uma célula e calcular o valor atual */
+            planilha_ler_celula(p, token, idx);
+        }
+        else if (op == 'S') {
+            /* atualizar uma célula e calcular o novo valor. É garantido que a célula a ser alterada contém
+            um valor constante, e que o novo valor também será constante */
+            // TODO: Falta implementar essa operação
+        }
+        else {
+            fprintf(stderr, "Operacao invalida!\n");
+        }
+    }
+}
+
 int main(void)
 {
     char nome_arquivo[MAX_NOME];
     planilha_t p;
 
+    // ! Deveria ser (MAX_NOME - 1), mas a linguagem C não permite de maneira prática.
     scanf("%" STR(MAX_NOME) "s %d %d", nome_arquivo, &p.w, &p.h);
     planilha_inicializar(&p);
     ler_arquivo_csv(&p, nome_arquivo);
+
+    realiza_operacoes(&p);
 
     planilha_liberar(&p);
     return 0;
