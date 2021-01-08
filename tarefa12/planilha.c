@@ -15,37 +15,25 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "planilha.h"
+
 /* Máximo de caracteres que uma linha da entrada pode ter */
 #define MAX_LINHA 1024
 /* Máximo de caracteres que o nome do arquivo pode ter */
 #define MAX_NOME 32
-/* Máximo de caracteres que um "token" pode ter */
-#define MAX_TOKEN 4
 
 
 #define XSTR(x) #x
 #define STR(x) XSTR(x)
 
-typedef struct celula_t
-{
-    int valor, tmh_formula;
-    char (*formula)[MAX_TOKEN]; /* vetor de tokens//strings */
-} celula_t;
-
-typedef struct planilha_t
-{
-    celula_t *planilha; /* matriz de células */
-    int w, h;
-} planilha_t;
-
-static void planilha_inicializar(planilha_t *p)
+void planilha_inicializar(planilha_t *p)
 {
     p->planilha = malloc(p->w * p->h * sizeof(celula_t));
     if (p->planilha == NULL)
         exit(1);
 }
 
-static void planilha_liberar(planilha_t *p)
+void planilha_liberar(planilha_t *p)
 {
     size_t tmh_tabela = p->w * p->h;
     for (size_t i = 0; i < tmh_tabela; i++) {
@@ -54,7 +42,7 @@ static void planilha_liberar(planilha_t *p)
     free(p->planilha);
 }
 
-static long planilha_coord_to_idx(planilha_t *p, const char *coord)
+long planilha_coord_to_idx(planilha_t *p, const char *coord)
 {
     long idx;
     int linha, ret;
@@ -92,6 +80,15 @@ static void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
         /* célula inválida */
         fprintf(stderr, "Coordenada invalida no índice: %lu\n", idx);
     }
+}
+
+static void planilha_escrever_celula(planilha_t *p, const char *coord, size_t idx)
+{
+    printf("%s: %d", coord, p->planilha[idx].valor);
+    scanf("%d", &p->planilha[idx].valor);
+
+    // TODO: Recalcular valor da célula se for o caso.
+    printf(" -> %d\n", p->planilha[idx].valor);
 }
 
 static void ler_formula(celula_t *celula, char formula[MAX_TOKEN])
@@ -180,6 +177,7 @@ static void realiza_operacoes(planilha_t *p)
             /* atualizar uma célula e calcular o novo valor. É garantido que a célula a ser alterada contém
             um valor constante, e que o novo valor também será constante */
             // TODO: Falta implementar essa operação
+            planilha_escrever_celula(p, token, idx);
         }
         else {
             fprintf(stderr, "Operacao invalida!\n");
