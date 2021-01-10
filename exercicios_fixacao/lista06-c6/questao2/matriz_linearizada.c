@@ -12,9 +12,7 @@ void le_pontos(double *matriz_pontos, int dim_pontos, int n_pontos)
         {
             scanf(" %lf", &matriz_pontos[i * dim_pontos + j]);
         }
-        
     }
-    
 }
 
 double * calcula_centroide(double *matriz_pontos, int dim_pontos, int n_pontos)
@@ -30,7 +28,6 @@ double * calcula_centroide(double *matriz_pontos, int dim_pontos, int n_pontos)
     }
 
     return centroide;
-    
 }
 
 void libera_centroide(double *centroide)
@@ -54,26 +51,18 @@ double hypot_n_dimensoes(double *ponto, double *centroide, int l, int r)
 {
     double resultado;
     int m = (l + r) / 2;
-    if (l > r)
-    {
+    if (l > r) {
         return 0.0;
     }
-    else if (l == r)
-    {
+    else if (l == r) {
         return fabs(ponto[l] - centroide[l]);
     }
-    else if (r - l == 1)
-    {
+    else if (r - l == 1) {
         return hypot(ponto[l] - centroide[l], ponto[r] - centroide[r]);
     }
-    else
-    {
+    else {
         return hypot(hypot_n_dimensoes(ponto, centroide, l, m), hypot_n_dimensoes(ponto, centroide, m + 1, r));
     }
-    
-    
-    
-    
 }
 
 void imprime_centroide(double *centroide, int dim_pontos, int n_pontos)
