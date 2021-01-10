@@ -52,4 +52,33 @@ void planilha_liberar(planilha_t *p);
 long planilha_coord_to_idx(planilha_t *p, const char *coord);
 
 
+/**
+ * @brief Imprime o valor de uma célula da planilha contendo um número ou uma fórmula.
+ * 
+ * @param p Ponteiro para a planilha.
+ * @param coord String contendo a coluna e a linha da planilha.
+ * @param idx Índice da célula na tabela (redundante ao parâmetro coord, mas evita recalcular o índice).
+ */
+void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx);
+
+
+/**
+ * @brief Atualiza o valor de uma célula com um novo número. A célula não pode conter uma fórmula.
+ * 
+ * @param p Ponteiro para a planilha.
+ * @param coord String contendo a coluna e a linha da planilha.
+ * @param idx Índice da célula na tabela (redundante ao parâmetro coord, mas evita recalcular o índice).
+ */
+void planilha_escrever_celula(planilha_t *p, const char *coord, size_t idx);
+
+
+/**
+ * @brief Divide a string da fórmula em vários "tokens", e armazena-os na célula indicada.
+ * 
+ * @param celula Célula que se deseja atualizar a fórmula.
+ * @param formula String contendo uma fórmula com os símbolos separados por espaços.
+ */
+void planilha_ler_formula(celula_t *celula, char *formula);
+
+
 #endif //TAREFA12_PLANILHA_H

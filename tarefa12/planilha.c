@@ -7,6 +7,12 @@
  * especificados pelo usuário.
  */
 
+// Precisamos dessas coisinhas aqui porque essa linguagem C maravilinda precisa só pra usar o strtok_s()
+#ifdef __STDC_ALLOC_LIB__
+#define __STDC_WANT_LIB_EXT2__ 1
+#else
+#define _POSIX_C_SOURCE 200809L
+#endif
 
 #include <assert.h>
 #include <ctype.h>
@@ -26,6 +32,47 @@
 
 #define XSTR(x) #x
 #define STR(x) XSTR(x)
+
+
+static int resolver_posfixo(planilha_t *p, size_t idx)
+{
+    // TODO: Detectar casos onde há ciclos de referência
+    celula_t *cel_atual = &p->planilha[idx];
+    int idx_token, result;
+    int *stk_num, slen = 0;
+    char c;
+
+    // Não há como ter mais operadores do que operandos
+    stk_num = malloc(sizeof(*stk_num) * (cel_atual->tmh_formula / 2 + 1));
+
+    for (int i = 0; i < cel_atual->tmh_formula; i++)
+    {
+        c = cel_atual->formula[i][0];
+        if (c == '+' || c == '-') {
+            /* o token contém um operador */
+            if (c == '+')
+                stk_num[slen - 2] += stk_num[slen - 1];
+            else if (c == '-')
+                stk_num[slen - 2] -= stk_num[slen - 1];
+
+            slen--;
+        }
+        else {
+            /* o token contém uma referência a outra célula */
+            idx_token = planilha_coord_to_idx(p, cel_atual->formula[i]);
+            if (p->planilha[idx_token].formula == NULL) {
+                stk_num[slen] = p->planilha[idx_token].valor;
+            } else {
+                stk_num[slen] = resolver_posfixo(p, idx_token);
+            }
+            slen++;
+        }
+    }
+    
+    result = stk_num[0];
+    free(stk_num);
+    return result;
+}
 
 void planilha_inicializar(planilha_t *p)
 {
@@ -63,11 +110,12 @@ long planilha_coord_to_idx(planilha_t *p, const char *coord)
     return idx;
 }
 
-static void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
+void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
 {
     assert(idx < ((size_t) p->w * (size_t) p->h));  // Checa se o índice da matriz é válido
 
     celula_t *cel_atual = &p->planilha[idx];
+    int result;
 
     if (cel_atual->tmh_formula == -1) {
         /* a célula contém apenas um número */
@@ -75,7 +123,9 @@ static void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
     }
     else if (cel_atual->formula != NULL) {
         /* a célula contém uma fórmula */
-        // TODO: Falta implementar
+        result = resolver_posfixo(p, idx);
+        cel_atual->valor = result;
+        printf("%s: %d\n", coord, result);
     }
     else {
         /* célula inválida */
@@ -83,24 +133,21 @@ static void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
     }
 }
 
-static void planilha_escrever_celula(planilha_t *p, const char *coord, size_t idx)
+void planilha_escrever_celula(planilha_t *p, const char *coord, size_t idx)
 {
-    // TODO: Falta implementar essa operação
-
+    // É garantido que a célula alterada contém um valor constante
     printf("%s: %d", coord, p->planilha[idx].valor);
     scanf("%d", &p->planilha[idx].valor);
-
-    // TODO: Recalcular valor da célula se for o caso.
     printf(" -> %d\n", p->planilha[idx].valor);
 }
 
-static void ler_formula(celula_t *celula, char *formula)
+void planilha_ler_formula(celula_t *celula, char *formula)
 {
     celula->tmh_formula = 0;
     size_t i;
-    char *token;
+    char *token, *saveptr;
 
-    // Pula o símbolo '=', que é inútil
+    // Pula o símbolo '=' e o espaço, que são inúteis
     if (formula[0] == '=') formula += 2;
 
     // Conta o número de tokens antes de alocar o vetor de tokens
@@ -115,10 +162,10 @@ static void ler_formula(celula_t *celula, char *formula)
         exit(1);
     
     // Copia tokens de entrada para a célula
-    token = strtok(formula, " ");
+    token = strtok_r(formula, " ", &saveptr);
     for (i = 0; token != NULL; i++) {
         strcpy(celula->formula[i], token);
-        token = strtok(NULL, " ");
+        token = strtok_r(NULL, " ", &saveptr);
     }
 }
 
@@ -159,6 +206,12 @@ static void infixo_para_posfixo(celula_t *celula)
             pilha_push(&stk_result, celula->formula[i]);
         }
     }
+
+    // Desempilha todos os operadores restantes
+    while (stk_op.slen > 0)
+    {
+        pilha_push(&stk_result, pilha_pop(&stk_op));
+    }
     
     // ? Aqui caberia um realloc para economizar um pouco de memória, se valesse a pena.
     memcpy(celula->formula, stk_result.stk, stk_result.slen * sizeof(*stk_result.stk));
@@ -171,7 +224,7 @@ static void infixo_para_posfixo(celula_t *celula)
 static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
 {
     char linha[MAX_LINHA];
-    char *token, *endptr;
+    char *token, *endptr, *saveptr;
     size_t i, j, idx;
     int num;
 
@@ -184,7 +237,7 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
     // Lê o arquivo linha por linha
     for (i = 0; NULL != fgets(linha, MAX_LINHA, arquivo_csv); i++)
     {
-        token = strtok(linha, ","); // Inicializa strtok()
+        token = strtok_r(linha, ",", &saveptr); // Inicializa strtok()
 
         // Divide a linha em células da tabela
         for (j = 0; token != NULL; j++)
@@ -195,7 +248,7 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
             if (token == endptr) {
                 /* a célula contém uma fórmula */
                 p->planilha[idx].valor = 0;
-                ler_formula(&p->planilha[idx], token);
+                planilha_ler_formula(&p->planilha[idx], token);
                 infixo_para_posfixo(&p->planilha[idx]);
             }
             else if (num != 0 || errno == 0) {
@@ -205,7 +258,7 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
                 p->planilha[idx].tmh_formula = -1;
             }
 
-            token = strtok(NULL, ",");  // Avança para o pŕoximo token
+            token = strtok_r(NULL, ",", &saveptr);  // Avança para o pŕoximo token
         }
     }
     
