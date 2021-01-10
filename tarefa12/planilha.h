@@ -17,6 +17,15 @@ typedef struct celula_t
 {
     int valor, tmh_formula;
     char (*formula)[MAX_TOKEN]; /* vetor de tokens//strings */
+
+    /**
+     * Guarda algumas informações úteis sobre cada célula
+     * 
+     * bit 0: célula já descoberta
+     * bit 1: célula já visitada/finalizada
+     * bit 2: célula contém um ciclo
+     * bits 3-7: reservados! */
+    unsigned char status;
 } celula_t;
 
 typedef struct planilha_t

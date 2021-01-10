@@ -34,13 +34,15 @@
 #define STR(x) XSTR(x)
 
 
-static int resolver_posfixo(planilha_t *p, size_t idx)
+static int resolver_posfixo(planilha_t *p, int idx, int *erro_ciclo)
 {
-    // TODO: Detectar casos onde há ciclos de referência
-    celula_t *cel_atual = &p->planilha[idx];
+    celula_t *vizinho, *cel_atual = &p->planilha[idx];
     int idx_token, result;
     int *stk_num, slen = 0;
     char c;
+
+    // Marca como descoberto
+    cel_atual->status |= (1UL << 0);
 
     // Não há como ter mais operadores do que operandos
     stk_num = malloc(sizeof(*stk_num) * (cel_atual->tmh_formula / 2 + 1));
@@ -60,16 +62,32 @@ static int resolver_posfixo(planilha_t *p, size_t idx)
         else {
             /* o token contém uma referência a outra célula */
             idx_token = planilha_coord_to_idx(p, cel_atual->formula[i]);
-            if (p->planilha[idx_token].formula == NULL) {
-                stk_num[slen] = p->planilha[idx_token].valor;
-            } else {
-                stk_num[slen] = resolver_posfixo(p, idx_token);
+            vizinho = &p->planilha[idx_token];
+
+            if ((vizinho->status & 1UL) || (vizinho->status >> 2 & 1UL)) {
+                /* se o vizinho já foi descoberto ou já tinha ciclo, ele contém um ciclo */
+                cel_atual->status |= (1UL << 2); // ...e a própria célula atual também contém um ciclo
+                *erro_ciclo = 1;
+                result = 0;
+                break;
+            }
+            else if (vizinho->formula == NULL || (vizinho->status >> 1) & 1UL) {
+                /* se o vizinho for um número, ou então uma fórmula já finalizada, mas sem ciclo */
+                stk_num[slen] = vizinho->valor;
+            }
+            else {
+                /* o vizinho contém uma fórmula ainda não resolvida */
+                stk_num[slen] = resolver_posfixo(p, idx_token, erro_ciclo);
             }
             slen++;
         }
     }
     
-    result = stk_num[0];
+    cel_atual->status &= ~(1UL << 0); // Desmarca a célula como descoberta
+    cel_atual->status |= (1UL << 1); // Finaliza célula
+
+    if (!(*erro_ciclo)) result = stk_num[0]; // Se tudo correu bem, o valor que sobrou na pilha é o resultado
+    cel_atual->valor = result;
     free(stk_num);
     return result;
 }
@@ -115,7 +133,7 @@ void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
     assert(idx < ((size_t) p->w * (size_t) p->h));  // Checa se o índice da matriz é válido
 
     celula_t *cel_atual = &p->planilha[idx];
-    int result;
+    int result, erro_ciclo = 0;
 
     if (cel_atual->tmh_formula == -1) {
         /* a célula contém apenas um número */
@@ -123,9 +141,18 @@ void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
     }
     else if (cel_atual->formula != NULL) {
         /* a célula contém uma fórmula */
-        result = resolver_posfixo(p, idx);
+        result = resolver_posfixo(p, idx, &erro_ciclo);
+        
+        // Limpa status das células percorridas na busca em profundidade na hora de resolver a fórmula.
+        // TODO: Percorrer apenas as células com fórmulas, ao invés da planilha toda
+        for (size_t i = 0; i < p->w * p->h; i++) p->planilha[i].status &= ~(1UL << 1);
+        
         cel_atual->valor = result;
-        printf("%s: %d\n", coord, result);
+        if (!erro_ciclo) {
+            printf("%s: %d\n", coord, result);
+        } else {
+            printf("%s: #ERRO#\n", coord);
+        }
     }
     else {
         /* célula inválida */
@@ -257,7 +284,7 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
                 p->planilha[idx].formula = NULL;
                 p->planilha[idx].tmh_formula = -1;
             }
-
+            p->planilha[idx].status = 0x0;
             token = strtok_r(NULL, ",", &saveptr);  // Avança para o pŕoximo token
         }
     }
