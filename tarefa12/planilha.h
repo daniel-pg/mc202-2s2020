@@ -11,7 +11,7 @@
 #define TAREFA12_PLANILHA_H
 
 /* Máximo de caracteres que um "token" pode ter */
-#define MAX_TOKEN 4
+#define MAX_TOKEN 6
 
 typedef struct celula_t
 {
