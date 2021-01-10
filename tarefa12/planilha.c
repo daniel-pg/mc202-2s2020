@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "planilha.h"
+#include "pilha.h"
 
 /* Máximo de caracteres que uma linha da entrada pode ter */
 #define MAX_LINHA 1024
@@ -84,6 +85,8 @@ static void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
 
 static void planilha_escrever_celula(planilha_t *p, const char *coord, size_t idx)
 {
+    // TODO: Falta implementar essa operação
+
     printf("%s: %d", coord, p->planilha[idx].valor);
     scanf("%d", &p->planilha[idx].valor);
 
@@ -91,16 +94,20 @@ static void planilha_escrever_celula(planilha_t *p, const char *coord, size_t id
     printf(" -> %d\n", p->planilha[idx].valor);
 }
 
-static void ler_formula(celula_t *celula, char formula[MAX_TOKEN])
+static void ler_formula(celula_t *celula, char *formula)
 {
     celula->tmh_formula = 0;
     size_t i;
     char *token;
 
+    // Pula o símbolo '=', que é inútil
+    if (formula[0] == '=') formula += 2;
+
     // Conta o número de tokens antes de alocar o vetor de tokens
-    while (NULL != (token = strchr(formula, ' '))) {
+    token = strchr(formula, ' ');
+    while (token != NULL) {
         celula->tmh_formula++;
-        token++;
+        token = strchr(token+1, ' ');
     }
 
     celula->formula = malloc(celula->tmh_formula * sizeof(*celula->formula));
@@ -108,9 +115,57 @@ static void ler_formula(celula_t *celula, char formula[MAX_TOKEN])
         exit(1);
     
     // Copia tokens de entrada para a célula
-    for (i = 0; NULL != (token = strtok(formula, " ")); i++) {
-        memcpy(celula->formula[i], token, MAX_TOKEN * sizeof(*token));
+    token = strtok(formula, " ");
+    for (i = 0; token != NULL; i++) {
+        strcpy(celula->formula[i], token);
+        token = strtok(NULL, " ");
     }
+}
+
+static void infixo_para_posfixo(celula_t *celula)
+{
+    // Célula ou fórmula inválida
+    if (!celula || !celula->formula) {
+        fprintf(stderr, "Conversao da notacao de infixo para pos-fixo falhou.");
+        return;
+    }
+
+    pilha_t stk_op, stk_result;
+    int i;
+    char c;
+
+    // TODO: Reimplementar essa função sem a pilha de resultado, se for possível
+    pilha_inicializar(&stk_op, celula->tmh_formula);
+    pilha_inicializar(&stk_result, celula->tmh_formula);
+
+    for (i = 0; i < celula->tmh_formula; i++)
+    {
+        /* Lê primeiro caractere do token atual para determinar se ele contém um operador */
+        c = celula->formula[i][0];
+
+        if (c == '(' || c == '+' || c == '-') {
+            /* se o token for um operador, adiciona-o à pilha de operadores */
+            pilha_push(&stk_op, celula->formula[i]); // TODO: Implementar precedência de operadores?
+        } else if (c == ')') {
+            /* desempilha todos os elementos até fechar os parênteses */
+            while (stk_op.stk[stk_op.slen - 1][0] != '(')
+            {
+                // ? Se não fosse garantido que a fórmula é válida, deveríamos também checar que: pilha.tmh > 0
+                pilha_push(&stk_result, pilha_pop(&stk_op));
+            }
+            pilha_pop(&stk_op); // Remove o "abre parênteses"
+        } else {
+            /* se o token for um operando, adiciona-o ao resultado */
+            pilha_push(&stk_result, celula->formula[i]);
+        }
+    }
+    
+    // ? Aqui caberia um realloc para economizar um pouco de memória, se valesse a pena.
+    memcpy(celula->formula, stk_result.stk, stk_result.slen * sizeof(*stk_result.stk));
+    celula->tmh_formula = stk_result.slen;
+
+    free(stk_op.stk);
+    free(stk_result.stk);
 }
 
 static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
@@ -137,13 +192,13 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
             idx = i * p->w + j; // Índice da célula atual
 
             num = (int) strtol(token, &endptr, 10);
-            if (num == 0 && errno != 0) {
+            if (token == endptr) {
                 /* a célula contém uma fórmula */
                 p->planilha[idx].valor = 0;
                 ler_formula(&p->planilha[idx], token);
-                // TODO: Transformar a notação da fórmula de infixa para pós-fixa
+                infixo_para_posfixo(&p->planilha[idx]);
             }
-            else {
+            else if (num != 0 || errno == 0) {
                 /* a célula contém um número */
                 p->planilha[idx].valor = num;
                 p->planilha[idx].formula = NULL;
@@ -176,7 +231,6 @@ static void realiza_operacoes(planilha_t *p)
         else if (op == 'S') {
             /* atualizar uma célula e calcular o novo valor. É garantido que a célula a ser alterada contém
             um valor constante, e que o novo valor também será constante */
-            // TODO: Falta implementar essa operação
             planilha_escrever_celula(p, token, idx);
         }
         else {
