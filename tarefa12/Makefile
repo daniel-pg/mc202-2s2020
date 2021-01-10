@@ -22,13 +22,15 @@ LD_FLAGS=\
 all: planilha
 
 # Executável
-planilha: planilha.o
-	$(CC) -o planilha planilha.o $(LD_FLAGS)
+planilha: planilha.o pilha.o
+	$(CC) -o planilha planilha.o pilha.o $(LD_FLAGS)
 
 # Objetos
 planilha.o: planilha.c
 	$(CC) -o planilha.o planilha.c $(CC_FLAGS)
 
+pilha.o: pilha.c
+	$(CC) -o pilha.o pilha.c $(CC_FLAGS)
 
 .PHONY: clean
 clean:
