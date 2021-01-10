@@ -2,14 +2,15 @@
 // Created by danielpg on 23/10/2020.
 //
 
-#define N_CORES_PRIMARIAS 3
+#include "tintas.h"
 
-struct tinta
+tinta mistura_tintas(tinta t1, tinta t2)
 {
-    double cores[N_CORES_PRIMARIAS];
-};
+    tinta mistura;
 
-void mistura_tintas()
-{
-    return;
+    for (int i = 0; i < N_CORES_PRIMARIAS; i++) {
+        mistura.cores[i] = 0.5 * (t1.cores[i] + t2.cores[i]);
+    }
+    
+    return mistura;
 }
