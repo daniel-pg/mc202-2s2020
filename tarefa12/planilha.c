@@ -142,10 +142,10 @@ void planilha_ler_celula(planilha_t *p, const char *coord, size_t idx)
     else if (cel_atual->formula != NULL) {
         /* a célula contém uma fórmula */
         result = resolver_posfixo(p, idx, &erro_ciclo);
-        
+
         // Limpa status das células percorridas na busca em profundidade na hora de resolver a fórmula.
         // TODO: Percorrer apenas as células com fórmulas, ao invés da planilha toda
-        for (size_t i = 0; i < p->w * p->h; i++) p->planilha[i].status &= ~(1UL << 1);
+        for (int i = 0; i < p->w * p->h; i++) p->planilha[i].status &= ~(1UL << 1);
         
         cel_atual->valor = result;
         if (!erro_ciclo) {
@@ -264,6 +264,7 @@ static void ler_arquivo_csv(planilha_t *p, const char *nome_arquivo)
     // Lê o arquivo linha por linha
     for (i = 0; NULL != fgets(linha, MAX_LINHA, arquivo_csv); i++)
     {
+        linha[strcspn(linha, "\n")] = '\0'; // Remove quebra de linha pestilenta
         token = strtok_r(linha, ",", &saveptr); // Inicializa strtok()
 
         // Divide a linha em células da tabela
