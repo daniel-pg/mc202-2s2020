@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa01.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:16:58 GMT -->
+<head>
+    <title>
+        Tarefa 1 - Mega da Virada &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 1 - Mega da Virada
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      27/09/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>O volante da Mega Sena consiste em um jogo de 60 números à disposição
+dos apostadores. Cada apostador pode apostar de 6 a 15 números do volante.</p>
+
+<p><img src="img/mega-sena.gif" alt="" /></p>
+
+<p>A Mega Sena da Virada é uma aposta especial em que prêmio principal é pago para
+quem acertar os 6 números sorteados dentre os 60 disponíveis no volante. Ainda
+é possível ganhar ao acertar 4 ou 5 números, onde a premiação é dividida
+proporcionalmente conforme a seguinte distribuição:</p>
+
+<ul>
+<li>62% - primeira faixa - seis acertos (sena);</li>
+<li>19% - segunda faixa - cinco acertos (quina);</li>
+<li>19% - terceira faixa - quatro acertos (quadra).</li>
+</ul>
+
+<p>Os ganhadores na mesma faixa dividem o prêmio igualmente entre si.</p>
+
+<p>A sua tarefa é escrever um programa em C chamado <code>megasena.c</code> que tem como entrada
+várias apostas e imprime na saída padrão os valores dos prêmios a serem recebidos
+pelos ganhadores.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A entrada é composta por várias linhas. A primeira linha da entrada contém um
+inteiro $m$ e um número de ponto flutuante $n$ que indicam, respectivamente,
+o número de apostadores e o valor total do prêmio. Em seguida são dadas $m$
+matrizes binárias de dimensão 6x10, onde 1s (uns) indicam os números marcados
+pelo apostador correspondente; e 0s (zeros) indicam o contrário. A última linha
+contém os 6 números sorteados.</p>
+
+<h3 id="restrições">Restrições:</h3>
+
+<ul>
+<li>5 ≤ $m$ ≤ 1000</li>
+<li>1e6 ≤ $n$ ≤ 3e9</li>
+</ul>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<p>No exemplo a seguir, a primeira matriz dada como entrada (linhas 2-7) corresponde
+ao volante da figura acima.</p>
+
+<pre><code class="language-text">5 1000000.00
+0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 1 1 0 0
+0 1 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 1 1 0 0
+0 0 0 0 0 0 0 1 0 0
+1 0 0 1 1 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 1 0
+0 1 0 0 0 1 0 0 0 1
+0 0 0 0 0 1 1 0 0 0
+0 0 1 0 0 0 0 1 0 0
+1 0 0 0 0 1 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 1
+0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 1
+0 0 0 0 0 0 1 1 0 0
+0 0 0 0 0 0 0 1 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0
+28 27 20 2 45 38</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída do seu programa deverá apresentar $m$ linhas, onde a <em>i</em>-ésima linha
+contém o valor prêmio a receber para o <em>i</em>-ésimo apostador, conforme a distribuição
+do valor destinado ao pagamento dos prêmios. O valor do prêmio terá precisão de
+duas casas decimais.</p>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">95000.00
+620000.00
+95000.00
+95000.00
+95000.00
+</code></pre>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa01.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:16:59 GMT -->
+</html>

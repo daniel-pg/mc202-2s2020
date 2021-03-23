@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa08.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+<head>
+    <title>
+        Tarefa 8 - Listas Legais &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 8 - Listas Legais
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      22/11/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<h1 id="introdução">Introdução</h1>
+
+<p>David Neto (<em>DN</em>) gosta muito de observar listas de números, o suficiente para apelidar algumas delas como <em>listas legais</em>. Uma lista <em>L</em> é considerada legal por DN se, e somente se, para todo elemento <em>x</em> pertencente a <em>L</em> existirem exatamente <em>x</em> cópias de <em>x</em>. Por exemplo, a lista <strong>A = {3,2,1,2,3,3}</strong> e <strong>B = {}</strong> são listas legais, já a lista <strong>C = {1,2,2,3,4}</strong> não é uma lista legal.</p>
+
+<p>Certo dia, <em>DN</em> recebeu uma lista muito grande de números que volta e meia crescia mais. Porém, ele estava insatisfeito com essa lista e gostaria de saber a menor quantidade de números que deveriam ser retirados da lista para que ela finalmente se tornasse uma <em>lista legal</em>. Como a lista de números pode acabar tendo mais elementos do que <em>DN</em> pode contar, ele pediu a sua ajuda para responder essa questão.</p>
+
+<p>É obrigatório utilizar uma árvore binária <strong>balanceada</strong> para a resolução desta atividade. Porém, você pode escolher a árvore balanceada que desejar: rubro-negra, AVL, etc.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A primeira linha da entrada consiste de dois inteiros <em>n</em> e <em>k</em> que indicam, respectivamente, a quantidade de números inicialmente na lista de <em>DN</em> e o número de operações que ele realizará. A linha seguinte conterá os <em>n</em> inteiros da lista de <em>DN</em>. Cada uma das <em>k</em> linhas seguintes conterá uma operação que <em>DN</em> deseja realizar. Cada uma dessas operações tem uma das formas a seguir:</p>
+
+<ul>
+<li><strong>1 <em>j</em></strong>, indicando que <em>DN</em> escolheu a operação <strong>1</strong> e deseja adicionar o inteiro <em>j</em> na sua lista atual;</li>
+<li><strong>2 <em>m</em></strong>, indicando que <em>DN</em> escolheu a operação <strong>2</strong> e deseja saber quantas vezes o inteiro <em>m</em> aparece na lista;</li>
+<li><strong>3</strong>, indicando que <em>DN</em> escolheu a operação <strong>3</strong> e deseja saber a menor quantidade de números que devem ser retirados da lista atual para que ela se torne legal.</li>
+</ul>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<pre><code class="language-text">5 5
+123456789 987654321 1234567890 9987654321 5
+2 123456789
+2 987654321
+2 1234567890
+2 9987654321
+3
+</code></pre>
+
+<h3 id="restrições">Restrições</h3>
+
+<ul>
+<li>Os elementos da lista possuem tamanho de no máximo 10^10</li>
+</ul>
+
+<h1 id="saída">Saída</h1>
+
+<p>Toda vez que as operações <strong>&lsquo;2&rsquo;</strong> e <strong>&lsquo;3&rsquo;</strong> aparecerem, deve-se imprimir um inteiro representando o resultado da operação e, após isso, uma quebra de linha.</p>
+
+<h2 id="exemplo-de-saida">Exemplo de saida</h2>
+
+<pre><code class="language-text">1
+1
+1
+1
+5
+</code></pre>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa08.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa11.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:06 GMT -->
+<head>
+    <title>
+        Tarefa 11 - Pokemon Teclado &amp; Mouse &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 11 - Pokemon Teclado &amp; Mouse
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      20/12/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>Red é um famoso treinador Pokémon, protagonista da primeira série de
+jogos lançada em 1996. Em uma realidade paralela, a mãe de Red
+deixou-o seguir o sonho de ser um mestre Pokémon, desde que ele
+mantivesse suas obrigações. Uma delas é fazer uma boa faculdade. Por
+isso, Red escolheu estudar Computação na Unicamp, onde além de uma
+educação de qualidade, ele teria acesso a muitos ginásios e pokestops.</p>
+
+<p><img src="img/caminho_lugia_menor.jpg" alt="Lugia" /></p>
+
+<p>O problema é que agora ele precisa organizar a sua rotina e quer
+maximizar a sua produtividade. Na sua
+jornada-para-se-tornar-um-mestre-pokemon, Red quer capturar os
+Pokémon disponíveis em Raids, aproveitando para pegar os itens das
+Pokestops no caminho. Atualmente, a prioridade é capturar um Lugia em
+alguma Raid por perto, mas ele não quer ficar muito tempo caminhando
+sem jogar.</p>
+
+<p>Red descobriu um mapa cartesiano com todas as pokestops e Lugias da
+Unicamp! Para cada ponto de interesse, ele conhece as coordenadas $x$
+e $y$ em metros a partir da origem do mapa, o Instituto de Computação.
+Agora, Red precisa de sua ajuda para planejar um caminho que sai da
+sua posição atual, passa por uma sequência de pokestops e termina em
+alguma Raid com um Lugia. Red gosta de andar e não se importa com a
+distância total que caminhará, mas gostaria de encontrar um percurso
+em que não fique muito tempo caminhando continuamente, sem parar para
+jogar.</p>
+
+<p>A sua tarefa é encontrar um percurso da posição atual até um Lugia em
+que a maior distância entre duas paradas seja mínima.</p>
+
+<h2 id="critérios">Critérios</h2>
+
+<p>O problema deve ser resolvido usando uma estrutura na forma de grafo.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A primeira linha contém as coordenadas $x$ e $y$ em que Red se
+encontra. Cada uma das linhas seguintes corresponde às coordenadas $x$
+e $y$ de um ponto de interesse, que pode ser um Pokestop ou uma Raid
+com um Lugia, conforme o exemplo a seguir.</p>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<pre><code class="language-text">-0.344 -0.208
+8.585 9.022 pokestop
+6.573 7.325 pokestop
+-0.344 -0.208 pokestop
+5.825 8.701 pokestop
+0.659 -1.099 pokestop
+-0.890 1.296 Lugia
+0.789 2.238 pokestop
+8.261 7.747 pokestop
+0.020 0.388 pokestop
+5.783 7.098 pokestop
+7.885 8.058 pokestop
+0.587 0.139 pokestop
+</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída deve conter o menor número inteiro de metros que limita a
+distância euclidiana entre duas paradas de um percurso entre a origem
+e um Lugia.</p>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">2
+</code></pre>
+
+<h1 id="correção">Correção</h1>
+
+<p>Esta tarefa será corrigida automaticamente e por um monitor. O teste
+automático será realizado sempre que você realizar um <code>push</code>. Para
+indicar que a sua tarefa está pronta para a correção pelo monitor,
+remova o arquivo <code>nao_corrigir.txt</code> do seu repositório antes de dar
+<code>commit</code>.</p>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa11.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:07 GMT -->
+</html>

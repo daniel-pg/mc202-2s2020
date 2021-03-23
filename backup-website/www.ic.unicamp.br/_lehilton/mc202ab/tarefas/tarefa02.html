@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa02.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:16:59 GMT -->
+<head>
+    <title>
+        Tarefa 2 - Professor Carlos &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 2 - Professor Carlos
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      04/10/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<h1 id="introdução">Introdução</h1>
+
+<p>Carlos é um professor de Filosofia que adora saber informações de seus alunos, pois ele acha relevante para sua aula. Porém, com o passar dos anos, Carlos tem recebido cada vez mais turmas e as turmas estão cada vez maiores. Por isso, ele precisa da sua ajuda para continuar prestando uma aula de alta qualidade. Para isso, Carlos precisa de um sistema capaz de realizar algumas operações.</p>
+
+<p>As operações que o professor Carlos deseja são:</p>
+
+<ol>
+<li><p>Dado um inteiro <em>j</em>, deve-se retornar o nome do aluno mais novo da turma <em>j</em>.</p></li>
+
+<li><p>Dado um inteiro <em>j</em>, deve-se retornar o sobrenome do aluno mais velho da turma <em>j</em>.</p></li>
+
+<li><p>O nome do aluno mais velho dentre todas as turmas.</p></li>
+
+<li><p>Descobrir o sobrenome do aluno mais novo dentre todas as turmas.</p></li>
+
+<li><p>Dada uma string <em>s</em>, informar quantos alunos, podendo ser de qualquer turma, possuem <em>s</em> como substring em seu nome. Por exemplo, se <em>s</em> for <code>&quot;los&quot;</code>, então o nome <code>&quot;Carlos&quot;</code> possui <code>&quot;los&quot;</code> como substring.</p></li>
+
+<li><p>Dados <em>j</em>, <em>nome</em>, <em>sobrenome</em>, <em>dia</em>, <em>mês</em>, e <em>ano de nascimento</em>, deve-se adicionar um novo aluno contendo o <em>nome</em>, <em>sobrenome</em>, <em>dia</em>, <em>mês</em> e <em>ano de nascimento</em>, informados previamente, na <em>j</em>-ésima turma. Após adicionado, deve-se retornar quantos alunos a turma <em>j</em> possui no momento.</p></li>
+
+<li><p>Dado <em>j</em>, deve-se remover o ultimo aluno adicionado na turma <em>j</em>. Após removido, deve-se retornar quantos alunos a turma <em>j</em> possui no momento.</p></li>
+</ol>
+
+<p>Em caso de empate nos itens 1-4, deve-se informar o aluno com menor nome em ordem lexicográfica e, caso persista o empate, deve-se informar o aluno com menor sobrenome em ordem lexicográfica. Considere que a primeira turma possui índice 0, a segunda possui índice 1 e assim sucessivamente.</p>
+
+<p>Sua tarefa é escrever um programa que, dadas as informações dos alunos e uma sequência de operações que Carlos deseja, realiza cada uma das operações devolvendo as informações solicitadas.
+Seu programa será dividido em três arquivos:</p>
+
+<ol>
+<li><p>O arquivo de cabeçalho <code>professor_carlos.h</code> fornecido contém a interface de alguns tipos abstratos (TADs) que devem ser utilizados nessa tarefa. Você não precisa alterar esse arquivo.</p></li>
+
+<li><p>As funções que implementam as operações sobre os TADs devem estar no no arquivo <code>professor_carlos_funcoes.c</code>, assim como outras funções auxiliarem que forem necessárias para implementar essas operações. Não adicione funções nesse arquivo que não sejam necessárias para a implementação dos TADs (e.g., não adicione funções de entrada e saída).</p></li>
+
+<li><p>O arquivo <code>professor_carlos_main.c</code> deve conter apenas a função <code>main()</code> e funções auxiliares de entrada e saída para essa tarefa, caso seja necessário. Esse arquivo é apenas o “cliente” dos TADs.</p></li>
+</ol>
+
+<p>Não é permitido a utilização de funções prontas, exceto as funções da biblioteca <code>&lt;stdio.h&gt;</code>.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A primeira linha da entrada consiste de dois inteiros <em>n</em> e <em>k</em> que indicam, respectivamente, o número de turmas que Carlos leciona e o número de operações que ele deseja realizar. Depois disso, para cada uma das $n$ turmas, a entrada possui um inteiro <em>m</em> que indica quantos alunos a turma possui seguido de <em>m</em> linhas com os dados dos alunos. Cada aluno é representado em uma linha contendo <em>nome</em>, <em>sobrenome</em>, <em>dia</em>, <em>mês</em> e <em>ano de nascimento</em>.</p>
+
+<p>Terminada a entrada dos dados dos alunos de todas as turmas, cada uma das próximas <em>k</em> linhas inicia com um inteiro <em>X</em>, indicando a operação escolhida por Carlos, de acordo com a enumeração acima além das outras informações necessárias para realizar a operação <em>X</em> como detalhado anteriormente.</p>
+
+<h2 id="exemplo-de-entrada">Exemplo de Entrada</h2>
+
+<p>No exemplo a seguir, a primeira turma possui 5 alunos e a segunda turma, 3 alunos.</p>
+
+<pre><code class="language-text">2 3
+5
+xenia tullez 10 1 2007
+roselia valiente 27 7 1988
+roselia cotrim 28 12 1986
+carina ferreyra 11 9 2016
+eudes valiente 12 5 2008
+3
+virginia linares 16 8 2003
+eudes linares 4 10 2007
+feliciana bonilla 24 4 2020
+1 1
+6 1 esmeralda cipriano 25 12 2002
+2 1
+</code></pre>
+
+<h3 id="restrições">Restrições</h3>
+
+<ul>
+<li><em>n</em> ≤ 50</li>
+<li><em>m</em> ≤ 40</li>
+<li><em>k</em> ≤ 50</li>
+<li>tamanho de <em>s</em> ≤ 5</li>
+<li>tamanho de <em>nome</em> ≤ 14</li>
+<li>tamanho de <em>sobrenome</em> ≤ 14</li>
+<li>em nenhum momento as turmas possuirão mais que 50 alunos</li>
+</ul>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída é composta por <em>k</em> linhas, cada uma contendo a resposta de uma das operações, na ordem em que foram descritas na entrada.</p>
+
+<h2 id="exemplo-de-saida">Exemplo de Saida</h2>
+
+<pre><code class="language-text">feliciana
+4
+cipriano
+</code></pre>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa02.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:16:59 GMT -->
+</html>

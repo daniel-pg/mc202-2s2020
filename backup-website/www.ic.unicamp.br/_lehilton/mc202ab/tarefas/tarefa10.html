@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa10.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:06 GMT -->
+<head>
+    <title>
+        Tarefa 10 - Corretor &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 10 - Corretor
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      13/12/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>David Neves (<em>DN</em>) está prestes a defender o seu mestrado e está correndo contra o tempo para entregar a versão final de sua dissertação. Como ele tem virado a noite escrevendo e muitas vezes dormido mal, <em>DN</em> acaba cometendo vários erros de digitação durante a escrita do texto.</p>
+
+<p><em>DN</em> precisa da sua ajuda para corrigir os erros de digitação, que podem ser esquecer de digitar um caractere, inserir um caracter a mais, ou digitar um caractere trocado.</p>
+
+<p>Sua tarefa é fazer um programa em C com nome <code>corretor.c</code> que, dada uma lista de palavras que corresponde a um dicionário, indica o nível de correção de cada palavra do texto. Os níveis são:</p>
+
+<ul>
+<li><strong>verde</strong>: a palavra está correta (isso é, está no dicionário);</li>
+<li><strong>amarelo</strong>: a palavra possui exatamente um erro de digitação;</li>
+<li><strong>vermelho</strong>: quando a palavra possui pelo menos dois erros de digitação.</li>
+</ul>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A entrada é composta por várias linhas. A primeira linha contém dois inteiros $n$ e $q$ que indicam, respectivamente, o número de palavras no dicionário e o número de palavras do texto. Em seguida são dadas $n$ palavras que compõem o dicionário e $q$ linhas com as palavras que devem ser buscadas.</p>
+
+<h3 id="restrições">Restrições:</h3>
+
+<ul>
+<li>5 ≤ $n$ ≤ 100</li>
+<li>3 ≤ $q$ ≤ 100</li>
+<li>Todos os caracteres são minúsculos, as palavras possuem no máximo 25 caracteres e <strong>não</strong> possuem caracteres especiais.</li>
+</ul>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<p>Observe que a palavra <code>intiera</code> possui dois caracteres trocados, <code>i</code> por <code>e</code> e <code>e</code> por <code>i</code>.</p>
+
+<pre><code class="language-text">5 3
+algoritmos
+demonstracao
+linear
+inteira
+exato
+algoritmoss
+intiera
+linear</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída do seu programa deverá apresentar $q$ linhas, onde a <em>i</em>-ésima linha
+contém o nível de correção da <em>i</em>-ésima palavra buscada: <code>verde</code>, <code>amarelo</code> ou <code>vermelho</code>.</p>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">amarelo
+vermelho
+verde</code></pre>
+
+<h1 id="critérios">Critérios</h1>
+
+<p>É <strong>obrigatório</strong> o uso de <em>tabela de hashing</em> nesta tarefa.</p>
+
+<h1 id="correção">Correção</h1>
+
+<p>Esta tarefa será corrigida automaticamente e por um monitor. O teste automático será realizado sempre que você realizar um <code>push</code>. Para indicar que a sua tarefa está pronta para a correção pelo monitor, remova o arquivo <code>nao_corrigir.txt</code> do seu repositório antes de dar <code>commit</code>.</p>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa10.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:06 GMT -->
+</html>

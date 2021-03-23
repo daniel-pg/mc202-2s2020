@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa09.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+<head>
+    <title>
+        Tarefa 9 - Dia de Uber &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 9 - Dia de Uber
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      29/11/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<h1 id="introdução">Introdução</h1>
+
+<p><img src="img/diadeuber.jpg" alt="" /></p>
+
+<p><strong>Fonte</strong>: <a href="https://blogdaboitempo.com.br/2018/06/18/michael-lowy-o-privilegio-da-servidao/">Blog da Boitempo</a></p>
+
+<p>Quem tem dificuldade financeira recorre a todo tipo de trabalho, por mais precário que seja. Sobreviver é a prioridade, principalmente em momentos de crise econômica. Nos dias atuais, são vários os trabalhos insalubres mediados por empresas de aplicativos que, ao se distanciarem do trabalhador(a), conseguem <a href="https://www.uol.com.br/tilt/noticias/redacao/2020/09/08/apps-resistem-a-entregar-ajuda-financeira-do-covid-dizem-motoristas.htm">super explorá-lo(a)</a> sem precisar garantir as condições mínimas de trabalho. Esse fenômeno é chamado de <a href="https://www.uol.com.br/ecoa/ultimas-noticias/2020/07/02/ideia-de-que-nao-ha-opcao-a-uberizacao-valida-exploracao-diz-pesquisadora.htm"><em>uberização</em></a>.</p>
+
+<p>Um exemplo são motoristas de aplicativos. <a href="https://diariodonordeste.verdesmares.com.br/negocios/motoristas-de-aplicativos-dirigem-ate-15-horas-por-dia-entenda-o-que-e-a-uberizacao-do-trabalho-1.2107103">Relatos</a> contam jornadas de até 15 horas diárias para atingir uma modesta meta pessoal. Com a inexistência do <a href="https://www.uol.com.br/tilt/noticias/reuters/2020/08/12/uber-pode-ser-forcada-a-encerrar-operacoes-na-california.htm">vínculo empregatício</a>, motoristas encontram dificuldades em exigir melhores <a href="https://www.uol.com.br/tilt/noticias/bbc/2020/07/01/com-pandemia-entregadores-de-app-tem-mais-trabalho-menos-renda-e-maior-risco-a-saude.htm/">condições de trabalho</a> e precisam recorrer a táticas para lidar com a <a href="https://www.uol.com.br/tilt/noticias/redacao/2019/11/14/inseguranca-as-taticas-que-motoristas-de-apps-como-uber-usam-contra-crimes.htm">insegurança</a> diária no trabalho. O repórter Carlos Messias trabalhou como motorista de Uber por um mês e relatou sua experiência na revista <a href="https://vejasp.abril.com.br/cidades/uber-teste-motorista-um-mes/">Veja São Paulo</a>.</p>
+
+<p>Neste trabalho, iremos simular a sua jornada diária. Mais especificamente, iremos gerenciar as múltiplas solicitações de corrida utilizando a estrutura de dados <a href="https://www.ime.usp.br/~pf/analise_de_algoritmos/aulas/heap.html"><em>Heap</em></a>. Apesar de somente atender a uma solicitação por vez, o seu algoritmo deverá organizar as várias solicitações em espera para minimizar o tempo de espera de um cliente (sempre que possível). Mesmo assim, clientes poderão cancelar suas solicitações. Ao fim do dia, serão apresentadas a Carlos as informações da jornada, incluindo o rendimento líquido obtido.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A entrada consiste de uma sequência de linhas (de tamanho indetermidado) que indicam as ações a serem realizadas no seu código. Cada linha começa com uma letra, representando uma ação diferente:</p>
+
+<ul>
+<li><strong>A</strong>: O motorista aceitou a solicitação de um(a) cliente, deixando-o(a) em espera.</li>
+<li><strong>F</strong>: O motorista finalizou a corrida atual.</li>
+<li><strong>C</strong>: O(A) cliente indicado(a) cancelou sua solicitação.</li>
+<li><strong>T</strong>: O motorista indicou o término da sua jornada e deseja ver o rendimento obtido.</li>
+</ul>
+
+<p>Nas ações do tipo <strong>A</strong>, a linha conterá também:</p>
+
+<ol>
+<li>o nome do cliente,</li>
+<li>a avaliação do(a) cliente (<em>i.e.</em> o número de estrelas),</li>
+<li>a posição X e Y (em coordenadas cartesianas) do(a) cliente,</li>
+<li>a posição X e Y (em coordenadas cartesianas) do destino do(a) cliente.</li>
+</ol>
+
+<!-- Mudar p/ estrelas  -->
+
+<p>O motorista atende as solicitações de corrida em ordem de avaliação do(a) cliente, da maior para a menor e não há empates. Quando uma ação do tipo <strong>F</strong> ocorrer, a solicitação de corrida corrente é finalizada e removida da lista de espera. Para calcular a distância entre dois pontos quaisquer neste trabalho, será considerada a <a href="https://pt.wikipedia.org/wiki/Geometria_pombalina">distância de Manhattan</a>, sempre medida em kilômetros.</p>
+
+<p>Nas ações do tipo <strong>C</strong>, a linha conterá também o nome do(a) cliente indicado(a). Nesses momentos, a solicitação correspondente é removida da lista de espera e o motorista recebe uma taxa de compensação.</p>
+
+<h2 id="constantes">Constantes</h2>
+
+<p>Todos os dias, o motorista inicia sua jornada em sua casa localizada no ponto (0,0) (<em>i.e.,</em> na origem).</p>
+
+<p>Os custos relacionados ao veículo são:</p>
+
+<ul>
+<li><strong>Custo do aluguel por dia</strong>: 57,00 reais</li>
+<li><strong>Consumo</strong>: 10 kilômetros por litro</li>
+<li><strong>Custo da gasolina</strong>: 4,104 reais por litro</li>
+</ul>
+
+<p>Os valores relacionados à Uber e à modalidade UberX são:</p>
+
+<ul>
+<li><strong>Taxa da Uber (UberX)</strong>: 25%</li>
+<li><strong>Taxa de cancelamento</strong>: 7 reais</li>
+<li><strong>Pagamento (UberX)</strong>: 1,40 reais por kilômetro</li>
+</ul>
+
+<h2 id="restrições">Restrições</h2>
+
+<p>O nome do programa deverá ser <strong>diadeuber.c</strong> e as restrições das variáveis são descritas a seguir:</p>
+
+<ul>
+<li>Nome de um(a) cliente contém até 15 caracteres ASCII sem espaço</li>
+<li>Número de ações é sempre menor que 500</li>
+</ul>
+
+<h2 id="exemplo-de-entrada">Exemplo de Entrada</h2>
+
+<pre><code class="language-text">A JUCIETE 4.43060231087548 -6 6 -5 -3
+A SAVADOR 3.255343682611576 0 -5 3 -5
+F
+A KETLA 3.356431306756503 6 -7 -2 2
+F
+A DONOVAN 3.9743695236176784 -2 -4 0 5
+A KRIS 3.729076408821234 0 -1 -1 1
+F
+F
+F
+T
+</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída consiste de um relatório das ações realizadas durante a jornada. Para ações do tipo <strong>A</strong>, deve-se atestar a inclusão da sua chamada à fila de espera. Quando ocorrer uma ação <strong>F</strong>, deve-se imprimir o nome do(a) passageiro(a) cuja corrida foi finalizada. Análogamente, quando um(a) cliente cancelar uma corrida, deve-se também indicar o seu nome. Finalmente, quando o motorista desejar finalizar o seu expediente, deve-se imprimir no relatório as seguintes informações na ordem indicada:</p>
+
+<ol>
+<li>Quantidade total de kilômetros rodados</li>
+<li>Rendimento bruto (<em>i.e.,</em> sem despesas)</li>
+<li>Despesas</li>
+<li>Rendimento líquido (<em>i.e.,</em> descontadas as despesas)</li>
+</ol>
+
+<h2 id="exemplo-de-saida">Exemplo de Saida</h2>
+
+<pre><code class="language-text">Cliente JUCIETE foi adicionado(a)
+Cliente SAVADOR foi adicionado(a)
+A corrida de JUCIETE foi finalizada
+Cliente KETLA foi adicionado(a)
+A corrida de SAVADOR foi finalizada
+Cliente DONOVAN foi adicionado(a)
+Cliente KRIS foi adicionado(a)
+A corrida de KETLA foi finalizada
+A corrida de DONOVAN foi finalizada
+A corrida de KRIS foi finalizada
+
+Jornada finalizada. Aqui esta o seu rendimento de hoje
+Km total: 80
+Rendimento bruto: 61.60
+Despesas: 89.83
+Rendimento liquido: -43.63
+</code></pre>
+
+<!-- # Correção -->
+
+<!-- FIXME: alguma instrução? F: Não entendi :) -->
+
+<!-- O nome do seu programa deverá ser **diadeuber**, e  -->
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa09.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:06 GMT -->
+</html>

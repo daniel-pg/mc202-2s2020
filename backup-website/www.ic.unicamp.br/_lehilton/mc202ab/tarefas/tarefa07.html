@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa07.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+<head>
+    <title>
+        Tarefa 7 - O mensageiro &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 7 - O mensageiro
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      15/11/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>Um mensageiro tem um conjunto de <em>tokens</em>, que nada mais é do que um
+saco de pequenos cartõezinhos numerados e com algum texto no verso. Os
+número dos cartões são únicos, ou seja, não há dois cartões com o
+mesmo número. Ao serem “reorganizados”, os textos nos versos dos
+cartões formam uma mensagem.</p>
+
+<p>Esse mensageiro tem o dever de transmitir a mensagem ao rei, mas como
+a mensagem está cifrada, ele deve passar por uma sequência de
+autoridades, com hierarquia cada vez mais alta. Cada autoridade tem um
+número pessoal privado, que só ela conhece. Para cada autoridade, o
+mensageiro deve perguntar o seu número e procurar uma <strong>tríade</strong> de
+cartões cuja a soma dos valores seja igual ao número dito. O
+mensageiro deve então remover esses três cartões do saco e entregá-los
+à autoridade, que devolverá <strong>um novo cartão</strong> com seu número e um
+novo texto no verso.</p>
+
+<p>Depois de ter passado por todas as autoridades, o mensageiro vai até o
+rei. Nesse momento, ele lê a mensagem obtida ao juntar <strong>todos</strong> os
+cartões restantes de forma com que os números fiquem em ordem
+crescente.</p>
+
+<p>A sua tarefa é escrever um programa em C que recebe um conjunto de
+cartões do mensageiro e uma sequência de inteiros com os números das
+autoridades em <strong>ordem de visita</strong>. O programa deve devolver a
+mensagem a ser transmitida ao rei. Suponha que o texto contido em um
+cartão devolvido por uma autoridade é a concatenação dos textos
+contidos na tríade entregue pelo mensageiro e que a concatenação é
+realizada seguindo a ordem numérica de cada cartão.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A entrada é composta de diversas mensagens. Para cada mensagem, são
+dadas três linhas: A primeira contém dois inteiros $m$ e $n$, que
+representam o número de cartões e o número de autoridades,
+respectivamente. A segunda linha contém $m$ pares, onde o primeiro item
+é o número do cartão e o segundo item é texto do verso entre aspas
+duplas e de no máximo 5 caracteres. A terceira linha contém $n$
+inteiros, onde cada inteiro é o número autoridade. A entrada termina com
+final de arquivo.</p>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<pre><code class="language-text">3 1
+6 &#34;reci&#34; 3 &#34;p&#34; 7 &#34;oso&#34;
+16
+4 1
+1 &#34;Meu &#34; 5 &#34;pr&#34; 7 &#34;so!&#34; 6 &#34;ecio&#34;
+18
+5 2
+1 &#34;Vou&#34; 2 &#34;ma &#34; 4 &#34;via&#34; 8 &#34; nu&#34; 16 &#34;gem.&#34;
+22 31
+</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída do seu programa deverá apresentar uma linha para cada mensagem.</p>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">precioso
+Meu precioso!
+Vou numa viagem.
+</code></pre>
+
+<h1 id="correção">Correção</h1>
+
+<p>Esta tarefa será corrigida automaticamente e por um monitor. O teste
+automático será realizado sempre que você realizar um <code>push</code>. Para
+indicar que a sua tarefa está pronta para a correção pelo monitor,
+remova o arquivo <code>nao_corrigir.txt</code> do seu repositório antes de dar
+<code>commit</code>.</p>
+
+<p>A nota dependerá do número de casos de teste privado executados
+corretamente. No entanto, nota poderá ser descontada por questões
+de critérios específicos, organização, legibilidade ou eficiência.
+Pense na próxima pessoa que lerá seu código, pode ser você daqui a
+um mês!</p>
+
+<h1 id="critérios-específicos">Critérios específicos</h1>
+
+<p><strong>É obrigatório</strong> implementar um algoritmo que utiliza a estrutura de
+árvore binária de busca. Com exceção da estrutura árvore binária de
+busca e strings, <strong>é vedado</strong> o uso de qualquer outra estrutura de
+dados para armazena coleções de dados (vetores, listas, pilhas, etc.).
+É vedado também a utilização de qualquer algoritmo de ordenação.</p>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa07.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+</html>

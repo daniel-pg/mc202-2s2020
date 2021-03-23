@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa04.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:00 GMT -->
+<head>
+    <title>
+        Tarefa 4 - Sea of Words &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 4 - Sea of Words
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      18/10/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>Edward Teach (também conhecido como <em>Blackbeard</em>) é uma lenda pirata em <em>Sea of Thieves</em> (popular jogo <em>online</em> de piratas) e está fazendo lorotas com sua aliança. Lorotas são grandes missões em que o jogador recebe um livro e deve desvendar suas charadas, como na imagem a seguir.</p>
+
+<p><img src="img/seaofthieves.jpg" alt="" /></p>
+
+<p>Blackbeard está em uma lorota que exige que o jogador encontre palavras no livro, sendo estas pistas para encontrar um tesouro. Como ele é o capitão do navio e está muito ocupado comandando a tripulação, deixou um dos membros da aliança como responsável por encontrar as palavras no livro. Ocorre que Blackbeard não pode confiar totalmente nas informações dadas pelos outros membros, afinal são piratas. Então ele precisa que você ajude-o a verificar, de forma rápida, se as informações realmente aparecem no livro.</p>
+
+<p>Sua tarefa é escrever um programa em C chamado <code>seaofwords.c</code> que, dado o texto do livro e as pistas extraídas pelo membro da aliança, verifica se essas palavras realmente aparecem no texto. Como esse é um livro de charadas, as palavras não necessariamente aparecem na horizontal como em um texto comum, elas podem aparecer formadas por letras vizinhas na vertical e/ou horizontal (mas nunca na diagonal). Uma mesma palavra não pode utilizar a mesma letra do texto mais de uma vez, mas palavras diferentes podem. Como no exemplo a seguir, em que a palavra <code>MAPA</code> aparece no texto:</p>
+
+<p><img src="img/exemplo_seaofwords.png" alt="" /></p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A entrada é composta por várias linhas. A primeira linha contém três inteiros $n$, $m$ e $q$ que indicam, respectivamente, o número de linhas e colunas do texto e o número de palavras que serão buscadas. Em seguida são dadas $n$ linhas com $m$ caracteres cada, representando o texto, e $q$ linhas com as palavras que devem ser buscadas. O texto e as palavras dados na entrada não possuem o caractere de espaço.</p>
+
+<h3 id="restrições">Restrições:</h3>
+
+<ul>
+<li>5 ≤ $n$ ≤ 100</li>
+<li>5 ≤ $m$ ≤ 100</li>
+<li>1 ≤ $q$ ≤ 10</li>
+<li>As palavras possuem no máximo 20 caracteres</li>
+<li>Todos os caracteres das palavras e do texto são maiúsculos</li>
+</ul>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<pre><code class="language-text">5 5 1
+XDLMW
+OVUIQ
+VIHMA
+TFOBP
+YTKEA
+MAPA</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída do seu programa deverá apresentar $q$ linhas, onde a <em>i</em>-ésima linha
+contém <code>sim</code> caso a <em>i</em>-ésima palavra apareça no texto e <code>nao</code> caso contrário.</p>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">sim
+</code></pre>
+
+<h1 id="correção">Correção</h1>
+
+<p>Esta tarefa será corrigida automaticamente e por um monitor. O teste automático será realizado sempre que você realizar um <code>push</code>. Para indicar que a sua tarefa está pronta para a correção pelo monitor, remova o arquivo <code>nao_corrigir.txt</code> do seu repositório antes de dar <code>commit</code>.</p>
+
+<p>É <strong>obrigatório</strong> o uso de recursão nesta tarefa.</p>
+
+<h1 id="dica">Dica</h1>
+
+<p>Use espaço antes de <code>%c</code> para ler o próximo caractere, ignorando espaços vazios e quebras de linha.</p>
+
+<pre><code class="language-c">char c;
+scanf(&quot; %c&quot;, &amp;c);
+</code></pre>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa04.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:02 GMT -->
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa06.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+<head>
+    <title>
+        Tarefa 6 - Sala de espera do Cecom &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 6 - Sala de espera do Cecom
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      08/11/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>O Cecom, Centro de Saúde da Comunidade da UNICAMP, é um serviço oferecido a estudantes e funcionários da UNICAMP. Devido ao alto volume de usuários, um sistema de senhas e prioridades é usado para organizar os diferentes atendimentos oferecidos.</p>
+
+<p>Há 9 especialidades diferentes de atendimento, oferecidas pelos diferentes profissionais no hospital. Cada especialidade possui um número identificador e uma quantidade de profissionais disponíveis no hospital.</p>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Atendimento</th>
+<th>Número de profissionais</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>1</td>
+<td>Clínico Geral</td>
+<td>10</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>Radiologista</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>Enfermeiro (exame de sangue)</td>
+<td>5</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>Otorrinolaringologista</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>Pneumologista</td>
+<td>4</td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>Dermatologista</td>
+<td>7</td>
+</tr>
+
+<tr>
+<td>7</td>
+<td>Neurologista</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>Oncologista</td>
+<td>1</td>
+</tr>
+
+<tr>
+<td>9</td>
+<td>Psiquiatra</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+
+<p>Seu trabalho é implementar um sistema capaz de direcionar os pacientes a cada profissional, conforme ele fica disponível.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A entrada é composta por uma lista de pacientes na ordem de chegada no hospital. Cada linha possui o nome de um indivíduo, a prioridade de atendimento e uma sequência de números que representa os atendimentos de que o paciente precisa. Veja o exemplo de uma linha:</p>
+
+<p><code>&quot;Ze Carioca&quot; normal 1 5 3 1</code></p>
+
+<!--
+`"Scrooge McDuck" prioritario 1`
+`"Donald Duck" normal 4`
+`"Pateta" normal 9`
+ -->
+
+<p>Cada número da sequência de um paciente corresponde ao identificador de uma especialidade. Assim, ao chegar no hospital, Zé Carioca entrará numa fila de espera para profissionais do tipo 1, ao fim desse atendimento, ele entrará na fila de espera para profissionais do tipo 5 e assim por diante. Pode haver mais de um profissional do mesmo tipo, o que significa que um paciente será atendido pelo primeiro profissional que se disponibilizar.</p>
+
+<p>Alguns pacientes possuem carteirinha de atendimento prioritário (marcados com a palavra <code>preferencial</code> depois do nome). Esses pacientes são inseridos no <em>começo</em> de qualquer fila em que entrarem, mesmo que a primeira pessoa da fila também tenha carteirinha de atendimento prioritário.</p>
+
+<h3 id="restrições">Restrições</h3>
+
+<ul>
+<li>Nomes são strings delimitadas por aspas duplas e possuem no máximo 50 caracteres ASCII, podendo conter espaços.</li>
+<li>Não há limite para o número de atendimentos que um paciente pode receber em um dia.</li>
+</ul>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<pre><code class="language-text">&#34;Allegra Magbie&#34; normal 1 2 3 4 5
+&#34;Chiquia Sidra Rockwell&#34; normal 5 4 3 2 1
+&#34;Teddi Daniele&#34; normal 1 2 4 3 5
+&#34;Queenie Broderic Junia&#34; normal 7 7 4 7 7
+</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>Todos os pacientes e profissionais já estão no hospital às 08:00, quando começam os atendimentos. Presuma que cada atendimento leva exatamente 10 minutos, já incluídos o tempos de deslocamento e de chamada de pacientes.</p>
+
+<p>O seu programa deverá criar um registro dos horários de saída dos pacientes em um dia. Deve-se imprimir, em ordem, os horários e nomes de cada pessoa que sai do hospital. Se mais de um paciente sai no mesmo horário, a ordem de impressão na saída não importa.</p>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">08:50 Chiquia Sidra Rockwell
+08:50 Allegra Magbie
+08:50 Teddi Daniele
+08:50 Queenie Broderic Junia
+</code></pre>
+
+<h1 id="critérios">Critérios</h1>
+
+<p>É obrigatório o uso da estrutura de dados deque (<em>double ended queue</em>) implementada usando listas ligadas. Um deque é uma generalização de fila que contém operações de inserção e remoção tanto no início quanto do final. Cada uma dessas operações deve ser implementada em tempo constante. Não pode haver vazamento de memória.</p>
+
+<h1 id="dicas-e-observações">Dicas e observações</h1>
+
+<ul>
+<li><p>No script de correção, a compilação inclui todos os arquivos <code>.c</code> no diretório <code>tarefa06</code>. Tenha certeza que exatamente um deles possui a função <code>main()</code>. Você pode incluir outros arquivos criando arquivos <code>.h</code> correspondentes.</p></li>
+
+<li><p>A sua saída pode ser ligeiramente diferente dos arquivos <code>.res</code>. As saídas são ordenadas antes de serem comparadas pelo script de correção. Para comparar as saídas uma a uma, você pode usar o comando de Bash <code>diff -y &lt;(sort testes/sala_de_espera1.res) &lt;(./sala_de_espera &lt;testes/sala_de_espera1.in | sort)</code>.</p></li>
+
+<li><p>Se dois ou mais pacientes terminarem um atendimento ao mesmo tempo, pode acontecer que eles queiram entrar na fila para a mesma especialidade. Dependendo da ordem em que eles entrarem nessa fila, o horário de saída desses pacientes pode mudar e quem foi inserido depois pode acabar sendo prejudicado, causando um conflito. Por isso, é importante adotar um critério de desempate justo. Neste hospital, o critério de desempate adotado para evitar conflitos é inserir primeiro pacientes que chegaram antes no hospital (de acordo com a ordem do arquivo de entrada). Nesta tarefa, é permitido o uso de funções de ordenação prontas, como o <code>qsort()</code>, disponível em <code>stdlib.h</code>.</p></li>
+
+<li><p>Você sabia que <code>scanf()</code> retorna um int? A documentação pode te ajudar. No Linux, <code>man scanf</code> imprime a documentação da função <code>scanf</code>. Ela pode ser facilmente encontrada online, também.</p></li>
+</ul>
+
+<h1 id="correção">Correção</h1>
+
+<p>Esta tarefa será corrigida automaticamente e por um monitor. O teste automático será realizado sempre que você realizar um <code>push</code>. Para indicar que a sua tarefa está pronta para a correção pelo monitor, remova o arquivo <code>nao_corrigir.txt</code> do seu repositório antes de dar <code>commit</code>. A nota dependerá do número de casos de teste executados corretamente de acordo com a completude da tarefa:</p>
+
+<ul>
+<li>Casos de teste sem pacientes prioritários nem conflitos (<sup>10</sup>&frasl;<sub>20</sub>): conceito C</li>
+<li>Casos de teste sem conflitos (<sup>16</sup>&frasl;<sub>20</sub>): conceito B</li>
+<li>Todos os casos de teste (<sup>20</sup>&frasl;<sub>20</sub>): conceito A</li>
+</ul>
+
+<p>No entanto, nota poderá ser descontada por questões de organização, legibilidade ou eficiência. Pense na próxima pessoa que lerá seu código, pode ser você daqui a um mês!</p>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa06.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+</html>

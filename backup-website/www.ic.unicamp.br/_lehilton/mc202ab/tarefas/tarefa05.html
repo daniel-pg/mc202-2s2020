@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa05.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:02 GMT -->
+<head>
+    <title>
+        Tarefa 5 - Calculadora de números gigantes &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 5 - Calculadora de números gigantes
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      08/11/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>Há muitos anos, Wilson Percival Higgsbury chegou ao Constant depois de
+ser enganado pelo seu rival Maxwell, como pode ser visto
+<a href="https://www.youtube.com/watch?v=xN712L5NdE4&amp;ab_channel=Don%27tStarve">aqui</a>.
+Wilson é um jovem e talentoso cientista. No início, tudo no Constant
+era misterioso, mas depois de 936 anos sobrevivendo (pois cada ano lá
+dentro tem 70 dias), ele já descobriu até as limitações da engine que
+criou o jogo.</p>
+
+<p>No dia 65537 (depois de ter sobrevivido 65536 dias) Wilson percebeu
+que o calendário passou a marcar &ldquo;1&rdquo; (que seria o dia 0), como dá pra
+ver nas imagens.</p>
+
+<p><img src="img/calculadora_dia.png" alt="" /></p>
+
+<p>Isso aconteceu porque o inteiro sem sinal que armazena a quantidade de
+dias tem apenas 16 bits. Assim, quando mais um dia foi somado, o
+número &ldquo;deu a volta&rdquo; e zerou, aparecendo &ldquo;Dia 1&rdquo;.</p>
+
+<p><img src="img/calculadora_overflow.png" alt="" /></p>
+
+<p>Agora, Wilson precisa que você o ajude a implementar uma calculadora
+que consiga realizar operações entre números muito grandes. Os números
+devem ser inteiros sem sinal e as operações serão soma, subtração e
+multiplicação. Como o nosso cientista quer desenvolver uma boa
+ferramenta, é importante começar com um projeto conciso e no futuro
+aprimorar com novas funcionalidades. Nessa primeira versão, a
+calculadora deve suportar soma, subtração e multiplicação de numeros
+inteiros bem grandes, mas a divisão e operações com números racionais
+só serão implementadas nas próximas versões.</p>
+
+<h2 id="critérios">Critérios</h2>
+
+<p>As operações devem ser feitas com números armazenados na forma de
+lista ligada.</p>
+
+<h1 id="entrada">Entrada</h1>
+
+<p>A entrada é composta por várias linhas. A primeira linha contém um
+inteiro $n$ que indica a quantidade de casos de teste. Em seguida
+serão dadas $2n$ linhas, onde a primeira indicará a operação $op$ a
+ser realizada e a segunda conterá dois números $n_1$ e $n_2$ separados
+por um espaço.</p>
+
+<p>O código $op$ representa uma das operações a seguir:</p>
+
+<ul>
+<li><strong>+</strong>: soma</li>
+<li><strong>-</strong>: subtração</li>
+<li><strong>*</strong>: multiplicação</li>
+<li><strong>/</strong>: divisão (opcional)</li>
+</ul>
+
+<h2 id="restrições">Restrições:</h2>
+
+<ul>
+<li>3 ≤ $n$ ≤ 110</li>
+<li>0 ≤ $n_1, n_2$ ≤ $10^{24}$</li>
+<li>a subtração será sem sinal (resultado em módulo), por exemplo, $|1-10|=9$</li>
+<li>a divisão será inteira, por exemplo, $7 / 3 = 2$</li>
+<li>não haverá caso de teste com divisão por $0$</li>
+</ul>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<pre><code class="language-text">4
+&#43;
+751796058999103512 894118966031226686
+-
+377631708972605051 46619653822740516
+*
+541644749181291169 747107029163164920
+/
+38531094373797137 575993551452481287
+</code></pre>
+
+<h1 id="saída">Saída</h1>
+
+<p>A saída do seu programa deverá apresentar $n$ linhas, onde cada linha
+conterá o resultado da operação realizada.</p>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">1645915025030330198
+331012055149864535
+404666599422662049824112340086591480
+0
+</code></pre>
+
+<h1 id="dica">Dica</h1>
+
+<p>Para desenvolver um bom programa, é importante desenvolver a ideia com
+calma. Antes de escrever uma função em C, pense na entrada e na saída
+do problema sendo resolvido e escreva seu algoritmo em português ou em
+pseudo-código de maneira clara. Faça alguns testes no papel até que
+tenha entendido e corrigido seu algoritmo completamente. Só depois,
+comece a escrever o código.</p>
+
+<p>Implemente seu programa incrementalmente, teste-o e faça um commit a
+cada passo. Uma sugestão é começar implementando as funções básicas de
+lista ligada e as funções auxiliares para ler a entrada e para
+escrever a saída. Depois, implemente as operações da calculadora, uma
+por uma, começando pelas mais simples. A operação de divisão é
+opcional, então deixe-a por último.</p>
+
+<p>O arquivo de Makefile de exemplo presume que seu programa se chama
+<code>calculadora.c</code>. Se você decidir separar a implementação em mais de um
+arquivo, lembre-se de fazer as devidas adaptações no <code>Makefile</code>.</p>
+
+<h1 id="correção">Correção</h1>
+
+<p>Esta tarefa será corrigida automaticamente e por um monitor. O teste
+automático será realizado sempre que você realizar um <code>push</code>. Para
+indicar que a sua tarefa está pronta para a correção pelo monitor,
+remova o arquivo <code>nao_corrigir.txt</code> do seu repositório antes de dar
+<code>commit</code>.</p>
+
+<p>A nota dependerá do número de casos de teste executados corretamente
+de acordo com a completude da tarefa. Das 6 entradas dos casos de
+teste fechados:</p>
+
+<ul>
+<li>há uma entrada para cada uma das operações de soma, subtração e multiplicação;</li>
+<li>há uma entrada que combina as operações de soma, subtração e multiplicação,
+que será avaliada com Valgrind;</li>
+<li>há uma entrada para a operação de divisão, mas ela não influenciará na nota;</li>
+<li>há uma entrada que combina todas as operações, que também não influenciará
+na nota.</li>
+</ul>
+
+<p><img src="img/calculadora_science.png" alt="" /></p>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa05.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:05 GMT -->
+</html>

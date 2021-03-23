@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa00.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:12 GMT -->
+<head>
+    <title>
+        Tarefa 0 - Primeiros passos &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 0 - Primeiros passos
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      27/09/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<h1 id="linha-de-comando">Linha de comando</h1>
+
+<p>Para fazer as tarefas que são solicitadas nessa disciplina, você deve
+se familiarizar com a interação com o computador através de linha de
+comando. No GNU/Linux, um dos interpretadores de comando mais
+utilizado é o <a href="https://www.gnu.org/software/bash/">Bash</a>. Nessa
+tarefa, iremos ver como dar comandos básicos ao computador utilizando
+o Bash. Caso queira, você poderá utilizar outros interpretadores de
+comando.</p>
+
+<p>Se você não tem uma distribuição GNU/Linux instalada em seu
+computador, consulte <a href="https://ubuntu.com/download/desktop">aqui</a> como
+instalar o Ubuntu. Você também pode instalar o Ubuntu (ou outras
+distribuições GNU/Linux) diretamente no Windows. Clique
+<a href="https://docs.microsoft.com/pt-br/windows/wsl/install-win10">aqui</a>
+para mais informações.</p>
+
+<p>Para começar a nos ambientar com o terminal, vamos criar um diretório
+e ver o seu conteúdo. Para isso, abra o terminal e digite
+<code>mkdir diretorio</code>. Seu terminal deve se parecer como o seguinte.</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ mkdir diretorio
+</code></pre>
+
+<p>Para navegar para esse diretório, podemos utilizar o comando <code>cd</code>.</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ cd diretorio
+</code></pre>
+
+<p>Agora, liste o conteúdo desse diretório.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ ls
+user@desktop:~/diretorio$ ..
+</code></pre>
+
+<p>O nosso diretório contém apenas os diretórios padrões <code>.</code> e <code>..</code>. O
+primeiro corresponde ao diretório atual e o segundo ao diretório pai.
+Esses arquivos (e quaisquer outros começando com <code>.</code>) não são
+mostrados por padrão. Para ver todos os arquivos, use a opção <code>-a</code> e para
+ver detalhes, a opção <code>-l</code>.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ ls -la
+drwxrwxr-x 2 user user 4096 ago 28 14:32 .
+drwxrwxr-x 5 user user 4096 ago 28 14:28 ..
+</code></pre>
+
+<p>Para vermos os comandos para copiar e mover arquivos, crie um arquivo
+nesse diretório utilizando o comando <code>touch</code>. Será criado um arquivo
+sem conteúdo.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ touch arquivo.txt
+</code></pre>
+
+<p>Se você listar o conteúdo desse diretório, deverá ver o arquivo que
+acabou de criar.</p>
+
+<p>Agora, crie um subdiretório.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ mkdir sub-dir
+user@desktop:~/diretorio$ ls -l
+-rw-rw-r-- 1 user user    0 ago 28 14:33 arquivo.txt
+drwxrwxr-x 2 user user 4096 ago 28 14:33 sub-dir
+</code></pre>
+
+<p>Copie o arquivo <code>arquivo.txt</code> para esse subdiretório com o comando <code>cp</code>.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ cp arquivo.txt sub-dir/
+</code></pre>
+
+<p>Crie um novo arquivo.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ touch arquivo2.txt
+</code></pre>
+
+<p>Move esse novo arquivo para o subdiretório com o comando <code>mv</code>.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ mv arquivo2.txt sub-dir/
+</code></pre>
+
+<p>Navegue para o subdiretório e liste o seu conteúdo.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio$ cd sub-dir
+user@desktop:~/diretorio/sub-dir$ ls
+arquivo2.txt  arquivo.txt
+</code></pre>
+
+<p>Para remover um arquivo, utilize o comando <code>rm</code>.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio/sub-dir$ rm arquivo.txt
+</code></pre>
+
+<p>Volte para o diretório pai e remova o subdiretório com <strong>todo</strong> o seu
+conteúdo.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/diretorio/sub-dir$ cd ..
+user@desktop:~/diretorio$ rm -r sub-dir
+</code></pre>
+
+<h1 id="instalando-o-compilador">Instalando o compilador</h1>
+
+<p>Para compilar programas escritos em C no seu computador, é necessário
+ter uma série de programas responsáveis por traduzir os vários
+códigos-fontes em arquivos objetos com as instruções de linguagem de
+máquina e depois juntá-los (<em>link</em>) em um arquivo executável pelo
+sistema operacional. O conjunto desses programas é chamado de
+<em>toolchain</em>.</p>
+
+<p>Além disso, as tarefas dessa disciplina virão acompanhadas de um
+arquivo escrito em Python chamado <code>testar.py</code> que ajuda a compilar e
+testar cada uma das tarefas. Não é necessário utilizar esse arquivo
+para realizar as tarefas, mas testar e aprender a criar testes
+automatizados evita que você gaste um tempo enorme testando seus
+programas de maneira manual.</p>
+
+<p>No Ubuntu ou em distribuições GNU/Linux baseadas você pode instalar o
+toolchain padrão e um interpretador Python 3.x com os comandos abaixo.</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ sudo apt update
+user@desktop:~$ sudo apt install build-essential python3
+</code></pre>
+
+<p>Execute</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ gcc --version
+user@desktop:~$ python3 --version
+</code></pre>
+
+<p>pare ter certeza de que a instalação funcionou e verificar a versão
+dos programas instalados. Para instalar Python em outras distribuições
+GNU/Linux, você pode consultar o site oficial do
+<a href="https://realpython.com/installing-python/">Python</a>, ou para o
+Windows, você pode seguir esse
+<a href="https://realpython.com/installing-python/">tutorial</a>.</p>
+
+<h1 id="usando-o-git">Usando o Git</h1>
+
+<p>Nesta disciplina, usaremos so Git para desenvolver e submeter as
+tarefas de programação. Git é uma ferramenta de controle de versão
+distribuída, que serve para manter o histórico de arquivos
+de maneira organizada e facilmente compartilhada por várias
+pessoas. Não é objetivo dessa disciplina nos aprofundarmos
+nessa ferramenta, mas é necessário saber realizar comandos
+básicos e utilizar o repositório efetivamente.</p>
+
+<p>Antes de começar, é preciso instalar o Git para torná-lo disponível em
+seu computador. No Ubuntu, abra o terminal e execute o comando abaixo.</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ sudo apt install git
+</code></pre>
+
+<p>Verifique se a instalação ocorreu com sucesso com o comando
+<code>git --version</code>.</p>
+
+<p>Se você ainda não tem e não conhece o Git, você pode ler o seguinte
+tutorial de
+<a href="https://www.hostinger.com.br/tutoriais/tutorial-do-git-basics-introducao/">introdução</a>,
+que explica como instalar o software em diferentes sistemas
+operacionais além dos comandos básicos.</p>
+
+<p>No contexto da disciplina, o Git é uma ferramenta para o
+acompanhamento das tarefas feitas durante o semestre. A partir dele,
+@s estudantes terão acesso a uma série de tarefas que servirão de
+avaliação.</p>
+
+<h2 id="clonando-seu-repositório-pessoal">Clonando seu repositório pessoal</h2>
+
+<p>Nos primeiros dias, o professor irá criar um repositório no
+<a href="https://gitlab.ic.unicamp.br/">Gitlab</a> do Instituto de Computação (IC)
+para cada estudante. Cada estudante do curso 34 ou 42 tem uma conta
+criada automaticamente nessa plataforma. Antes de ser possível criar o
+repositório, é necessário que cada estudante entre
+<a href="https://gitlab.ic.unicamp.br/">https://gitlab.ic.unicamp.br</a> e realize o login pela primeira vez
+utilizando a mesma senha do ambiente Linux. Se você não é desses
+cursos, o seu professor irá fornecer instruções separadamente sobre
+como obter sua senha.</p>
+
+<p>Uma vez criado o repositório, é possível cloná-lo para a sua máquina,
+realizar alterações e depois sincronizá-lo com o repositório remoto. O
+endereço do seu repositório será</p>
+
+<p><a href="https://gitlab.ic.unicamp.br/mc202-2020/raXXXXXX.git">https://gitlab.ic.unicamp.br/mc202-2020/raXXXXXX.git</a></p>
+
+<p>substituindo-se <code>XXXXXX</code> por seu número de RA. Você pode conferir
+entrando no link. Na página principal do seu repositório, clique no
+botão <code>Clone</code> e copie a URL sobre <code>Clone with HTTPS</code>. Abra o terminal
+dentro do diretório em que ficará guardado o repositório, digite
+<code>git clone</code> e em seguida cole a URL copiada:</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ git clone https://gitlab.ic.unicamp.br/mc202-2020/raXXXXXX.git
+</code></pre>
+
+<p>Pressione <strong>enter</strong> e realize a autenticação com o mesmo nome de
+usuário e senha que utilizou para acessar
+<a href="https://gitlab.ic.unicamp.br/">https://gitlab.ic.unicamp.br</a>.</p>
+
+<p>Dentro da pasta que você acabou de criar, deve haver um diretório
+<code>tarefa00</code>. Se não, espere alguns minutos e digite <code>git pull</code> dentro
+do pasta <code>raXXXXXX</code> recém criada.</p>
+
+<h1 id="submissão-de-tarefas">Submissão de tarefas</h1>
+
+<p>Durante o semestre, serão realizadas diversas tarefas. A maioria delas
+consiste em escrever um ou mais programas em C que resolvem
+determinados problema. Vamos ver um exemplo:</p>
+
+<p>Escreva um programa chamado <code>bomdia.c</code> que lê um nome no terminal e dá
+bom dia.</p>
+
+<h2 id="entrada">Entrada</h2>
+
+<p>A entrada do programa é o que o usuário irá digitar quando executa o
+programa. Nesse exemplo, é apenas um nome de uma pessoa.</p>
+
+<pre><code class="language-text">José</code></pre>
+
+<h2 id="saída">Saída</h2>
+
+<p>A saída o programa é o que o programa irá imprimir na tela após o
+usuário digitar a entrada. Nesse exemplo, para a entrada acima
+queremos que o programa tenha a saída:</p>
+
+<pre><code class="language-text">Bom dia, José.
+</code></pre>
+
+<h2 id="resolvendo-o-exercício">Resolvendo o exercício</h2>
+
+<p>Para resolver essa tarefa, precisamos criar um arquivo em C faz o
+solicitado. Para isso, você pode utilizar qualquer editor de texto.
+Uma sugestão é utilizar os <a href="https://code.visualstudio.com/">VC Code</a>.
+Vamos abrir o editor do texto e criar um arquivo <code>bomdia.c</code>
+dentro da pasta <code>raXXXXXX/tarefa00</code>.</p>
+
+<p>Em tarefas futuras, você deverá criar todo o programa. Nesse primeiro
+dia, vamos apenas copiar código abaixo e salvar um arquivo <code>bomdia.c</code>.</p>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main() {
+    char nome[30];
+    scanf(&#34;%s&#34;, nome);
+    printf(&#34;Bom dia, %s.\n&#34;, nome);
+}
+</code></pre>
+
+<h2 id="testando-o-exercício">Testando o exercício</h2>
+
+<p>Antes de executar o programa que você criou, é necessário compilá-lo.
+Vá até a linha de comandos e digite</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ cd raXXXXXX/tarefa00
+user@desktop:~/raXXXXXX/tarefa00$ gcc -std=c99 -Wall -Werror bomdia.c -o bomdia
+</code></pre>
+
+<p>Isso irá compilar o arquivo <code>bomdia.c</code> em um arquivo executável
+<code>bomdia</code>. Podemos verificar isso listando o diretório. Depois,
+executamos o programa recém criado.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ ls -l
+-rwxrwxr-x 1 user user 16792 ago 28 14:48 bomdia
+-rw-rw-r-- 1 user user   113 ago 28 14:48 bomdia.c
+-rw-rw-r-- 1 user user  6209 ago 28 14:47 testar.py
+drwxrwxr-x 2 user user  4096 ago 28 14:47 testes
+user@desktop:~/raXXXXXX/tarefa00$ ./bomdia
+</code></pre>
+
+<p>O console vai ficar piscando esperando que você digite algo. Digite
+seu nome e aperte Enter.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ ./bomdia
+Simone de Beauvoir
+Bom dia, Simone.
+</code></pre>
+
+<p>Deve ter aparecido uma mensagem de bom dia! Se não, verifique se não
+fez todos os passos acima.</p>
+
+<p>Você acabou de testar manualmente o seu programa. No mundo real, é
+importante criar testes automatizados. Na nossa disciplina, em cada
+tarefas haverá um arquivo <code>testar.py</code> que serve para você testar a sua
+tarefa localmente. Esse arquivo é incluído no diretório da tarefa.
+Para testar usando o script, abra o terminal dentro do diretório que
+contém o arquivo Python e digite</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ python3 testar.py
+
+Executando teste_1_bomdia...
+  -&gt; testes/bomdia.in passou
+teste_1_bomdia: OK
+
+...
+</code></pre>
+
+<p>Ele deve dar uma mensagem falando que um teste correspondente ao
+primeiro exercício <code>bomdia.c</code> passou. Esse é um bom momento para você
+guardar as suas alterações!</p>
+
+<h2 id="registrando-alterações">Registrando alterações</h2>
+
+<p>As alterações realizadas anteriormente foram no diretório de trabalho.
+Agora é necessário <strong>registrá-las</strong> no repositório local. No jargão
+git, queremos realizar um commit, que serve para documentar o
+desenvolvimento de sua tarefa. Primeiro, vamos revisar as modificações
+que acabamos de realizar.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ git status
+No ramo master
+Your branch is up to date with 'origin/master'.
+
+Arquivos não monitorados:
+  (utilize &quot;git add &lt;arquivo&gt;...&quot; para incluir o que será submetido)
+	bomdia.c
+
+nada adicionado ao envio mas arquivos não registrados
+estão presentes (use &quot;git add&quot; to registrar)
+</code></pre>
+
+<p>A mensagem acima explica que há um arquivo novo <code>bomdia.c</code> que ainda
+não está sendo monitorado pelo repositório de trabalho. No terminal,
+digite <code>git add .</code> para adicionar todos as alterações no diretório de
+trabalho à <strong>área de preparação</strong> (<em>staging</em>).</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ git add .
+user@desktop:~/raXXXXXX/tarefa00$ git status
+No ramo master
+Your branch is up to date with 'origin/master'.
+
+Mudanças a serem submetidas:
+  (use &quot;git restore --staged &lt;file&gt;...&quot; to unstage)
+	new file:   bomdia.c
+user@desktop:~/raXXXXXX/tarefa00$ git diff
+</code></pre>
+
+<p>Agora podemos registrar essas alterações. Antes de realizar o primeiro
+<code>commit</code> em uma máquina com uma instalação nova do git, é necessário
+definir seu endereço de e-mail e nome de usuário conforme o exemplo a
+seguir. O endereço de e-mail é utilizado para identificar quais
+alterações foram realizadas por cada autor. Por isso, certifique-se de
+usar sempre o mesmo endereço de e-mail. Nesta disciplina, recomendamos
+que você utilize o seu email institucional, como no exemplo.</p>
+
+<pre><code class="language-shell-session">user@desktop:~$ git config --global user.email &quot;fXXXXXX@dac.unicamp.br&quot;
+user@desktop:~$ git config --global user.name &quot;Fulana da Silva&quot;
+</code></pre>
+
+<p>O próximo passo é confirmar as alterações, ou seja, fazer um commit.
+Será necessário adicionar uma mensagem de alterações Certifique-se de
+incluir uma mensagem que realmente seja descritiva das alterações
+realizadas nesse commit.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ git commit -m &quot;cria exercício bomdia.c&quot;
+[master f91b22d] cria exercício bomdia.c
+ 1 file changed, 7 insertions(+)
+ create mode 100644 tarefa00/bomdia.c
+</code></pre>
+
+<h2 id="sincronizando-repositórios">Sincronizando repositórios</h2>
+
+<p>Tudo que você fez até agora está registrado apenas no seu repositório
+local. As alterações ainda <strong>não</strong> foram enviadas para o repositório
+remoto. Por último, é necessário executar o comando <code>git push</code> no
+terminal e realizar a autenticação.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ git push
+Username for 'https://gitlab.ic.unicamp.br': raXXXXXX
+Password for 'https://raXXXXXX@gitlab.ic.unicamp.br':
+Enumerating objects: 6, done.
+Counting objects: 100% (6/6), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 457 bytes | 457.00 KiB/s, done.
+Total 4 (delta 1), reused 0 (delta 0)
+To https://gitlab.ic.unicamp.br/mc202-2020/raXXXXXX.git
+   6018803..f91b22d  master -&gt; master
+</code></pre>
+
+<h2 id="verificando-o-resultado-de-suas-tarefas">Verificando o resultado de suas tarefas</h2>
+
+<p>Vocês devem ter recebido um e-mail com uma senha para acessar o site
+<a href="https://mc202.ic.unicamp.br/">https://mc202.ic.unicamp.br</a>. Essa site registra todas as correções
+recebidas no repositório remoto, feedback dos monitores e relatórios
+de erros. Tome cuidado com sua senha, ela não pode ser alterada. Por
+isso, não perca nem compartilhe sua senha com ninguém. Se você não
+recebeu a senha no seu <strong>e-mail institucional</strong>, então converse com o
+professor ou monitor.</p>
+
+<h1 id="boa-noite">Boa noite</h1>
+
+<p>Quando você executou o programa <code>testar.py</code> ou viu o site de notas,
+deve ter percebido que algum teste falhou. Isso é porque pode haver
+mais de um exercício por tarefa. Para concluir <code>tarefa00</code>, faça um
+programa <code>boanoite.c</code> que lê vários nomes e dá boa noite, conforme
+entrada e saída a seguir.</p>
+
+<h2 id="entrada-1">Entrada</h2>
+
+<pre><code class="language-text">3
+José
+Maria
+Manuela</code></pre>
+
+<h2 id="saída-1">Saída</h2>
+
+<pre><code class="language-text">Boa noite, José.
+Boa noite, Maria.
+Boa noite, Manuela.
+</code></pre>
+
+<p>Crie um arquivo <code>boanoite.c</code> conforme o modelo abaixo. Depois compile
+usando o <code>gcc</code> e teste manualmente seu programa.</p>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main() {
+    char nome[30];
+    int n;
+    scanf(&#34;%d&#34;, &amp;n);
+    for (int i = 0; i &lt; n; i&#43;&#43;) {
+        scanf(&#34;%s&#34;, nome);
+        printf(&#34;Boa noite, %s.\n&#34;, nome);
+    }
+}
+</code></pre>
+
+<p>Depois de testado manualmente, vamos tentar com o script de teste automático.
+Para testar apenas o teste de boa noite, passamos um parâmetro para o
+arquivo <code>testar.py</code>.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ python3 testar.py boanoite
+
+Executando teste_2_boanoite...
+teste_2_boanoite: FALHOU
+  -&gt; você deve criar um arquivo Makefile
+
+</code></pre>
+
+<p>Ele está reclamando de que não há um arquivo <code>Makefile</code>. Para esse
+exercício, vamos exemplificar também como criar um arquivo <code>Makefile</code>.
+Esse tipo de arquivo serve para guardar um conjunto de regras para
+compilar seu programa automáticamente, ao invés de ter que digitar o
+comando de compilação manualmente toda vez. Para isso, abra seu editor
+e crie um arquivo <code>Makefile</code> conforme o modelo abaixo. É muito
+importante que esse arquivo seja indentado usando <strong>tabs</strong> ao invés de
+espaços.</p>
+
+<pre><code class="language-makefile">CFLAGS = -std=c99 -Wall -Werror -Werror=vla -g
+LDFLAGS = -lm
+
+.PHONY: all clean
+
+all: bomdia boanoite
+
+bomdia: bomdia.c
+	gcc $(CFLAGS) bomdia.c -o bomdia $(LDFLAGS)
+
+boanoite: boanoite.c
+	gcc $(CFLAGS) boanoite.c -o boanoite $(LDFLAGS)
+
+clean:
+	rm -f bomdia boanoite
+</code></pre>
+
+<p>Agora, para compilar todos os programas, basta digitar <code>make</code>.</p>
+
+<pre><code class="language-shell-session">user@desktop:~/raXXXXXX/tarefa00$ make
+gcc -std=c99 -Wall -Werror -Werror=vla -g bomdia.c -o bomdia -lm
+gcc -std=c99 -Wall -Werror -Werror=vla -g boanoite.c -o boanoite -lm
+</code></pre>
+
+<p>Pronto, agora você já pode testar, registrar e enviar suas alterações
+para o repositório remoto.</p>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa00.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:12 GMT -->
+</html>

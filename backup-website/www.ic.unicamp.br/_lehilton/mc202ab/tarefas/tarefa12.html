@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa12.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:07 GMT -->
+<head>
+    <title>
+        Tarefa 12 - Editor de Planilha &ndash; Tarefas - Estruturas de Dados
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="prism.css" />
+    <link rel="stylesheet" href="fonts.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+    MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+        }
+    };
+
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function (x) {
+            x.parentElement.classList += 'has-jax'
+        })
+    });
+
+</script>
+<script src="../../../../polyfill.io/v3/polyfill.min1162.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async src="../../../../cdn.jsdelivr.net/npm/mathjax%403/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    
+<header>
+  <h1>
+    Tarefa 12 - Editor de Planilha
+  </h1>
+  
+  <p>
+    Prazo de entrega:
+    <time>
+      27/12/2020
+    </time>
+  </p>
+  
+</header>
+
+<hr />
+
+<a href="index.html">Voltar para lista de tarefas</a>
+
+<hr />
+
+<main>
+  
+
+<p>O aplicativo de edição de planilha é um dos casos de uso mais importantes na história do computador pessoal. Enquanto ele realiza operações muito simples, como as de uma calculadora de mesa, as fórmulas armazenadas em suas células contêm referências a outras células, revelando assim a grande capacidade um computador. Isso permite que mesmo usuários com pouco ou nenhum conhecimento de programação automatizem tarefas e processem grandes volumes de dados.</p>
+
+<p><img src="img/apple2.png" alt="VisiCalc executando no computador Apple II" /></p>
+
+<p><em>Computador pessoal Apple II executando o programa de planilhas VisiCalc</em></p>
+
+<!-- (Fonte: XXX) -->
+
+<p>Enquanto utilizar uma editor de planilhas possa ser simples, implementar um aplicativo de planilhas não é trivial. Como as fórmulas podem se referir a outras células, sempre que uma delas for alterada, é necessário atualizar todas as suas dependentes.</p>
+
+<p>Isso é particularmente importante porque um usuário inexperiente pode acabar criando dependências cíclicas. Essa situação ocorre quando uma célula se refere a si mesma ou a alguma outra, mas essa outra depende da primeira! Nesses casos, é necessário detectar e mostrar o erro.</p>
+
+<p>Para complicar ainda mais, nos aplicativos modernos (Google Sheet, Excel Online etc.), dezenas de usuários podem acessar e modificar planilhas simultaneamente. Por isso, é importante realizar cada operação na planilha tão eficientemente quanto possível. Isso é um problema que ainda hoje não foi solucionado em definitivo! Mas há várias estratégias para amenizar esse problema.</p>
+
+<p>Entre as estratégias mais populares, estão as <a href="https://en.wikipedia.org/wiki/Operational_transformation">transformações operacionais</a>. A ideia é simples. No primeiro acesso, toda a planilha é carregada na memória de um servidor. Depois, a cada operação de leitura ou de escrita, esse servidor manipula a planilha e devolve o novo valor da célula afetada.</p>
+
+<p>Nesta tarefa, você deve realizar uma sequência de transformações operacionais.</p>
+
+<h1 id="formato-da-planilha">Formato da planilha</h1>
+
+<p>Nesta tarefa, uma planilha armazena apenas números inteiros. Células que começam com o caractere <code>=</code> correspondem a uma fórmula que consistem de expressões aritiméticas com inteiros, referências a outras células, operações <code>+</code> ou <code>-</code> e parênteses.</p>
+
+<p>Assim como na maioria dos aplicativos de planilha, a referência de uma célula tem o formato <code>&lt;coluna&gt;&lt;linha&gt;</code>, onde a coluna é uma letra de <code>A</code> até <code>Z</code> e a linha é um número inteiro começando de <code>1</code>. Por exemplo, na planilha abaixo, a célula <code>A2</code> contém o valor <code>4</code> e a célula <code>B2</code> contém a fórmula <code>( A1 - ( B1 + C1 ) )</code>, que se resolve para <code>-4</code>.</p>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="center">A</th>
+<th align="center">B</th>
+<th align="center">C</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">3</td>
+</tr>
+
+<tr>
+<td><strong>2</strong></td>
+<td align="center">4</td>
+<td align="center">= ( A1 - ( B1 + C1 ) )</td>
+<td align="center">6</td>
+</tr>
+
+<tr>
+<td><strong>3</strong></td>
+<td align="center">= C3</td>
+<td align="center">8</td>
+<td align="center">= A3</td>
+</tr>
+</tbody>
+</table>
+
+<p>As células <code>A3</code> e <code>C3</code> se referem uma a outra. Isso configura uma dependência cíclica. Assim, ao serem lidas, deve-se mostrar uma mensagem <code>#ERRO#</code>.</p>
+
+<h2 id="arquivo-externo">Arquivo externo</h2>
+
+<p>A planilha estará armazenada em um arquivo de texto externo. Para abrir e fechar um arquivo, você pode utilizar as funções <code>fopen()</code> e <code>fclose()</code> e, para ler um arquivo de texto aberto, você pode utilizar a função <code>fscanf()</code>. Leia o manual!</p>
+
+<p>Segue um exemplo de uso das funções acima que lê uma lista de inteiros e imprime seus quadrados:</p>
+
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(){
+  FILE *arquivo = fopen(&quot;inteiros.txt&quot;, &quot;r&quot;);
+  int r;
+  while (fscanf(arquivo, &quot;%d&quot;, &amp;r) != EOF){
+    printf(&quot;%d\n&quot;, r * r);
+  }
+  fclose(arquivo);
+  return 0;
+}
+</code></pre>
+
+<p>A função <code>fscanf()</code> funciona da mesma forma que a função <code>scanf()</code>, mas recebe antes um ponteiro do tipo <code>FILE*</code>, que foi devolvido pela função <code>fopen()</code>. Não se esqueça de verificar se o arquivo foi aberto corretamente e fechar o arquivo depois de usar com a função <code>fclose()</code>.</p>
+
+<p>O arquivo está no formato <code>CSV</code>, <em>comma separated values</em>. Cada linha corresponde a uma linha da planilha e as células de uma linha estão separadas pelo caractere <code>,</code>. Veja abaixo o arquivo texto correspondente à planilha de exemplo.</p>
+
+<p>Arquivos CSV podem ser abertos em aplicativos de planilha comuns, como o LibreOffice Calc e o Microsoft Excel. Você pode usá-los para verificar se seu programa está correto.</p>
+
+<h1 id="entrada-e-saída">Entrada e Saída</h1>
+
+<p>Cada arquivo de entrada <code>planilha*.in</code> contém uma sequência de operações e deve ser lido da entrada padrão (usando <code>scanf()</code> e similares). A entrada consiste de múltiplas linhas. A primeira linha contém o caminho relativo para o arquivo <code>csv</code> para ser usado com <code>fopen()</code>, o número de colunas e o número de linhas da planilha. Cada linha subsequente contém uma operação a ser executada na planilha. Há dois tipos de operação:</p>
+
+<ul>
+<li><p>Leitura: <code>G &lt;coordenada&gt;</code>: ler uma célula e calcular o valor atual.</p></li>
+
+<li><p>Escrita: <code>S &lt;coordenada&gt; &lt;valor&gt;</code>: atualizar uma célula e calcular o novo valor. É garantido que a célula a ser alterada contém um valor constante, e que o novo valor também será constante.</p></li>
+</ul>
+
+<h2 id="exemplo-de-csv">Exemplo de CSV</h2>
+
+<p>Considere um arquivo de nome <code>testes/planilha0.csv</code> com o seguinte conteúdo:</p>
+
+<pre><code class="language-csv"> 1 , 2 , 3
+ 4 ,= ( A1 - ( B1 + C1 ) ) , 6
+= C3 , 8 ,= A3
+</code></pre>
+
+<h2 id="exemplo-de-entrada">Exemplo de entrada</h2>
+
+<pre><code class="language-text">testes/planilha0.csv 3 3
+G B2
+S C1 10
+G B2
+G A3
+</code></pre>
+
+<h2 id="exemplo-de-saída">Exemplo de saída</h2>
+
+<pre><code class="language-text">B2: -4
+C1: 3 -&gt; 10
+B2: -11
+A3: #ERRO#
+</code></pre>
+
+<h1 id="dicas">Dicas</h1>
+
+<ul>
+<li><p>Para os casos de teste desta tarefa, você pode supor que toda expressão binária está parentesada, isso é, todas operações binárias são delimitadas por parênteses. Por exemplo, temos uma fórmula <code>= ( ( A1 - B2 ) - C3 )</code> ao invés de <code>= A1 - B2 - C3</code>. Mas expressões com um único termo não possuem parênteses, por exemplo, temos <code>= A1</code> aos invés de <code>= ( A1 )</code>.</p></li>
+
+<li><p>Todos os elementos de uma fórmula (<em>tokens</em>) estão separados por espaços. Pode ser conveniente armazenar a fórmula como uma lista ou um vetor de elementos, ao invés de analisar a string diretamente. Por exemplo, para a fórmula acima, você pode criar uma lista de strings <code>&quot;(&quot;</code>, <code>&quot;(&quot;</code>, <code>&quot;A1&quot;</code>, <code>&quot;-&quot;</code>, <code>&quot;B2&quot;</code>, <code>&quot;)&quot;</code>, <code>&quot;-&quot;</code>, <code>&quot;C3&quot;</code>, <code>&quot;)&quot;</code>.</p></li>
+
+<li><p>Todos os termos de uma fórmula são coordenadas de outras células.</p></li>
+</ul>
+
+<h1 id="correção">Correção</h1>
+
+<p>Esta tarefa será corrigida automaticamente e por um monitor. O teste automático será realizado sempre que você realizar um <code>push</code>. Para indicar que a sua tarefa está pronta para a correção pelo monitor, remova o arquivo <code>nao_corrigir.txt</code> do seu repositório antes de dar <code>commit</code>. A nota dependerá do número de casos de teste executados corretamente de acordo com a completude da tarefa:</p>
+
+<ul>
+<li>Casos de teste sem dependências cíclicas (4 casos): conceito C, nota 5.0</li>
+<li>Casos de teste com ciclos e células com no máximo 2 termos (7 casos): conceito B, nota 7.0</li>
+<li>Todos os casos de teste (10 casos): conceito A, nota 10.0</li>
+</ul>
+
+<p>No entanto, a nota poderá ser descontada por questões de organização, legibilidade ou eficiência. Pense na próxima pessoa que lerá seu código, pode ser você daqui a um mês!</p>
+
+</main>
+
+
+    <script src="prism.js"></script>
+</body>
+
+
+<!-- Mirrored from www.ic.unicamp.br/~lehilton/mc202ab/tarefas/tarefa12.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 23 Mar 2021 21:17:08 GMT -->
+</html>
